@@ -12,7 +12,7 @@ const { items, showCategory = true } = Astro.props;
 <ul class="grid">
   {items.map((p, i) => (
     <li class="card reveal">
-      <div class="card__frame">
+      <div class="card__frame gleam" data-tilt="5">
         <Image
           src={p.data.image}
           alt={p.data.alt}

@@ -249,3 +249,123 @@ a { color: inherit; }
   white-space: nowrap;
   border: 0;
 }
+
+/* =============================================================================
+   INTERACTION LAYER
+   Pointer- and touch-reactive behaviour. Every rule here is decoration: with
+   JavaScript off none of it applies and the page is unchanged.
+   ========================================================================== */
+
+/* ---- tilt ---- */
+[data-tilt] {
+  transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.22, 0.8, 0.24, 1);
+}
+[data-tilt].is-live { transition-duration: 0.12s; }
+@media (prefers-reduced-motion: reduce) {
+  [data-tilt] { transform: none !important; }
+}
+
+/* ---- gleam: light travelling across metal, following the pointer ---- */
+.gleam { position: relative; overflow: hidden; }
+.gleam::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle 40% at var(--gx, 50%) var(--gy, 50%),
+    rgba(255, 244, 214, 0.20),
+    rgba(201, 166, 107, 0.07) 40%,
+    transparent 68%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  mix-blend-mode: screen;
+  z-index: 2;
+}
+.gleam.is-live::after,
+.gleam:hover::after { opacity: 1; }
+
+/* ---- header condenses once the page moves ---- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  transition: padding 0.35s ease, background-color 0.35s ease, backdrop-filter 0.35s ease;
+}
+.site-header.is-stuck {
+  background: rgba(20, 16, 13, 0.86);
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+}
+
+/* ---- richer reveal: rises and settles ---- */
+.js .reveal {
+  opacity: 0;
+  transform: translate3d(0, 26px, 0);
+  transition: opacity 0.7s cubic-bezier(0.22, 0.8, 0.24, 1),
+              transform 0.7s cubic-bezier(0.22, 0.8, 0.24, 1);
+  will-change: opacity, transform;
+}
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+/* ---- headline entrance ---- */
+@keyframes riseIn {
+  from { opacity: 0; transform: translate3d(0, 30px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+.js .enter > * {
+  animation: riseIn 0.9s cubic-bezier(0.22, 0.8, 0.24, 1) backwards;
+}
+.js .enter > *:nth-child(1) { animation-delay: 0.10s; }
+.js .enter > *:nth-child(2) { animation-delay: 0.22s; }
+.js .enter > *:nth-child(3) { animation-delay: 0.34s; }
+.js .enter > *:nth-child(4) { animation-delay: 0.46s; }
+@media (prefers-reduced-motion: reduce) {
+  .js .enter > * { animation: none; }
+}
+
+/* ---- buttons gain depth and a moving sheen ---- */
+.btn {
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.18s ease, border-color 0.18s ease,
+              color 0.18s ease, transform 0.35s cubic-bezier(0.22, 0.8, 0.24, 1),
+              box-shadow 0.3s ease;
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.28) 50%, transparent 65%);
+  transform: translateX(-120%);
+  transition: transform 0.75s cubic-bezier(0.22, 0.8, 0.24, 1);
+}
+.btn:hover::before { transform: translateX(120%); }
+.btn--wa:hover { box-shadow: 0 10px 30px -10px rgba(18, 140, 126, 0.7); }
+.btn--call:hover { box-shadow: 0 10px 30px -12px rgba(169, 130, 47, 0.65); }
+.btn > * { position: relative; z-index: 1; }
+
+/* ---- link underline that draws in ---- */
+.ulink {
+  position: relative;
+  text-decoration: none;
+  padding-bottom: 3px;
+}
+.ulink::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.45s cubic-bezier(0.22, 0.8, 0.24, 1);
+}
+.ulink:hover::after { transform: scaleX(1); transform-origin: left; }

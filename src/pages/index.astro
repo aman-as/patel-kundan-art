@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProductGrid from '../components/ProductGrid.astro';
 import ContactButtons from '../components/ContactButtons.astro';
+import HeroCanvas from '../components/HeroCanvas.astro';
 import { site, url } from '../data/site';
 import heroImage from '../assets/img/work/kundan-choker-ruby-pearl-set.png';
 
@@ -33,14 +34,15 @@ const steps = [
 >
   <!-- HERO -->
   <section class="hero on-ink">
+    <HeroCanvas />
     <div class="wrap hero__inner">
-      <div class="hero__text">
+      <div class="hero__text enter">
         <p class="eyebrow">Kundan &amp; Jadau Jewellery Manufacturing</p>
         <h1>You bring the design.<br />We make it.</h1>
         <p class="lede">{site.subline}</p>
         <ContactButtons class="hero__cta" waLabel="WhatsApp us" />
       </div>
-      <div class="hero__figure">
+      <div class="hero__figure gleam" data-tilt="7">
         <Image
           src={heroImage}
           alt="A kundan choker with peacock motif and matching chandbali earrings, made at the workshop"
@@ -61,7 +63,7 @@ const steps = [
       <p class="eyebrow">Selected work</p>
       <h2>Made by hand, at our own bench.</h2>
       <ProductGrid items={featured} />
-      <p class="more"><a href={url('/our-work/')}>See more of our work →</a></p>
+      <p class="more"><a class="ulink" href={url('/our-work/')}>See more of our work →</a></p>
     </div>
   </section>
 
@@ -121,7 +123,7 @@ const steps = [
           </li>
         ))}
       </ol>
-      <p class="more"><a href={url('/workshop/')}>More about how we work →</a></p>
+      <p class="more"><a class="ulink" href={url('/workshop/')}>More about how we work →</a></p>
     </div>
   </section>
 
@@ -139,8 +141,41 @@ const steps = [
 </BaseLayout>
 
 <style>
-  .hero__inner {
+  .hero {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    align-items: center;
+  }
+  @media (min-width: 900px) { .hero { min-height: min(86vh, 780px); } }
+  /* Scrim between the dust and the words. It must sit ABOVE the canvas
+     (z-index 1) — as a z-index:0 sibling the canvas simply painted over it.
+     The linear pass darkens the text column; the radial keeps the middle of
+     the mark from washing out the headline. */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 48% 64% at 24% 50%,
+        rgba(20, 16, 13, 0.86), rgba(20, 16, 13, 0.48) 56%, transparent 80%),
+      linear-gradient(90deg,
+        rgba(20, 16, 13, 0.74) 0%, rgba(20, 16, 13, 0.28) 44%, transparent 64%);
+  }
+  /* Phones: the mark is above the words, so the scrim only needs to protect
+     the lower half. */
+  @media (max-width: 899px) {
+    .hero::after {
+      background: linear-gradient(180deg,
+        transparent 0%, rgba(20, 16, 13, 0.55) 32%, rgba(20, 16, 13, 0.86) 46%);
+    }
+  }
+  .hero__inner { position: relative; z-index: 2;
     padding-block: clamp(2.5rem, 2rem + 3vw, 4.5rem);
+    padding-top: clamp(8rem, 26vh, 13rem);
+    padding-bottom: 3rem;
     display: grid;
     gap: 2rem;
     align-items: center;
@@ -156,7 +191,7 @@ const steps = [
      on the connection most visitors arrive on. */
   .hero__figure { display: none; }
   @media (min-width: 900px) {
-    .hero__inner { grid-template-columns: 1fr 0.85fr; gap: 3.5rem; }
+    .hero__inner { grid-template-columns: 1fr 0.85fr; gap: 3.5rem; padding-top: clamp(2.5rem, 2rem + 3vw, 4.5rem); }
     .hero__figure {
       display: block;
       border-radius: var(--radius);

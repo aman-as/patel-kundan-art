@@ -1,0 +1,154 @@
+---
+/**
+ * Site-wide interaction layer. One script, no libraries.
+ *
+ *  - a soft jeweller's-lamp light that follows the pointer over dark sections
+ *  - 3D tilt + a gleam that tracks pointer or finger across cards and photos
+ *  - magnetic pull on primary buttons
+ *  - staggered reveal on scroll
+ *  - header that condenses once the page moves
+ *
+ * All of it is enhancement: with JavaScript off, every section is visible,
+ * every link works, and nothing shifts.
+ */
+---
+
+<div class="lamp" aria-hidden="true"></div>
+
+<style>
+  .lamp {
+    position: fixed;
+    top: 0; left: 0;
+    width: 620px; height: 620px;
+    margin: -310px 0 0 -310px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    background: radial-gradient(
+      circle closest-side,
+      rgba(233, 202, 133, 0.16),
+      rgba(201, 166, 107, 0.07) 45%,
+      transparent 72%
+    );
+    mix-blend-mode: screen;
+    transition: opacity 0.45s ease;
+    will-change: transform;
+  }
+  .lamp.on { opacity: 1; }
+  @media (pointer: coarse) { .lamp { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .lamp { display: none; } }
+</style>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = window.matchMedia('(pointer: fine)').matches;
+
+  /* ---------- jeweller's lamp ---------- */
+  const lamp = document.querySelector<HTMLElement>('.lamp');
+  if (lamp && fine && !reduce) {
+    let lx = 0, ly = 0, tx = 0, ty = 0, on = false, raf = 0;
+    const loop = () => {
+      lx += (tx - lx) * 0.16;
+      ly += (ty - ly) * 0.16;
+      lamp.style.transform = `translate3d(${lx}px, ${ly}px, 0)`;
+      raf = Math.abs(tx - lx) + Math.abs(ty - ly) > 0.4 ? requestAnimationFrame(loop) : 0;
+    };
+    window.addEventListener('pointermove', (e) => {
+      tx = e.clientX; ty = e.clientY;
+      if (!on) {
+        on = true; lx = tx; ly = ty;
+        lamp.classList.add('on');
+      }
+      // only glow over the dark sections — over ivory it would look like a smudge
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      lamp.style.opacity = el && el.closest('.on-ink') ? '1' : '0';
+      if (!raf) raf = requestAnimationFrame(loop);
+    }, { passive: true });
+  }
+
+  /* ---------- tilt + gleam ---------- */
+  document.querySelectorAll<HTMLElement>('[data-tilt]').forEach((el) => {
+    const max = Number(el.dataset.tilt) || 6;
+    let raf = 0, rx = 0, ry = 0, gx = 50, gy = 50;
+
+    const apply = () => {
+      raf = 0;
+      el.style.setProperty('--rx', `${rx.toFixed(2)}deg`);
+      el.style.setProperty('--ry', `${ry.toFixed(2)}deg`);
+      el.style.setProperty('--gx', `${gx.toFixed(1)}%`);
+      el.style.setProperty('--gy', `${gy.toFixed(1)}%`);
+    };
+    const track = (cx: number, cy: number) => {
+      const r = el.getBoundingClientRect();
+      const px = (cx - r.left) / r.width;
+      const py = (cy - r.top) / r.height;
+      gx = px * 100; gy = py * 100;
+      if (!reduce && fine) { ry = (px - 0.5) * 2 * max; rx = -(py - 0.5) * 2 * max; }
+      if (!raf) raf = requestAnimationFrame(apply);
+    };
+
+    el.addEventListener('pointermove', (e) => track(e.clientX, e.clientY), { passive: true });
+    el.addEventListener('touchmove', (e) => {
+      const t = e.touches[0];
+      if (t) track(t.clientX, t.clientY);
+    }, { passive: true });
+
+    const reset = () => {
+      rx = 0; ry = 0; gx = 50; gy = 50;
+      el.classList.remove('is-live');
+      if (!raf) raf = requestAnimationFrame(apply);
+    };
+    el.addEventListener('pointerenter', () => el.classList.add('is-live'), { passive: true });
+    el.addEventListener('pointerleave', reset, { passive: true });
+    el.addEventListener('touchstart', () => el.classList.add('is-live'), { passive: true });
+    el.addEventListener('touchend', reset, { passive: true });
+  });
+
+  /* ---------- magnetic buttons ---------- */
+  if (fine && !reduce) {
+    document.querySelectorAll<HTMLElement>('[data-magnet], .btn').forEach((el) => {
+      let raf = 0, x = 0, y = 0;
+      const apply = () => { raf = 0; el.style.transform = `translate3d(${x}px, ${y}px, 0)`; };
+      el.addEventListener('pointermove', (e) => {
+        const r = el.getBoundingClientRect();
+        x = ((e.clientX - (r.left + r.width / 2)) / r.width) * 12;
+        y = ((e.clientY - (r.top + r.height / 2)) / r.height) * 10;
+        if (!raf) raf = requestAnimationFrame(apply);
+      }, { passive: true });
+      el.addEventListener('pointerleave', () => {
+        x = 0; y = 0;
+        if (!raf) raf = requestAnimationFrame(apply);
+      }, { passive: true });
+    });
+  }
+
+  /* ---------- staggered reveal ---------- */
+  const items = document.querySelectorAll<HTMLElement>('.reveal');
+  if (items.length) {
+    const io = new IntersectionObserver((entries) => {
+      const hit = entries.filter((e) => e.isIntersecting);
+      hit.forEach((e, i) => {
+        const el = e.target as HTMLElement;
+        el.style.transitionDelay = `${Math.min(i, 6) * 80}ms`;
+        el.classList.add('is-visible');
+        io.unobserve(el);
+      });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    items.forEach((el) => io.observe(el));
+  }
+
+  /* ---------- header condenses on scroll ---------- */
+  const header = document.querySelector<HTMLElement>('.site-header');
+  if (header) {
+    let ticking = false;
+    const check = () => {
+      ticking = false;
+      header.classList.toggle('is-stuck', window.scrollY > 40);
+    };
+    window.addEventListener('scroll', () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(check); }
+    }, { passive: true });
+    check();
+  }
+</script>
