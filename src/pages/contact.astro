@@ -1,0 +1,111 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { site, contacts, formatPhone, wa, tel, waMessages } from '../data/site';
+---
+
+<BaseLayout
+  title="Contact — Patel Kundan Art, Beadonpura, Karol Bagh, Delhi"
+  description="Call or WhatsApp Patel Kundan Art. Kundan jewellery manufacturing and job work at 2561/6, 1st Floor, Beadonpura, Karol Bagh, New Delhi 110005."
+>
+  <PageHero
+    eyebrow="Contact"
+    title="Call, or send a photograph on WhatsApp."
+    lede="A photograph of what you need made is the quickest way to start a conversation."
+  />
+
+  <section class="section">
+    <div class="wrap cols">
+      <div>
+        <h2 class="h">Speak to us</h2>
+        <ul class="people">
+          {contacts.map((c) => (
+            <li>
+              <p class="person">{c.name}</p>
+              <p class="role">{c.role}</p>
+              <p class="links">
+                {c.call && <a href={tel(c.number)}>{formatPhone(c.number)}</a>}
+                {c.call && c.whatsapp && <span class="sep">·</span>}
+                {c.whatsapp && (
+                  <a href={wa(waMessages.general, c.number)} rel="noopener" target="_blank">
+                    WhatsApp{!c.call && ` ${formatPhone(c.number)}`}
+                  </a>
+                )}
+              </p>
+            </li>
+          ))}
+        </ul>
+
+        <h2 class="h">Email</h2>
+        <p><a class="plain" href={`mailto:${site.emails.primary}`}>{site.emails.primary}</a></p>
+
+        <h2 class="h">Instagram</h2>
+        <p><a class="plain" href={site.social.instagram} rel="noopener" target="_blank">@patelkundanart</a></p>
+      </div>
+
+      <div>
+        <h2 class="h">Workshop</h2>
+        <address>
+          {site.address.street}<br />
+          {site.address.locality}<br />
+          {site.address.city} {site.address.postalCode}
+        </address>
+        <p class="mt"><a class="plain" href={site.mapsUrl} rel="noopener" target="_blank">Open in Google Maps →</a></p>
+
+        {site.hours.length > 0 && (
+          <>
+            <h2 class="h">Hours</h2>
+            <ul class="hours">
+              {site.hours.map((h) => (
+                <li>{h.days.join(', ')} — {h.opens} to {h.closes}</li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        <div class="map mt">
+          <iframe
+            title="Map showing the location of Patel Kundan Art in Beadonpura, Karol Bagh"
+            src={`https://www.google.com/maps?q=${site.geo.lat},${site.geo.lng}&hl=en&z=17&output=embed`}
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cols { display: grid; gap: 2.75rem; }
+  @media (min-width: 820px) { .cols { grid-template-columns: 1fr 1fr; gap: 4rem; } }
+  .h {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-top: 2.25rem;
+    margin-bottom: 0.85rem;
+  }
+  .h:first-child { margin-top: 0; }
+  .people { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.35rem; }
+  .person { font-family: var(--font-display); font-size: var(--step-1); }
+  .role { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+  .links { margin-top: 0.35rem; }
+  .links a { color: var(--brass); text-decoration: none; border-bottom: 1px solid var(--ivory-line); }
+  .links a:hover { border-bottom-color: var(--brass); }
+  .sep { color: var(--text-muted); margin-inline: 0.5rem; }
+  .plain { color: var(--brass); text-decoration: none; border-bottom: 1px solid var(--ivory-line); }
+  address { font-style: normal; line-height: 1.7; }
+  .hours { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.3rem; }
+  .mt { margin-top: 1rem; }
+  .map {
+    border: 1px solid var(--ivory-line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+  }
+  .map iframe { width: 100%; height: 100%; border: 0; display: block; }
+</style>

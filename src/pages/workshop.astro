@@ -1,0 +1,123 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ContactButtons from '../components/ContactButtons.astro';
+import { site } from '../data/site';
+
+const steps = [
+  ['Design or reference', 'A photograph on WhatsApp, a drawing, or a piece to copy. Most jobs start with a photograph.'],
+  ['Weight and estimate', 'We tell you what the piece needs and what the work involves before anything is committed.'],
+  ['Gold received', 'Weighed and entered in the job register, in front of you.'],
+  ['Ghaat — the framework', 'The gold structure of the piece is built by hand.'],
+  ['Kundan setting', 'Stones set in the traditional way. This is the stage the workshop is named for.'],
+  ['Polish and finish', 'Cleaned, finished and checked.'],
+  ['Weighed out and delivered', 'Against the same register it came in on.'],
+];
+---
+
+<BaseLayout
+  title="The Workshop — Handmade Kundan Jewellery in Beadonpura, Karol Bagh"
+  description="A family workshop in Beadonpura, Karol Bagh, Delhi. Two brothers, one bench, and a written record of every gram of gold that comes in and goes out."
+>
+  <PageHero
+    eyebrow="The workshop"
+    title="Two brothers, one bench, in Beadonpura."
+    lede="Patel Kundan Art is a family workshop in Karol Bagh. Sunil Singh takes the orders and finishes the pieces; his younger brother Anil Singh does the kundan setting. The work is not sent out."
+  />
+
+  <section class="section">
+    <div class="wrap wrap--narrow prose">
+      <h2>What we do</h2>
+      <p>
+        We manufacture kundan and jadau jewellery by hand, to order, for retail
+        jewellers and for individuals. Kundan setting is the specialisation — it is
+        the slowest, most particular stage of making a piece, and it is the one that
+        decides whether the finished jewellery holds together.
+      </p>
+      <p>
+        We are manufacturers, not a shop. There is no window and no stock on display.
+        Everything that leaves the bench was ordered by someone first.
+      </p>
+    </div>
+  </section>
+
+  <!-- THE PROCESS -->
+  <section class="section on-ink">
+    <div class="wrap">
+      <p class="eyebrow">How a job runs</p>
+      <h2>Seven stages, and a written record at both ends.</h2>
+      <ol class="flow">
+        {steps.map(([name, detail], i) => (
+          <li class="reveal">
+            <span class="flow__n">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <h3>{name}</h3>
+              <p>{detail}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- THE REGISTER -->
+  <section class="section on-sunk">
+    <div class="wrap wrap--narrow prose">
+      <p class="eyebrow">The job register</p>
+      <h2>Every gram is written down, in and out.</h2>
+      <p>
+        When somebody hands over gold — a retailer sending a month's work, or a
+        family bringing a set to be remade — the first thing that happens is that it
+        is weighed and written into the job register. When the finished piece goes
+        back, it is weighed against the same entry.
+      </p>
+      <p>
+        This is ordinary practice and it should not be remarkable. It is worth saying
+        because it is the actual question behind every new relationship in this
+        trade, and it deserves a straight answer rather than a reassurance.
+      </p>
+      <!-- TODO: photograph of a real register page goes here. It is the single
+           most persuasive image the site can carry. -->
+    </div>
+  </section>
+
+  <section class="section on-ink">
+    <div class="wrap wrap--narrow">
+      <h2>Come and see the workshop.</h2>
+      <p class="lede">
+        We are on the first floor at {site.address.street}, off {site.address.locality}.
+        Call before you come and one of us will be at the bench.
+      </p>
+      <ContactButtons class="cta" />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .flow {
+    list-style: none;
+    margin: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem) 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+    max-width: 720px;
+  }
+  .flow li {
+    display: grid;
+    grid-template-columns: 3.25rem 1fr;
+    gap: 1rem;
+    padding-block: 1.35rem;
+    border-top: 1px solid var(--ink-line);
+  }
+  .flow li:last-child { border-bottom: 1px solid var(--ink-line); }
+  .flow__n {
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    color: var(--brass-soft);
+    padding-top: 0.45rem;
+  }
+  .flow h3 { font-size: var(--step-1); }
+  .flow p { color: var(--text-on-ink-muted); font-size: 0.95rem; margin-top: 0.25rem; }
+  .cta { margin-top: 1.75rem; }
+</style>

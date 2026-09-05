@@ -1,0 +1,108 @@
+---
+import Mark from './Mark.astro';
+import { site, url } from '../data/site';
+
+const nav = [
+  { href: url('/our-work/'), label: 'Our Work' },
+  { href: url('/for-jewellers/'), label: 'For Jewellers' },
+  { href: url('/custom-orders/'), label: 'Custom Orders' },
+  { href: url('/workshop/'), label: 'The Workshop' },
+  { href: url('/contact/'), label: 'Contact' },
+];
+const path = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href={url('/')}>
+      <Mark size="42px" />
+      <span class="brand__text">
+        <span class="brand__name">{site.brand}</span>
+        <span class="brand__sub">Kundan &amp; Customized Jewellery</span>
+      </span>
+    </a>
+
+    <nav aria-label="Main">
+      <ul>
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  /* No hamburger, no JavaScript. Five links scroll horizontally on small
+     screens — fewer taps than a menu and nothing to break. */
+  .site-header {
+    background: var(--ink);
+    color: var(--text-on-ink);
+    border-bottom: 1px solid var(--ink-line);
+  }
+  .bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding-block: 0.85rem;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  .brand__text { display: flex; flex-direction: column; line-height: 1.15; }
+  .brand__name {
+    font-family: var(--font-display);
+    font-size: 1.32rem;
+    letter-spacing: 0.02em;
+  }
+  .brand__sub {
+    font-size: 0.66rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-on-ink-muted);
+  }
+  nav { overflow-x: auto; scrollbar-width: none; }
+  nav::-webkit-scrollbar { display: none; }
+  nav ul {
+    display: flex;
+    gap: 1.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    white-space: nowrap;
+  }
+  nav a {
+    display: block;
+    padding-block: 0.3rem;
+    font-size: 0.86rem;
+    letter-spacing: 0.03em;
+    color: var(--text-on-ink-muted);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.18s ease, border-color 0.18s ease;
+  }
+  nav a:hover { color: var(--text-on-ink); }
+  nav a[aria-current='page'] {
+    color: var(--brass-soft);
+    border-bottom-color: var(--brass-soft);
+  }
+
+  @media (min-width: 860px) {
+    .bar {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding-block: 1.15rem;
+    }
+    .brand__name { font-size: 1.5rem; }
+    nav ul { gap: 1.9rem; }
+  }
+</style>

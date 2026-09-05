@@ -1,0 +1,19 @@
+{
+  "name": "patel-kundan-art",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Patel Kundan Art — Kundan & customized jewellery manufacturing, Karol Bagh, Delhi",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.2.1",
+    "astro": "^5.18.2",
+    "sharp": "^0.33.5"
+  }
+}

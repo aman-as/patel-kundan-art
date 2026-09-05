@@ -1,0 +1,127 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import StickyContactBar from '../components/StickyContactBar.astro';
+import { site, fullAddress, contacts, formatPhone, url } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Set on the page that should carry the LocalBusiness schema (home only). */
+  isHome?: boolean;
+}
+
+const { title, description, isHome = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+/* Derived from astro.config, so the schema follows the site when the domain
+   changes instead of pointing at a URL that does not exist yet. */
+const homeUrl = new URL(import.meta.env.BASE_URL, Astro.site).href;
+
+/* ---------------------------------------------------------------------------
+   Structured data is generated from src/data/site.ts, so what Google reads can
+   never drift from what the page displays. Unverified fields (hours, founding
+   year) are omitted entirely rather than guessed.
+--------------------------------------------------------------------------- */
+const schema: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': ['LocalBusiness', 'JewelryStore'],
+  '@id': `${homeUrl}#business`,
+  name: site.brand,
+  alternateName: site.entities,
+  description: site.description,
+  url: homeUrl,
+  telephone: contacts.filter((c) => c.call).map((c) => formatPhone(c.number)),
+  email: site.emails.primary,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: `${site.address.street}, ${site.address.locality}`,
+    addressLocality: site.address.city,
+    addressRegion: site.address.region,
+    postalCode: site.address.postalCode,
+    addressCountry: site.address.country,
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng },
+  hasMap: site.mapsUrl,
+  sameAs: [site.social.instagram],
+  areaServed: 'IN',
+  knowsAbout: ['Kundan jewellery', 'Jadau jewellery', 'Polki', 'Jewellery manufacturing', 'Jewellery job work'],
+};
+
+if (site.hours.length) {
+  schema.openingHoursSpecification = site.hours.map((h) => ({
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: h.days,
+    opens: h.opens,
+    closes: h.closes,
+  }));
+}
+if (site.foundedYear) schema.foundingDate = String(site.foundedYear);
+---
+
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.brand} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_IN" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#14100D" />
+    <meta name="format-detection" content="telephone=yes" />
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="sitemap" href={url('/sitemap-index.xml')} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap"
+    />
+
+    {isHome && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+
+    {/* Marks the document as script-capable before first paint, so the
+        scroll fade-in can hide sections without ever hiding them from a
+        visitor (or a crawler) that has no JavaScript. */}
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <StickyContactBar />
+
+    <script>
+      // The only client-side JavaScript on the site: a single fade-in on scroll.
+      const items = document.querySelectorAll('.reveal');
+      if (items.length) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-visible');
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px' }
+        );
+        items.forEach((el) => io.observe(el));
+      }
+    </script>
+  </body>
+</html>

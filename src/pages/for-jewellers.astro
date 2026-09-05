@@ -1,0 +1,101 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ContactButtons from '../components/ContactButtons.astro';
+
+const assurances = [
+  {
+    h: 'Your design stays yours',
+    p: 'What you give us is made for you. We do not resell a retailer\'s design to the next shop that walks in.',
+  },
+  {
+    h: 'Gold in, gold out',
+    p: 'Every job is weighed in and weighed out against a written register. You get an account of the metal, not an assurance about it.',
+  },
+  {
+    h: 'One bench, not a middleman',
+    p: 'The work is done in our own workshop in Beadonpura. When you call, you are speaking to the people setting the stones.',
+  },
+  {
+    h: 'Made to order only',
+    p: 'We have no shop, no window and no stock on display. We are not selling to the customer you are selling to.',
+  },
+];
+---
+
+<BaseLayout
+  title="Kundan Jewellery Job Work & Manufacturing for Jewellers | Karol Bagh, Delhi"
+  description="Kundan and jadau jewellery manufacturing and job work for retail jewellers and jewellery businesses. Handmade to order in Karol Bagh, Delhi."
+>
+  <PageHero
+    eyebrow="For jewellers &amp; businesses"
+    title="A kundan manufacturing partner in Karol Bagh."
+    lede="We manufacture kundan, jadau and antique-finish jewellery for retail jewellers and jewellery businesses. You bring the design, the reference or the requirement — we make the piece."
+  >
+    <ContactButtons message="trade" waLabel="WhatsApp us about trade work" />
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap">
+      <p class="eyebrow">What a retailer is actually deciding</p>
+      <h2>Four things you want settled before you hand over gold.</h2>
+      <ul class="cards">
+        {assurances.map((a) => (
+          <li class="reveal">
+            <h3>{a.h}</h3>
+            <p>{a.p}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section on-sunk">
+    <div class="wrap wrap--narrow prose">
+      <h2>What we can take on</h2>
+      <p>
+        Kundan and jadau setting is our specialisation. Beyond that we manufacture
+        across gold jewellery — bridal sets, chokers, rani haar, bangles, earrings,
+        pendants and rings, in antique and polished finishes.
+      </p>
+      <p>
+        Work can start from your design, a photograph, a sample piece, or a rough
+        idea we develop with you. Repeat orders and continuing lines are the work we
+        would rather have.
+      </p>
+      <h2>What we will not put in writing on a website</h2>
+      <p>
+        Rates, minimum quantities and delivery times depend on the piece, the season
+        and how much work is on the bench. Anyone who publishes those numbers is
+        guessing, and you would have to renegotiate them anyway. Call us and we will
+        give you a straight answer for your specific job.
+      </p>
+    </div>
+  </section>
+
+  <section class="section on-ink">
+    <div class="wrap wrap--narrow">
+      <h2>Send us a design and we will tell you what it takes.</h2>
+      <p class="lede">
+        A photograph on WhatsApp is enough to start. If it is not work we can do
+        well, we will say so.
+      </p>
+      <ContactButtons class="cta" message="trade" waLabel="WhatsApp us about trade work" />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cards {
+    list-style: none;
+    margin: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem) 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+  }
+  @media (min-width: 700px) { .cards { grid-template-columns: 1fr 1fr; gap: 2rem 2.5rem; } }
+  .cards li { padding-top: 1.1rem; border-top: 1px solid var(--ivory-line); }
+  .cards h3 { font-size: var(--step-1); }
+  .cards p { color: var(--text-muted); margin-top: 0.45rem; }
+  .cta { margin-top: 1.75rem; }
+</style>

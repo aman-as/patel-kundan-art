@@ -1,0 +1,245 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProductGrid from '../components/ProductGrid.astro';
+import ContactButtons from '../components/ContactButtons.astro';
+import { site, url } from '../data/site';
+import heroImage from '../assets/img/work/kundan-choker-ruby-pearl-set.png';
+
+const featured = (await getCollection('products', (p) => p.data.featured)).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+const makes = [
+  'Kundan', 'Jadau', 'Polki', 'Antique finish', 'Bridal sets',
+  'Chokers', 'Rani haar', 'Bangles', 'Earrings', 'Pendants', 'Rings',
+];
+
+const steps = [
+  ['Design', 'You send a photograph, a drawing or a piece to copy.'],
+  ['Weight', 'We tell you what the piece needs before anything begins.'],
+  ['Gold in', 'Received, weighed and entered in the job register.'],
+  ['Ghaat', 'The gold framework is built by hand.'],
+  ['Kundan setting', 'The specialist stage, and the one we are known for.'],
+  ['Finish', 'Polished, weighed out, delivered against the same register.'],
+];
+---
+
+<BaseLayout
+  title="Patel Kundan Art — Kundan Jewellery Manufacturer in Karol Bagh, Delhi"
+  description={site.description}
+  isHome
+>
+  <!-- HERO -->
+  <section class="hero on-ink">
+    <div class="wrap hero__inner">
+      <div class="hero__text">
+        <p class="eyebrow">Kundan &amp; Jadau Jewellery Manufacturing</p>
+        <h1>You bring the design.<br />We make it.</h1>
+        <p class="lede">{site.subline}</p>
+        <ContactButtons class="hero__cta" waLabel="WhatsApp us" />
+      </div>
+      <div class="hero__figure">
+        <Image
+          src={heroImage}
+          alt="A kundan choker with peacock motif and matching chandbali earrings, made at the workshop"
+          widths={[420, 640, 860]}
+          sizes="(min-width: 1100px) 42vw, 50vw"
+          format="webp"
+          quality={84}
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- SELECTED WORK -->
+  <section class="section on-ink work">
+    <div class="wrap">
+      <p class="eyebrow">Selected work</p>
+      <h2>Made by hand, at our own bench.</h2>
+      <ProductGrid items={featured} />
+      <p class="more"><a href={url('/our-work/')}>See more of our work →</a></p>
+    </div>
+  </section>
+
+  <!-- THE FORK -->
+  <section class="section">
+    <div class="wrap">
+      <p class="eyebrow">Who we work with</p>
+      <h2>Two ways to work with us.</h2>
+      <div class="fork">
+        <a class="path reveal" href={url('/for-jewellers/')}>
+          <h3>For jewellers &amp; businesses</h3>
+          <p>
+            Manufacturing and job work for retail jewellers. Your design stays yours,
+            and every job is weighed in and weighed out against a written register.
+          </p>
+          <span class="path__go">Trade &amp; job work →</span>
+        </a>
+        <a class="path reveal" href={url('/custom-orders/')}>
+          <h3>For individuals</h3>
+          <p>
+            One piece, made to order. Bring a design, a photograph, or old gold you
+            would like remade into something you will actually wear.
+          </p>
+          <span class="path__go">Custom orders →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT WE MAKE -->
+  <section class="section on-sunk">
+    <div class="wrap">
+      <p class="eyebrow">What we make</p>
+      <h2>Kundan is our specialisation.<br />Gold jewellery is our trade.</h2>
+      <ul class="tags">
+        {makes.map((m) => <li>{m}</li>)}
+      </ul>
+      <p class="prose note">
+        Every piece is made to order. Because each one is different, only a small
+        part of what we have made is shown here — send us a reference and we will
+        tell you whether we can make it.
+      </p>
+    </div>
+  </section>
+
+  <!-- HOW A JOB RUNS -->
+  <section class="section">
+    <div class="wrap">
+      <p class="eyebrow">How a job runs</p>
+      <h2>From a photograph on WhatsApp to a finished piece.</h2>
+      <ol class="steps">
+        {steps.map(([name, detail], i) => (
+          <li class="reveal">
+            <span class="steps__n">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{name}</h3>
+            <p>{detail}</p>
+          </li>
+        ))}
+      </ol>
+      <p class="more"><a href={url('/workshop/')}>More about how we work →</a></p>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="section on-ink closing">
+    <div class="wrap wrap--narrow">
+      <h2>Send us a photo of what you need made.</h2>
+      <p class="lede">
+        Tell us what it is, and we will tell you honestly whether it is work we can
+        do well.
+      </p>
+      <ContactButtons class="closing__cta" />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero__inner {
+    padding-block: clamp(2.5rem, 2rem + 3vw, 4.5rem);
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+  .hero__text { display: grid; gap: 1.15rem; justify-items: start; }
+  .hero h1 { max-width: 15ch; }
+  .hero .lede { max-width: 46ch; }
+  .hero__cta { margin-top: 0.6rem; }
+
+  /* The photograph is the point of a jewellery site, so it shares the first
+     screen on desktop. On phones it is withheld — the product grid is only one
+     scroll below, and a second large image before it would just cost load time
+     on the connection most visitors arrive on. */
+  .hero__figure { display: none; }
+  @media (min-width: 900px) {
+    .hero__inner { grid-template-columns: 1fr 0.85fr; gap: 3.5rem; }
+    .hero__figure {
+      display: block;
+      border-radius: var(--radius);
+      overflow: hidden;
+      aspect-ratio: 4 / 5;
+    }
+    .hero__figure :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: center 38%; }
+  }
+
+  .work h2 { margin-bottom: clamp(2rem, 1.5rem + 2vw, 3rem); }
+  .more { margin-top: 2.25rem; }
+  .more a {
+    font-size: 0.95rem;
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 2px;
+  }
+  .on-ink .more a { color: var(--brass-soft); }
+
+  .fork {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem);
+  }
+  @media (min-width: 780px) { .fork { grid-template-columns: 1fr 1fr; gap: 1.75rem; } }
+  .path {
+    display: block;
+    padding: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+    border: 1px solid var(--ivory-line);
+    border-radius: var(--radius);
+    background: #fff;
+    text-decoration: none;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .path:hover { border-color: var(--brass); transform: translateY(-2px); }
+  .path p { color: var(--text-muted); margin-top: 0.7rem; }
+  .path__go {
+    display: inline-block;
+    margin-top: 1.1rem;
+    color: var(--brass);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .tags {
+    list-style: none;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .tags li {
+    padding: 0.45em 0.95em;
+    border: 1px solid var(--ivory-line);
+    border-radius: 999px;
+    background: var(--ivory);
+    font-size: 0.9rem;
+  }
+  .note { margin-top: 1.75rem; color: var(--text-muted); }
+
+  .steps {
+    list-style: none;
+    margin: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem) 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+    counter-reset: step;
+  }
+  @media (min-width: 640px) { .steps { grid-template-columns: repeat(2, 1fr); gap: 2rem; } }
+  @media (min-width: 1000px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+  .steps li { padding-top: 1rem; border-top: 1px solid var(--ivory-line); }
+  .steps__n {
+    display: block;
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    color: var(--brass);
+    margin-bottom: 0.5rem;
+  }
+  .steps h3 { font-size: var(--step-1); }
+  .steps p { color: var(--text-muted); font-size: 0.94rem; margin-top: 0.3rem; }
+
+  .closing { text-align: left; }
+  .closing__cta { margin-top: 1.75rem; }
+</style>

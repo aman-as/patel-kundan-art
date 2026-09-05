@@ -1,0 +1,56 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ProductGrid from '../components/ProductGrid.astro';
+import ContactButtons from '../components/ContactButtons.astro';
+
+const all = (await getCollection('products')).sort((a, b) => a.data.order - b.data.order);
+const categories = [...new Set(all.map((p) => p.data.category))];
+---
+
+<BaseLayout
+  title="Our Work — Kundan & Jadau Jewellery | Patel Kundan Art, Karol Bagh"
+  description="A selection of kundan, jadau and antique-finish jewellery made by hand at our workshop in Karol Bagh, Delhi. Every piece is made to order."
+>
+  <PageHero
+    eyebrow="Our work"
+    title="Pieces we have made."
+    lede="Everything here was made by hand at our bench in Beadonpura. Each piece was made to order, so no two are the same — these are examples of what we can do, not a catalogue to buy from."
+  />
+
+  <section class="section on-ink">
+    <div class="wrap">
+      {/* The cards use h3, so the grid needs an h2 above it or the heading
+          order jumps h1 -> h3. Hidden visually because the page heading
+          already says this; screen readers and crawlers still get the
+          structure. */}
+      <h2 class="visually-hidden">All pieces</h2>
+      <p class="cats">{categories.join(' · ')}</p>
+      <ProductGrid items={all} />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap wrap--narrow prose">
+      <h2>Looking for something you don't see here?</h2>
+      <p>
+        Because each piece is made to order, only a small part of our work is
+        photographed. If you have a reference — a photograph, a drawing, a piece you
+        already own — send it to us and we will tell you whether we can make it.
+      </p>
+      <ContactButtons class="cta" message="general" />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cats {
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-on-ink-muted);
+    margin-bottom: 2rem;
+  }
+  .cta { margin-top: 1.75rem; }
+</style>

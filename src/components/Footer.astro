@@ -1,0 +1,89 @@
+---
+import Mark from './Mark.astro';
+import { site, contacts, formatPhone, wa, tel, waMessages, fullAddress } from '../data/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap grid">
+    <div>
+      <Mark size="52px" />
+      <p class="name">{site.brand}</p>
+      <p class="muted">Kundan &amp; Customized Jewellery<br />Manufacturing &amp; Job Work</p>
+    </div>
+
+    <div>
+      <h2 class="h">Workshop</h2>
+      <address class="muted">
+        {site.address.street}<br />
+        {site.address.locality}<br />
+        {site.address.city} {site.address.postalCode}
+      </address>
+      <p><a class="link" href={site.mapsUrl} rel="noopener" target="_blank">View on Google Maps</a></p>
+    </div>
+
+    <div>
+      <h2 class="h">Contact</h2>
+      <ul class="list">
+        {contacts.map((c) => (
+          <li>
+            <a class="link" href={c.call ? tel(c.number) : wa(waMessages.general, c.number)}>
+              {formatPhone(c.number)}
+            </a>
+            <span class="muted"> — {c.name}</span>
+          </li>
+        ))}
+        <li><a class="link" href={`mailto:${site.emails.primary}`}>{site.emails.primary}</a></li>
+        <li><a class="link" href={site.social.instagram} rel="noopener" target="_blank">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wrap legal">
+    <p class="muted">{site.entities.join(' · ')} · Karol Bagh, New Delhi</p>
+    <p class="muted">© {year} {site.brand}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--ink);
+    color: var(--text-on-ink);
+    padding-block: clamp(2.5rem, 1.8rem + 3vw, 4rem) 2rem;
+  }
+  .grid {
+    display: grid;
+    gap: 2.25rem;
+  }
+  @media (min-width: 720px) {
+    .grid { grid-template-columns: 1.2fr 1fr 1fr; gap: 3rem; }
+  }
+  .name {
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    margin-top: 0.85rem;
+  }
+  .h {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brass-soft);
+    margin-bottom: 0.85rem;
+  }
+  .muted { color: var(--text-on-ink-muted); font-size: 0.92rem; font-style: normal; }
+  .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; font-size: 0.92rem; }
+  .link { color: var(--text-on-ink); text-decoration: none; border-bottom: 1px solid var(--ink-line); }
+  .link:hover { border-bottom-color: var(--brass-soft); }
+  .legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    justify-content: space-between;
+    margin-top: 2.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--ink-line);
+    font-size: 0.82rem;
+  }
+</style>

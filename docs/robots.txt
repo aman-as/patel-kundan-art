@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://aman-as.github.io/patel-kundan-art/sitemap-index.xml

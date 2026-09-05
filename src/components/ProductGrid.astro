@@ -1,0 +1,82 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  items: CollectionEntry<'products'>[];
+  showCategory?: boolean;
+}
+const { items, showCategory = true } = Astro.props;
+---
+
+<ul class="grid">
+  {items.map((p, i) => (
+    <li class="card reveal">
+      <div class="card__frame">
+        <Image
+          src={p.data.image}
+          alt={p.data.alt}
+          widths={[360, 540, 760]}
+          sizes="(min-width: 1000px) 30vw, (min-width: 640px) 45vw, 88vw"
+          format="webp"
+          quality={82}
+          loading={i < 2 ? 'eager' : 'lazy'}
+          decoding="async"
+        />
+      </div>
+      <div class="card__body">
+        {showCategory && <p class="eyebrow">{p.data.category}</p>}
+        <h3>{p.data.title}</h3>
+        <p class="note">{p.data.note}</p>
+        {p.data.customisable && <p class="custom">Customisation available</p>}
+      </div>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(1.5rem, 1rem + 2vw, 2.75rem);
+    grid-template-columns: 1fr;
+  }
+  /* 2 and 4 columns, never 3 — the portfolio holds four pieces and a
+     three-across grid orphans the last one on its own row. */
+  @media (min-width: 620px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1150px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+
+  /* The photographs are rectangular, shot on dark velvet, with backgrounds
+     that vary from navy to near-black. Filling the frame edge to edge unifies
+     them into one tile grid; floating them inside a padded panel just makes
+     each one look pasted on. */
+  .card__frame {
+    background: var(--ink);
+    border-radius: var(--radius);
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+  }
+  .card__frame :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 42%;
+    transition: transform 0.5s ease;
+  }
+  .card:hover .card__frame :global(img) { transform: scale(1.03); }
+  .card__body { padding-top: 1rem; }
+  .card__body h3 { font-size: var(--step-1); margin-top: 0.35rem; }
+  .note { color: var(--text-muted); font-size: 0.94rem; margin-top: 0.35rem; }
+  .custom {
+    margin-top: 0.6rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brass);
+  }
+
+  :global(.on-ink) .note { color: var(--text-on-ink-muted); }
+  :global(.on-ink) .custom { color: var(--brass-soft); }
+</style>

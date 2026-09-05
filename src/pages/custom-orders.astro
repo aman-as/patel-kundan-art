@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ContactButtons from '../components/ContactButtons.astro';
+---
+
+<BaseLayout
+  title="Custom & Made-to-Order Kundan Jewellery in Delhi | Patel Kundan Art"
+  description="Custom kundan and jadau jewellery made to order in Karol Bagh, Delhi. Bring a design, a photograph, or old gold you would like remade by hand."
+>
+  <PageHero
+    eyebrow="For individuals"
+    title="One piece, made properly, for you."
+    lede="You do not need to be a jeweller to have something made here. Bring a design, a photograph of something you liked, or gold you already own — and we will make it by hand."
+  >
+    <ContactButtons message="custom" waLabel="WhatsApp us about a custom piece" />
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap">
+      <p class="eyebrow">What people come to us for</p>
+      <div class="two">
+        <div class="prose">
+          <h2>Remaking old gold</h2>
+          <p>
+            Jewellery that sits in a locker because nobody wears it any more — a set
+            from a wedding a generation ago, pieces that came from two sides of a
+            family, something broken or out of fashion.
+          </p>
+          <p>
+            We melt nothing without telling you what you have first. The old piece is
+            weighed in front of you, and what comes back is weighed the same way.
+          </p>
+          <ContactButtons class="cta" message="remake" waLabel="Ask about remaking old gold" showCall={false} />
+        </div>
+        <div class="prose">
+          <h2>Made to your design</h2>
+          <p>
+            A bridal set, a single piece for an occasion, or a copy of something you
+            saw and could not find anywhere. Send a photograph — most conversations
+            here start with one.
+          </p>
+          <p>
+            Kundan and jadau is what we are known for, but we manufacture across gold
+            jewellery. If a design is beyond what we do well, we will tell you rather
+            than take the order.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section on-sunk">
+    <div class="wrap wrap--narrow prose">
+      <h2>Honest expectations</h2>
+      <p>
+        Everything is made to order by hand, so it takes time — this is not a shop
+        where you choose a piece and take it home the same day. We will tell you the
+        realistic timeline for your piece before you commit to it, and we would
+        rather lose the order than promise a date we cannot keep.
+      </p>
+      <p>
+        We do not quote rates on a website. What a piece costs depends on what it is.
+        Send us the design and ask.
+      </p>
+    </div>
+  </section>
+
+  <section class="section on-ink">
+    <div class="wrap wrap--narrow">
+      <h2>Send us a photograph of what you have in mind.</h2>
+      <p class="lede">It is the quickest way to find out what is possible.</p>
+      <ContactButtons class="cta" message="custom" waLabel="WhatsApp us about a custom piece" />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .two { display: grid; gap: 2.5rem; margin-top: 1.5rem; }
+  @media (min-width: 800px) { .two { grid-template-columns: 1fr 1fr; gap: 3.5rem; } }
+  .cta { margin-top: 1.5rem; }
+</style>

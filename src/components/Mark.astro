@@ -1,0 +1,34 @@
+---
+/**
+ * The कुंदन वाला mark, recovered at 1502×1440 from the shop's own print
+ * artwork. The file is a white alpha mask, so it is applied with CSS
+ * mask-image and tinted per context — one asset, any colour, no gradients.
+ */
+import mark from '../assets/img/brand/kundanwala-mark.webp';
+
+interface Props {
+  size?: string;
+  color?: string;
+  class?: string;
+}
+const { size = '58px', color = 'var(--brass-soft)', class: cls = '' } = Astro.props;
+---
+
+<span
+  class={`mark ${cls}`}
+  role="img"
+  aria-label="Kundanwala"
+  style={`--mark-url:url(${mark.src}); --mark-size:${size}; --mark-color:${color};`}
+></span>
+
+<style>
+  .mark {
+    display: block;
+    width: var(--mark-size);
+    height: var(--mark-size);
+    background-color: var(--mark-color);
+    -webkit-mask: var(--mark-url) center / contain no-repeat;
+    mask: var(--mark-url) center / contain no-repeat;
+    flex: none;
+  }
+</style>
