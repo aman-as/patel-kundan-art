@@ -1,15 +1,20 @@
 ---
 /**
- * GOLD DUST — the hero animation.
+ * STARDUST — the hero animation.
  *
- * Thousands of gold particles converge to form the कुंदन वाला mark, then hold
- * with a slow shimmer. Pointer or touch pushes them apart; they spring back.
- * Everything is drawn on one canvas from the mark's own alpha channel — no
- * video, no image sequence, no animation library.
+ * Ribbons of dust sweep in along curved paths, trailing behind them, and
+ * assemble into the कुंदन वाला mark on the right of the hero.
  *
- * Guards: honours prefers-reduced-motion (renders the settled state and
- * stops), pauses when scrolled out of view or the tab is hidden, and scales
- * particle count and pixel ratio to the device.
+ * The dust is SILVER while it travels and warms to GOLD as it settles — the
+ * two metals the workshop actually works in, said without a word of copy.
+ * Once settled it holds with a shimmer and scatters from pointer or finger.
+ *
+ * Drawn on one canvas from the mark's own alpha channel. No video, no image
+ * sequence, no animation library.
+ *
+ * Guards: honours prefers-reduced-motion (draws the settled gold mark and
+ * stops), pauses off-screen and on tab hide, and scales particle count, grain
+ * size and pixel ratio to the device.
  */
 import mark from '../assets/img/brand/kundanwala-mark.webp';
 ---
@@ -30,12 +35,26 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
 
 <script>
   type P = {
-    x: number; y: number; tx: number; ty: number;
-    vx: number; vy: number; s: number; ph: number; band: number;
+    // path
+    sx: number; sy: number;   // start
+    cx: number; cy: number;   // curve control point
+    tx: number; ty: number;   // target, inside the mark
+    delay: number; dur: number;
+    // live
+    x: number; y: number; vx: number; vy: number;
+    s: number; ph: number; band: number; warm: number;
   };
 
-  const BANDS = ['#8A6A28', '#B8933F', '#E3C889'];
-  const SPARK = '#F3E3BC';
+  const INK = '10, 9, 11';
+  // silver -> gold ramp, walked as each grain settles
+  const SILVER: [number, number, number] = [196, 202, 210];
+  const GOLD: [number, number, number] = [201, 162, 39];
+  const GOLD_HI: [number, number, number] = [233, 205, 134];
+  const STEPS = 8;
+  const BAND_A = [0.42, 0.68, 1.0];
+
+  const ease = (t: number) => 1 - Math.pow(1 - t, 4);
+  const mix = (a: number, b: number, t: number) => a + (b - a) * t;
 
   document.querySelectorAll<HTMLCanvasElement>('canvas.dust').forEach((canvas) => {
     const ctx = canvas.getContext('2d', { alpha: true });
@@ -45,41 +64,47 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const coarse = window.matchMedia('(pointer: coarse)').matches;
 
+    // Precomputed palette: 8 warmth steps x 3 tonal bands, so the whole field
+    // costs 24 fillStyle changes a frame instead of one per grain.
+    const RAMP: string[][] = [];
+    for (let w = 0; w < STEPS; w++) {
+      const t = w / (STEPS - 1);
+      const row: string[] = [];
+      for (let b = 0; b < 3; b++) {
+        const target = b === 2 ? GOLD_HI : GOLD;
+        const r = Math.round(mix(SILVER[0], target[0], t));
+        const g = Math.round(mix(SILVER[1], target[1], t));
+        const bl = Math.round(mix(SILVER[2], target[2], t));
+        row.push(`rgba(${r},${g},${bl},${BAND_A[b]})`);
+      }
+      RAMP.push(row);
+    }
+
     let W = 0, H = 0, dpr = 1;
     let parts: P[] = [];
-    let sparks: P[] = [];
-    let raf = 0;
-    let visible = true;
-    let settled = 0;
-    let t0 = 0;
-
+    let raf = 0, visible = true, t0 = 0, done = false;
     const ptr = { x: -1e4, y: -1e4, on: false };
-    const R = coarse ? 90 : 130;      // interaction radius
-    const PUSH = coarse ? 1.5 : 1.9;  // repulsion strength
+    const R = coarse ? 80 : 120;
+    const PUSH = coarse ? 1.4 : 1.8;
 
-    /* ---- build particle targets from the mark's alpha channel ---- */
     function build(img: HTMLImageElement) {
       const rect = host.getBoundingClientRect();
       W = Math.max(1, Math.round(rect.width));
       H = Math.max(1, Math.round(rect.height));
-      dpr = Math.min(window.devicePixelRatio || 1, coarse ? 2 : 2);
-
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = W * dpr;
       canvas.height = H * dpr;
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx!.clearRect(0, 0, W, H);
 
-      // The mark sits BEHIND the headline column, not beside it — on wide
-      // screens the right half is occupied by the product photograph, and
-      // anything drawn there is simply covered up.
-      // On phones the mark takes the empty band above the headline instead of
-      // sitting behind it — overlaying dust on body text is unreadable at that
-      // width no matter how the scrim is tuned.
+      // Wide: the mark owns the RIGHT column, the headline the left.
+      // Narrow: it takes the band above the headline.
       const wide = W >= 900;
       const size = wide
-        ? Math.min(W * 0.54, H * 0.96, 720)
-        : Math.min(W * 0.74, H * 0.30, 340);
-      const ox = (wide ? W * 0.30 : W * 0.5) - size / 2;
-      const oy = wide ? H / 2 - size / 2 : H * 0.045;
+        ? Math.min(W * 0.40, H * 0.82, 520)
+        : Math.min(W * 0.62, H * 0.26, 264);
+      const cxm = wide ? W * 0.71 : W * 0.5;
+      const cym = wide ? H * 0.5 : H * 0.155;
 
       const off = document.createElement('canvas');
       const ow = Math.round(size), oh = Math.round(size * (img.height / img.width));
@@ -89,110 +114,142 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
       octx.drawImage(img, 0, 0, ow, oh);
 
       let data: Uint8ClampedArray;
-      try {
-        data = octx.getImageData(0, 0, ow, oh).data;
-      } catch {
-        return; // tainted canvas — bail out silently, hero still looks fine
+      try { data = octx.getImageData(0, 0, ow, oh).data; } catch { return; }
+
+      const ox = cxm - ow / 2, oy = cym - oh / 2;
+      const gap = W < 700 ? 2 : W < 1200 ? 3 : 2;
+      const keep = W < 700 ? 0.82 : 0.5;
+
+      // Five ribbons. A grain joins the ribbon matching its angle around the
+      // mark's centre, so each stream feeds one sector and the entry reads as
+      // ribbons sweeping in rather than a uniform cloud.
+      const STREAMS = 5;
+      const origins: { x: number; y: number; cx: number; cy: number }[] = [];
+      for (let i = 0; i < STREAMS; i++) {
+        const a = (-0.55 + (i / (STREAMS - 1)) * 1.9) * Math.PI;
+        const far = Math.max(W, H) * 1.05;
+        origins.push({
+          x: cxm + Math.cos(a) * far,
+          y: cym + Math.sin(a) * far * 0.7,
+          // control point offset perpendicular to the run — this is the curve
+          cx: cxm + Math.cos(a + 1.25) * size * 2.4,
+          cy: cym + Math.sin(a + 1.25) * size * 1.7,
+        });
       }
 
-      // Gap controls density. Larger gap on small screens keeps phones smooth.
-      const gap = W < 700 ? 3 : W < 1200 ? 4 : 3;
       const next: P[] = [];
-      const yOff = oy + (size - oh) / 2;
-
       for (let y = 0; y < oh; y += gap) {
         for (let x = 0; x < ow; x += gap) {
           const a = data[(y * ow + x) * 4 + 3];
           if (a < 45) continue;
-          if (Math.random() > (W < 700 ? 0.97 : 0.92)) continue; // less mechanical
-          const tx = ox + x, ty = yOff + y;
+          if (Math.random() > keep) continue;
+          const tx = ox + x, ty = oy + y;
+
+          const ang = Math.atan2(ty - cym, tx - cxm);
+          let si = Math.floor(((ang + Math.PI) / (Math.PI * 2)) * STREAMS) % STREAMS;
+          if (si < 0) si += STREAMS;
+          const o = origins[si];
+          const jitter = size * 0.55;
+
           next.push({
-            x: tx + (Math.random() - 0.5) * W * 1.4,
-            y: ty + (Math.random() - 0.5) * H * 1.6,
+            sx: o.x + (Math.random() - 0.5) * jitter,
+            sy: o.y + (Math.random() - 0.5) * jitter,
+            cx: o.cx + (Math.random() - 0.5) * jitter * 1.6,
+            cy: o.cy + (Math.random() - 0.5) * jitter * 1.6,
             tx, ty,
-            vx: 0, vy: 0,
-            s: coarse ? (Math.random() < 0.14 ? 1.8 : 1.05)
-                      : (Math.random() < 0.14 ? 2.6 : 1.5),
+            delay: si * 0.13 + Math.random() * 0.85,
+            dur: 1.5 + Math.random() * 0.85,
+            x: o.x, y: o.y, vx: 0, vy: 0,
+            s: coarse ? (Math.random() < 0.15 ? 1.7 : 1.0)
+                      : (Math.random() < 0.15 ? 2.4 : 1.4),
             ph: Math.random() * Math.PI * 2,
             band: a > 200 ? 2 : a > 120 ? 1 : 0,
+            warm: 0,
           });
         }
       }
-
       parts = next;
-      sparks = [];
-      for (let i = 0; i < Math.min(46, Math.floor(parts.length / 70)); i++) {
-        sparks.push(parts[Math.floor(Math.random() * parts.length)]);
-      }
-      settled = 0;
       t0 = performance.now();
+      done = false;
     }
 
-    /* ---- frame ---- */
     function frame(now: number) {
       raf = 0;
       if (!ctx) return;
       const time = (now - t0) / 1000;
-      settled = Math.min(1, time / 1.6);
-      const ease = 0.020 + settled * 0.045;
 
-      ctx.clearRect(0, 0, W, H);
+      // Trails while the ribbons fly: veil the previous frame in the hero's
+      // own black rather than clearing it, so each grain drags a comet tail.
+      //
+      // Once everything has landed, clear to TRANSPARENT instead. A partial
+      // veil never quite reaches black, and that residue showed up as a faint
+      // rectangle where the canvas met the section edge. Transparent lets the
+      // section's own background through, so the match is exact by
+      // construction rather than by matching two colour values by hand.
+      if (done) {
+        ctx.clearRect(0, 0, W, H);
+      } else {
+        ctx.fillStyle = `rgba(${INK}, 0.22)`;
+        ctx.fillRect(0, 0, W, H);
+      }
 
-      const buckets: P[][] = [[], [], []];
+      const buckets: P[][][] = RAMP.map(() => [[], [], []]);
+      let travelling = 0;
+
       for (let i = 0; i < parts.length; i++) {
         const p = parts[i];
+        const lt = (time - p.delay) / p.dur;
 
-        // spring toward the mark
-        p.vx += (p.tx - p.x) * ease;
-        p.vy += (p.ty - p.y) * ease;
+        if (lt < 1) {
+          // --- on the path: quadratic Bezier from origin, through the
+          //     control point, to its place in the mark
+          travelling++;
+          if (lt > 0) {
+            const e = ease(lt);
+            const n = 1 - e;
+            p.x = n * n * p.sx + 2 * n * e * p.cx + e * e * p.tx;
+            p.y = n * n * p.sy + 2 * n * e * p.cy + e * e * p.ty;
+            p.warm = Math.max(0, (e - 0.55) / 0.45); // silver -> gold on arrival
+          } else {
+            continue; // not launched yet
+          }
+        } else {
+          // --- settled: spring, shimmer, and push away from the pointer
+          p.warm = 1;
+          p.vx += (p.tx - p.x) * 0.065;
+          p.vy += (p.ty - p.y) * 0.065;
+          if (ptr.on) {
+            const dx = p.x - ptr.x, dy = p.y - ptr.y;
+            const d2 = dx * dx + dy * dy;
+            if (d2 < R * R && d2 > 0.01) {
+              const d = Math.sqrt(d2);
+              const f = (1 - d / R) * PUSH;
+              p.vx += (dx / d) * f;
+              p.vy += (dy / d) * f;
+            }
+          }
+          p.vx *= 0.86; p.vy *= 0.86;
+          p.x += p.vx; p.y += p.vy;
+        }
 
-        // pointer repulsion
-        if (ptr.on) {
-          const dx = p.x - ptr.x, dy = p.y - ptr.y;
-          const d2 = dx * dx + dy * dy;
-          if (d2 < R * R && d2 > 0.01) {
-            const d = Math.sqrt(d2);
-            const f = (1 - d / R) * PUSH;
-            p.vx += (dx / d) * f;
-            p.vy += (dy / d) * f;
+        const w = Math.min(STEPS - 1, Math.round(p.warm * (STEPS - 1)));
+        buckets[w][p.band].push(p);
+      }
+
+      if (!done && travelling === 0) done = true;
+
+      for (let w = 0; w < STEPS; w++) {
+        for (let b = 0; b < 3; b++) {
+          const arr = buckets[w][b];
+          if (!arr.length) continue;
+          ctx.fillStyle = RAMP[w][b];
+          for (let i = 0; i < arr.length; i++) {
+            const p = arr[i];
+            const tw = 1 + Math.sin(time * 2.2 + p.ph) * 0.24;
+            ctx.fillRect(p.x, p.y, p.s * tw, p.s * tw);
           }
         }
-
-        p.vx *= 0.855;
-        p.vy *= 0.855;
-        p.x += p.vx;
-        p.y += p.vy;
-
-        buckets[p.band].push(p);
       }
-
-      // Drawn in three tonal bands so the mark reads as depth rather than a
-      // flat stencil — and so fillStyle changes three times a frame, not
-      // thousands.
-      const shimmer = 0.95 + Math.sin(time * 1.1) * 0.07;
-      for (let b = 0; b < 3; b++) {
-        ctx.fillStyle = BANDS[b];
-        ctx.globalAlpha = Math.min(1, settled * shimmer * (0.50 + b * 0.26));
-        const arr = buckets[b];
-        for (let i = 0; i < arr.length; i++) {
-          const p = arr[i];
-          const tw = 1 + Math.sin(time * 2.1 + p.ph) * 0.22;
-          ctx.fillRect(p.x, p.y, p.s * tw, p.s * tw);
-        }
-      }
-
-      // a handful of brighter grains that catch the light
-      ctx.globalAlpha = settled;
-      ctx.fillStyle = SPARK;
-      for (let i = 0; i < sparks.length; i++) {
-        const p = sparks[i];
-        const tw = Math.max(0, Math.sin(time * 1.6 + p.ph));
-        if (tw < 0.55) continue;
-        const s = 1.6 + tw * 1.9;
-        ctx.globalAlpha = settled * (tw - 0.5) * 1.5;
-        ctx.fillRect(p.x - s / 2, p.y - s / 2, s, s);
-      }
-      ctx.globalAlpha = 1;
 
       if (visible) raf = requestAnimationFrame(frame);
     }
@@ -201,38 +258,28 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
       if (!ctx) return;
       ctx.clearRect(0, 0, W, H);
       for (let b = 0; b < 3; b++) {
-        ctx.fillStyle = BANDS[b];
-        ctx.globalAlpha = 0.55 + b * 0.28;
+        ctx.fillStyle = RAMP[STEPS - 1][b];
         for (const p of parts) if (p.band === b) ctx.fillRect(p.tx, p.ty, p.s, p.s);
       }
-      ctx.globalAlpha = 1;
     }
 
     function start() {
       if (reduce) { still(); return; }
-      if (!raf) { t0 = performance.now() - settled * 1600; raf = requestAnimationFrame(frame); }
+      if (!raf) raf = requestAnimationFrame(frame);
     }
     function stop() { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
 
-    /* ---- input ---- */
-    host.addEventListener('pointermove', (e) => {
+    const track = (cx: number, cy: number) => {
       const r = host.getBoundingClientRect();
-      ptr.x = e.clientX - r.left;
-      ptr.y = e.clientY - r.top;
-      ptr.on = true;
-    }, { passive: true });
+      ptr.x = cx - r.left; ptr.y = cy - r.top; ptr.on = true;
+    };
+    host.addEventListener('pointermove', (e) => track(e.clientX, e.clientY), { passive: true });
     host.addEventListener('pointerleave', () => { ptr.on = false; }, { passive: true });
     host.addEventListener('touchmove', (e) => {
-      const t = e.touches[0];
-      if (!t) return;
-      const r = host.getBoundingClientRect();
-      ptr.x = t.clientX - r.left;
-      ptr.y = t.clientY - r.top;
-      ptr.on = true;
+      const t = e.touches[0]; if (t) track(t.clientX, t.clientY);
     }, { passive: true });
     host.addEventListener('touchend', () => { ptr.on = false; }, { passive: true });
 
-    /* ---- lifecycle ---- */
     const img = new Image();
     img.decoding = 'async';
     img.src = canvas.dataset.mark!;

@@ -1,12 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
-import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProductGrid from '../components/ProductGrid.astro';
 import ContactButtons from '../components/ContactButtons.astro';
 import HeroCanvas from '../components/HeroCanvas.astro';
 import { site, url } from '../data/site';
-import heroImage from '../assets/img/work/kundan-choker-ruby-pearl-set.png';
 
 const featured = (await getCollection('products', (p) => p.data.featured)).sort(
   (a, b) => a.data.order - b.data.order
@@ -41,18 +39,6 @@ const steps = [
         <h1>You bring the design.<br />We make it.</h1>
         <p class="lede">{site.subline}</p>
         <ContactButtons class="hero__cta" waLabel="WhatsApp us" />
-      </div>
-      <div class="hero__figure gleam" data-tilt="7">
-        <Image
-          src={heroImage}
-          alt="A kundan choker with peacock motif and matching chandbali earrings, made at the workshop"
-          widths={[420, 640, 860]}
-          sizes="(min-width: 1100px) 42vw, 50vw"
-          format="webp"
-          quality={84}
-          loading="eager"
-          fetchpriority="high"
-        />
       </div>
     </div>
   </section>
@@ -147,7 +133,7 @@ const steps = [
     display: grid;
     align-items: center;
   }
-  @media (min-width: 900px) { .hero { min-height: min(86vh, 780px); } }
+  @media (min-width: 900px) { .hero { min-height: min(76vh, 660px); } }
   /* Scrim between the dust and the words. It must sit ABOVE the canvas
      (z-index 1) — as a z-index:0 sibling the canvas simply painted over it.
      The linear pass darkens the text column; the radial keeps the middle of
@@ -158,23 +144,21 @@ const steps = [
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background:
-      radial-gradient(ellipse 48% 64% at 24% 50%,
-        rgba(20, 16, 13, 0.86), rgba(20, 16, 13, 0.48) 56%, transparent 80%),
-      linear-gradient(90deg,
-        rgba(20, 16, 13, 0.74) 0%, rgba(20, 16, 13, 0.28) 44%, transparent 64%);
+    background: linear-gradient(90deg,
+      rgba(10, 9, 11, 0.9) 0%, rgba(10, 9, 11, 0.6) 26%,
+      rgba(10, 9, 11, 0.24) 44%, transparent 62%);
   }
   /* Phones: the mark is above the words, so the scrim only needs to protect
      the lower half. */
   @media (max-width: 899px) {
     .hero::after {
       background: linear-gradient(180deg,
-        transparent 0%, rgba(20, 16, 13, 0.55) 32%, rgba(20, 16, 13, 0.86) 46%);
+        transparent 0%, rgba(10, 9, 11, 0.5) 30%, rgba(10, 9, 11, 0.9) 44%);
     }
   }
   .hero__inner { position: relative; z-index: 2;
     padding-block: clamp(2.5rem, 2rem + 3vw, 4.5rem);
-    padding-top: clamp(8rem, 26vh, 13rem);
+    padding-top: clamp(8.5rem, 29vh, 13.5rem);
     padding-bottom: 3rem;
     display: grid;
     gap: 2rem;
@@ -184,22 +168,6 @@ const steps = [
   .hero h1 { max-width: 15ch; }
   .hero .lede { max-width: 46ch; }
   .hero__cta { margin-top: 0.6rem; }
-
-  /* The photograph is the point of a jewellery site, so it shares the first
-     screen on desktop. On phones it is withheld — the product grid is only one
-     scroll below, and a second large image before it would just cost load time
-     on the connection most visitors arrive on. */
-  .hero__figure { display: none; }
-  @media (min-width: 900px) {
-    .hero__inner { grid-template-columns: 1fr 0.85fr; gap: 3.5rem; padding-top: clamp(2.5rem, 2rem + 3vw, 4.5rem); }
-    .hero__figure {
-      display: block;
-      border-radius: var(--radius);
-      overflow: hidden;
-      aspect-ratio: 4 / 5;
-    }
-    .hero__figure :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: center 38%; }
-  }
 
   .work h2 { margin-bottom: clamp(2rem, 1.5rem + 2vw, 3rem); }
   .more { margin-top: 2.25rem; }

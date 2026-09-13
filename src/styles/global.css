@@ -9,22 +9,28 @@
    ========================================================================== */
 
 :root {
-  /* ---- colour ---- */
-  --ink:          #14100D;
-  --ink-raised:   #1F1915;
-  --ink-line:     #2E2620;
+  /* ---- colour: black, gold, silver ----
+     Two metals, because the workshop works in both. Gold is the accent that
+     leads; silver carries rules, labels and secondary type so the pair reads
+     as deliberate rather than as gold with grey bits. */
+  --ink:          #0A090B;
+  --ink-raised:   #141317;
+  --ink-line:     #272529;
 
-  --ivory:        #F8F5EF;
-  --ivory-sunk:   #EFE9DE;
-  --ivory-line:   #DED5C6;
+  --ivory:        #F4F4F5;   /* pearl, not cream — the palette is cool now */
+  --ivory-sunk:   #E9E9EC;
+  --ivory-line:   #D6D6DB;
 
-  --brass:        #A9822F;
-  --brass-soft:   #C9A66B;
+  --brass:        #A8841F;   /* gold on light */
+  --brass-soft:   #E9CD86;   /* gold on ink */
 
-  --text:         #201A15;
-  --text-muted:   #6D6157;
-  --text-on-ink:  #EDE6DA;
-  --text-on-ink-muted: #A2968A;
+  --silver:       #7E838C;   /* silver on light */
+  --silver-soft:  #D3D8DE;   /* silver on ink */
+
+  --text:         #15141A;
+  --text-muted:   #5D5E68;
+  --text-on-ink:  #E8E8EC;
+  --text-on-ink-muted: #9A9AA4;
 
   /* WhatsApp is the primary conversion element on this site. Recognisability
      beats palette purity here — a green button that reads as "WhatsApp" at a
@@ -369,3 +375,26 @@ a { color: inherit; }
   transition: transform 0.45s cubic-bezier(0.22, 0.8, 0.24, 1);
 }
 .ulink:hover::after { transform: scaleX(1); transform-origin: left; }
+
+/* =============================================================================
+   SILVER — the second metal, used where gold would shout
+   ========================================================================== */
+.on-ink .eyebrow { color: var(--brass-soft); }
+.on-ink .rule, .on-ink hr { border-color: var(--ink-line); }
+
+/* Category labels and step numbers run silver so gold stays reserved for the
+   things that matter: the mark, the accents, and the call to action. */
+.on-ink .steps__n,
+.on-ink .cats { color: var(--silver-soft); }
+
+::selection { background: rgba(233, 205, 134, 0.28); }
+
+/* The lamp picks up both metals */
+.lamp {
+  background: radial-gradient(
+    circle closest-side,
+    rgba(233, 205, 134, 0.14),
+    rgba(211, 216, 222, 0.07) 45%,
+    transparent 72%
+  ) !important;
+}
