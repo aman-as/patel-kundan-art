@@ -27,9 +27,8 @@ export const formatPhone = (n: string) => {
 };
 
 export const contacts: Contact[] = [
-  { name: 'Anil Singh',  role: 'Kundan setting',     number: '919999029885', call: true,  whatsapp: true },
-  { name: 'Sunil Singh', role: 'Orders and finishing', number: '919999964650', call: true,  whatsapp: true },
-  { name: 'Aman Singh',  role: 'Enquiries',          number: '918448731321', call: false, whatsapp: true },
+  { name: 'Anil Singh',  role: 'Kundan setting',      number: '919999029885', call: true, whatsapp: true },
+  { name: 'Sunil Singh', role: 'Orders and finishing', number: '919999964650', call: true, whatsapp: true },
 ];
 
 /** The number used for every primary CTA. Keep it consistent everywhere —
@@ -74,7 +73,7 @@ export const site = {
 
   /** Short description used for meta tags and structured data. */
   description:
-    'Kundan and jadau jewellery manufacturing and job work in Karol Bagh, Delhi. Handmade to order for jewellery retailers and for individuals.',
+    'Kundan and jadau jewellery manufacturing and job work in Karol Bagh, Delhi. Gold and silver, handmade to order for jewellery retailers and for individuals.',
 
   url: 'https://patelkundanart.com',
 

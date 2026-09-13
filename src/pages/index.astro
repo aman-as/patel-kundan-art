@@ -13,6 +13,7 @@ const featured = (await getCollection('products', (p) => p.data.featured)).sort(
 const makes = [
   'Kundan', 'Jadau', 'Polki', 'Antique finish', 'Bridal sets',
   'Chokers', 'Rani haar', 'Bangles', 'Earrings', 'Pendants', 'Rings',
+  'Silver jewellery',
 ];
 
 const steps = [
@@ -83,7 +84,7 @@ const steps = [
   <section class="section on-sunk">
     <div class="wrap">
       <p class="eyebrow">What we make</p>
-      <h2>Kundan is our specialisation.<br />Gold jewellery is our trade.</h2>
+      <h2>Kundan is our specialisation.<br />Gold is our trade — and we work in silver too.</h2>
       <ul class="tags">
         {makes.map((m) => <li>{m}</li>)}
       </ul>
@@ -133,7 +134,7 @@ const steps = [
     display: grid;
     align-items: center;
   }
-  @media (min-width: 900px) { .hero { min-height: min(76vh, 660px); } }
+  @media (min-width: 900px) { .hero { min-height: min(70vh, 600px); } }
   /* Scrim between the dust and the words. It must sit ABOVE the canvas
      (z-index 1) — as a z-index:0 sibling the canvas simply painted over it.
      The linear pass darkens the text column; the radial keeps the middle of
@@ -148,18 +149,19 @@ const steps = [
       rgba(10, 9, 11, 0.9) 0%, rgba(10, 9, 11, 0.6) 26%,
       rgba(10, 9, 11, 0.24) 44%, transparent 62%);
   }
-  /* Phones: the mark is above the words, so the scrim only needs to protect
-     the lower half. */
+  /* Phones: the mark sits lower-right, so the scrim holds the left text
+     column and releases only past the halfway mark. */
   @media (max-width: 899px) {
     .hero::after {
-      background: linear-gradient(180deg,
-        transparent 0%, rgba(10, 9, 11, 0.5) 30%, rgba(10, 9, 11, 0.9) 44%);
+      background: linear-gradient(90deg,
+        rgba(10, 9, 11, 0.96) 0%, rgba(10, 9, 11, 0.9) 44%,
+        rgba(10, 9, 11, 0.28) 58%, transparent 76%);
     }
   }
   .hero__inner { position: relative; z-index: 2;
-    padding-block: clamp(2.5rem, 2rem + 3vw, 4.5rem);
-    padding-top: clamp(8.5rem, 29vh, 13.5rem);
-    padding-bottom: 3rem;
+    /* The mark now sits to the RIGHT at every width, so the text no longer
+       needs to clear anything above it. */
+    padding-block: clamp(2.25rem, 1.75rem + 2.5vw, 3.25rem);
     display: grid;
     gap: 2rem;
     align-items: center;

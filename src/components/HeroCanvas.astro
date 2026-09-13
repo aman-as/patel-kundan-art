@@ -2,19 +2,22 @@
 /**
  * STARDUST — the hero animation.
  *
- * Ribbons of dust sweep in along curved paths, trailing behind them, and
- * assemble into the कुंदन वाला mark on the right of the hero.
+ * 1. Five ribbons of dust sweep in along curved paths, trailing comet tails.
+ *    In flight the grains are SILVER.
+ * 2. They assemble into the कुंदन वाला mark and turn BOLD GOLD — and stay
+ *    bold. Both metals the workshop works in, said without a word of copy.
+ * 3. Once formed the mark never goes static: it breathes, and gold vapour
+ *    lifts continuously off every edge, drifts outward and fades, like heat
+ *    shimmer coming off warm metal.
  *
- * The dust is SILVER while it travels and warms to GOLD as it settles — the
- * two metals the workshop actually works in, said without a word of copy.
- * Once settled it holds with a shimmer and scatters from pointer or finger.
+ * Pointer or finger scatters the grains; they spring back.
  *
  * Drawn on one canvas from the mark's own alpha channel. No video, no image
  * sequence, no animation library.
  *
- * Guards: honours prefers-reduced-motion (draws the settled gold mark and
- * stops), pauses off-screen and on tab hide, and scales particle count, grain
- * size and pixel ratio to the device.
+ * Guards: honours prefers-reduced-motion (draws the settled mark and stops),
+ * pauses off-screen and on tab hide, and scales particle count, grain size
+ * and pixel ratio to the device.
  */
 import mark from '../assets/img/brand/kundanwala-mark.webp';
 ---
@@ -35,23 +38,25 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
 
 <script>
   type P = {
-    // path
-    sx: number; sy: number;   // start
-    cx: number; cy: number;   // curve control point
-    tx: number; ty: number;   // target, inside the mark
-    delay: number; dur: number;
-    // live
+    sx: number; sy: number; cx: number; cy: number;
+    tx: number; ty: number; delay: number; dur: number;
     x: number; y: number; vx: number; vy: number;
     s: number; ph: number; band: number; warm: number;
   };
+  type V = {
+    x: number; y: number; vx: number; vy: number;
+    life: number; max: number; s: number;
+  };
 
   const INK = '10, 9, 11';
-  // silver -> gold ramp, walked as each grain settles
-  const SILVER: [number, number, number] = [196, 202, 210];
-  const GOLD: [number, number, number] = [201, 162, 39];
-  const GOLD_HI: [number, number, number] = [233, 205, 134];
+  const SILVER: [number, number, number] = [214, 221, 230];
+  const GOLD: [number, number, number] = [214, 170, 48];
+  const GOLD_HI: [number, number, number] = [246, 222, 154];
   const STEPS = 8;
-  const BAND_A = [0.42, 0.68, 1.0];
+  // Settled grains are bold. The dimmest band used to sit at 0.42, which is
+  // what made the assembled mark look faded next to the bright flight.
+  const BAND_A = [0.72, 0.9, 1.0];
+  const VAPOUR_STEPS = 5;
 
   const ease = (t: number) => 1 - Math.pow(1 - t, 4);
   const mix = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -64,8 +69,6 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const coarse = window.matchMedia('(pointer: coarse)').matches;
 
-    // Precomputed palette: 8 warmth steps x 3 tonal bands, so the whole field
-    // costs 24 fillStyle changes a frame instead of one per grain.
     const RAMP: string[][] = [];
     for (let w = 0; w < STEPS; w++) {
       const t = w / (STEPS - 1);
@@ -79,9 +82,16 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
       }
       RAMP.push(row);
     }
+    const VAP: string[] = [];
+    for (let i = 0; i < VAPOUR_STEPS; i++) {
+      VAP.push(`rgba(${GOLD_HI[0]},${GOLD_HI[1]},${GOLD_HI[2]},${(0.1 + (i / (VAPOUR_STEPS - 1)) * 0.5).toFixed(3)})`);
+    }
 
     let W = 0, H = 0, dpr = 1;
     let parts: P[] = [];
+    let vap: V[] = [];
+    let vapCap = 0;
+    let cxm = 0, cym = 0;
     let raf = 0, visible = true, t0 = 0, done = false;
     const ptr = { x: -1e4, y: -1e4, on: false };
     const R = coarse ? 80 : 120;
@@ -97,14 +107,18 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx!.clearRect(0, 0, W, H);
 
-      // Wide: the mark owns the RIGHT column, the headline the left.
-      // Narrow: it takes the band above the headline.
+      // The mark owns the RIGHT of the hero at every width — beside the
+      // headline on desktop, and in the free space to the right of the
+      // left-aligned text on phones.
       const wide = W >= 900;
+      // Desktop: beside the headline. Phones: the only genuinely free area is
+      // the LOWER right — beside the call buttons, below the headline. Sitting
+      // it mid-height there put dust straight through the lede.
       const size = wide
-        ? Math.min(W * 0.40, H * 0.82, 520)
-        : Math.min(W * 0.62, H * 0.26, 264);
-      const cxm = wide ? W * 0.71 : W * 0.5;
-      const cym = wide ? H * 0.5 : H * 0.155;
+        ? Math.min(W * 0.38, H * 0.78, 500)
+        : Math.min(W * 0.46, H * 0.27, 186);
+      cxm = wide ? W * 0.72 : W * 0.74;
+      cym = wide ? H * 0.5 : H * 0.74;
 
       const off = document.createElement('canvas');
       const ow = Math.round(size), oh = Math.round(size * (img.height / img.width));
@@ -118,11 +132,8 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
 
       const ox = cxm - ow / 2, oy = cym - oh / 2;
       const gap = W < 700 ? 2 : W < 1200 ? 3 : 2;
-      const keep = W < 700 ? 0.82 : 0.5;
+      const keep = W < 700 ? 0.8 : 0.5;
 
-      // Five ribbons. A grain joins the ribbon matching its angle around the
-      // mark's centre, so each stream feeds one sector and the entry reads as
-      // ribbons sweeping in rather than a uniform cloud.
       const STREAMS = 5;
       const origins: { x: number; y: number; cx: number; cy: number }[] = [];
       for (let i = 0; i < STREAMS; i++) {
@@ -131,7 +142,6 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
         origins.push({
           x: cxm + Math.cos(a) * far,
           y: cym + Math.sin(a) * far * 0.7,
-          // control point offset perpendicular to the run — this is the curve
           cx: cxm + Math.cos(a + 1.25) * size * 2.4,
           cy: cym + Math.sin(a + 1.25) * size * 1.7,
         });
@@ -144,18 +154,16 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
           if (a < 45) continue;
           if (Math.random() > keep) continue;
           const tx = ox + x, ty = oy + y;
-
           const ang = Math.atan2(ty - cym, tx - cxm);
           let si = Math.floor(((ang + Math.PI) / (Math.PI * 2)) * STREAMS) % STREAMS;
           if (si < 0) si += STREAMS;
           const o = origins[si];
-          const jitter = size * 0.55;
-
+          const j = size * 0.55;
           next.push({
-            sx: o.x + (Math.random() - 0.5) * jitter,
-            sy: o.y + (Math.random() - 0.5) * jitter,
-            cx: o.cx + (Math.random() - 0.5) * jitter * 1.6,
-            cy: o.cy + (Math.random() - 0.5) * jitter * 1.6,
+            sx: o.x + (Math.random() - 0.5) * j,
+            sy: o.y + (Math.random() - 0.5) * j,
+            cx: o.cx + (Math.random() - 0.5) * j * 1.6,
+            cy: o.cy + (Math.random() - 0.5) * j * 1.6,
             tx, ty,
             delay: si * 0.13 + Math.random() * 0.85,
             dur: 1.5 + Math.random() * 0.85,
@@ -169,29 +177,48 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
         }
       }
       parts = next;
+      vap = [];
+      vapCap = coarse ? 130 : 260;
       t0 = performance.now();
       done = false;
     }
 
+    /** A grain of vapour lifting off the mark. */
+    function spawnVapour() {
+      const p = parts[(Math.random() * parts.length) | 0];
+      if (!p) return;
+      const dx = p.tx - cxm, dy = p.ty - cym;
+      const d = Math.hypot(dx, dy) || 1;
+      const sp = 0.18 + Math.random() * 0.5;
+      vap.push({
+        x: p.tx, y: p.ty,
+        vx: (dx / d) * sp + (Math.random() - 0.5) * 0.22,
+        vy: (dy / d) * sp - 0.14 - Math.random() * 0.16, // slight lift
+        life: 0,
+        max: 1.7 + Math.random() * 1.7,
+        s: 0.8 + Math.random() * 1.5,
+      });
+    }
+
+    let last = 0;
     function frame(now: number) {
       raf = 0;
       if (!ctx) return;
       const time = (now - t0) / 1000;
+      const dt = Math.min(0.05, last ? (now - last) / 1000 : 0.016);
+      last = now;
 
-      // Trails while the ribbons fly: veil the previous frame in the hero's
-      // own black rather than clearing it, so each grain drags a comet tail.
-      //
-      // Once everything has landed, clear to TRANSPARENT instead. A partial
-      // veil never quite reaches black, and that residue showed up as a faint
-      // rectangle where the canvas met the section edge. Transparent lets the
-      // section's own background through, so the match is exact by
-      // construction rather than by matching two colour values by hand.
       if (done) {
         ctx.clearRect(0, 0, W, H);
       } else {
         ctx.fillStyle = `rgba(${INK}, 0.22)`;
         ctx.fillRect(0, 0, W, H);
       }
+
+      // Breathing: the settled mark drifts a couple of pixels on a slow cycle
+      // so it is never truly still.
+      const bx = done ? Math.sin(time * 0.42) * 2.6 : 0;
+      const by = done ? Math.cos(time * 0.31) * 2.1 : 0;
 
       const buckets: P[][][] = RAMP.map(() => [[], [], []]);
       let travelling = 0;
@@ -201,23 +228,21 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
         const lt = (time - p.delay) / p.dur;
 
         if (lt < 1) {
-          // --- on the path: quadratic Bezier from origin, through the
-          //     control point, to its place in the mark
           travelling++;
           if (lt > 0) {
             const e = ease(lt);
             const n = 1 - e;
             p.x = n * n * p.sx + 2 * n * e * p.cx + e * e * p.tx;
             p.y = n * n * p.sy + 2 * n * e * p.cy + e * e * p.ty;
-            p.warm = Math.max(0, (e - 0.55) / 0.45); // silver -> gold on arrival
+            // Stay silver for most of the run, then turn gold on arrival.
+            p.warm = Math.max(0, (e - 0.72) / 0.28);
           } else {
-            continue; // not launched yet
+            continue;
           }
         } else {
-          // --- settled: spring, shimmer, and push away from the pointer
           p.warm = 1;
-          p.vx += (p.tx - p.x) * 0.065;
-          p.vy += (p.ty - p.y) * 0.065;
+          p.vx += (p.tx + bx - p.x) * 0.065;
+          p.vy += (p.ty + by - p.y) * 0.065;
           if (ptr.on) {
             const dx = p.x - ptr.x, dy = p.y - ptr.y;
             const d2 = dx * dx + dy * dy;
@@ -236,7 +261,7 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
         buckets[w][p.band].push(p);
       }
 
-      if (!done && travelling === 0) done = true;
+      if (!done && travelling === 0) { done = true; }
 
       for (let w = 0; w < STEPS; w++) {
         for (let b = 0; b < 3; b++) {
@@ -245,8 +270,35 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
           ctx.fillStyle = RAMP[w][b];
           for (let i = 0; i < arr.length; i++) {
             const p = arr[i];
-            const tw = 1 + Math.sin(time * 2.2 + p.ph) * 0.24;
+            const tw = 1 + Math.sin(time * 2.2 + p.ph) * 0.2;
             ctx.fillRect(p.x, p.y, p.s * tw, p.s * tw);
+          }
+        }
+      }
+
+      // ---- vapour ----
+      if (done) {
+        const want = Math.min(6, vapCap - vap.length);
+        for (let i = 0; i < want; i++) spawnVapour();
+
+        const vb: V[][] = Array.from({ length: VAPOUR_STEPS }, () => []);
+        for (let i = vap.length - 1; i >= 0; i--) {
+          const v = vap[i];
+          v.life += dt;
+          if (v.life >= v.max) { vap.splice(i, 1); continue; }
+          v.x += v.vx; v.y += v.vy;
+          v.vx *= 0.994; v.vy *= 0.994;
+          v.vy -= 0.0016;                       // keeps rising as it thins
+          const k = 1 - v.life / v.max;         // 1 -> 0
+          vb[Math.min(VAPOUR_STEPS - 1, (k * VAPOUR_STEPS) | 0)].push(v);
+        }
+        for (let i = 0; i < VAPOUR_STEPS; i++) {
+          if (!vb[i].length) continue;
+          ctx.fillStyle = VAP[i];
+          for (const v of vb[i]) {
+            const k = 1 - v.life / v.max;
+            const s = v.s * (0.45 + k * 0.55);
+            ctx.fillRect(v.x, v.y, s, s);
           }
         }
       }
@@ -265,7 +317,7 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
 
     function start() {
       if (reduce) { still(); return; }
-      if (!raf) raf = requestAnimationFrame(frame);
+      if (!raf) { last = 0; raf = requestAnimationFrame(frame); }
     }
     function stop() { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
 
