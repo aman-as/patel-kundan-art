@@ -92,7 +92,7 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
     let vap: V[] = [];
     let vapCap = 0;
     let cxm = 0, cym = 0;
-    let raf = 0, visible = true, t0 = 0, done = false;
+    let raf = 0, visible = true, t0 = 0, done = false, doneAt = 0;
     const ptr = { x: -1e4, y: -1e4, on: false };
     const R = coarse ? 80 : 120;
     const PUSH = coarse ? 1.4 : 1.8;
@@ -111,14 +111,14 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
       // headline on desktop, and in the free space to the right of the
       // left-aligned text on phones.
       const wide = W >= 900;
-      // Desktop: beside the headline. Phones: the only genuinely free area is
-      // the LOWER right — beside the call buttons, below the headline. Sitting
-      // it mid-height there put dust straight through the lede.
+      // Desktop: beside the headline. Phones: the upper right, in the gap
+      // left by the three short headline lines — the headline never reaches
+      // past about half the width, so that block is free.
       const size = wide
         ? Math.min(W * 0.38, H * 0.78, 500)
-        : Math.min(W * 0.46, H * 0.27, 186);
-      cxm = wide ? W * 0.72 : W * 0.74;
-      cym = wide ? H * 0.5 : H * 0.74;
+        : Math.min(W * 0.44, H * 0.29, 182);
+      cxm = wide ? W * 0.72 : W * 0.71;
+      cym = wide ? H * 0.5 : H * 0.29;
 
       const off = document.createElement('canvas');
       const ow = Math.round(size), oh = Math.round(size * (img.height / img.width));
@@ -217,8 +217,16 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
 
       // Breathing: the settled mark drifts a couple of pixels on a slow cycle
       // so it is never truly still.
-      const bx = done ? Math.sin(time * 0.42) * 2.6 : 0;
-      const by = done ? Math.cos(time * 0.31) * 2.1 : 0;
+      //
+      // Both waves are anchored to the instant it landed and ramped in from
+      // zero. Reading them off the absolute clock meant sin() was at some
+      // arbitrary value the moment the mark completed, so the whole thing
+      // jumped a couple of pixels as it finished. cos() is the worse of the
+      // two — it starts at 1, i.e. full offset.
+      const sinceDone = done ? time - doneAt : 0;
+      const ramp = Math.min(1, sinceDone / 1.8);
+      const bx = done ? Math.sin(sinceDone * 0.42) * 2.6 * ramp : 0;
+      const by = done ? Math.sin(sinceDone * 0.31) * 2.1 * ramp : 0;
 
       const buckets: P[][][] = RAMP.map(() => [[], [], []]);
       let travelling = 0;
@@ -261,7 +269,7 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
         buckets[w][p.band].push(p);
       }
 
-      if (!done && travelling === 0) { done = true; }
+      if (!done && travelling === 0) { done = true; doneAt = time; }
 
       for (let w = 0; w < STEPS; w++) {
         for (let b = 0; b < 3; b++) {
@@ -270,7 +278,11 @@ import mark from '../assets/img/brand/kundanwala-mark.webp';
           ctx.fillStyle = RAMP[w][b];
           for (let i = 0; i < arr.length; i++) {
             const p = arr[i];
-            const tw = 1 + Math.sin(time * 2.2 + p.ph) * 0.2;
+            // Twinkle only while the grains are flying. Once landed every
+            // grain holds its exact size, so the mark reads as one steady
+            // gold — the per-grain size wobble was being seen as the colour
+            // still shifting. The vapour supplies the movement instead.
+            const tw = done ? 1 : 1 + Math.sin(time * 2.2 + p.ph) * 0.2;
             ctx.fillRect(p.x, p.y, p.s * tw, p.s * tw);
           }
         }

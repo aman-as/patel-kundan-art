@@ -149,13 +149,13 @@ const steps = [
       rgba(10, 9, 11, 0.9) 0%, rgba(10, 9, 11, 0.6) 26%,
       rgba(10, 9, 11, 0.24) 44%, transparent 62%);
   }
-  /* Phones: the mark sits lower-right, so the scrim holds the left text
-     column and releases only past the halfway mark. */
+  /* Phones: the mark sits upper-right, beside the headline, so the scrim
+     holds the left text column and releases just past halfway. */
   @media (max-width: 899px) {
     .hero::after {
       background: linear-gradient(90deg,
-        rgba(10, 9, 11, 0.96) 0%, rgba(10, 9, 11, 0.9) 44%,
-        rgba(10, 9, 11, 0.28) 58%, transparent 76%);
+        rgba(10, 9, 11, 0.96) 0%, rgba(10, 9, 11, 0.92) 47%,
+        rgba(10, 9, 11, 0.3) 61%, transparent 80%);
     }
   }
   .hero__inner { position: relative; z-index: 2;
