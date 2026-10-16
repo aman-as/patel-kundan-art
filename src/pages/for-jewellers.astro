@@ -44,8 +44,8 @@ const assurances = [
       <p class="eyebrow">What a retailer is actually deciding</p>
       <h2>Four things you want settled before you hand over gold.</h2>
       <ul class="cards">
-        {assurances.map((a) => (
-          <li class="reveal">
+        {assurances.map((a, i) => (
+          <li class={`reveal ${i % 2 ? 'reveal--right' : 'reveal--left'}`}>
             <h3>{a.h}</h3>
             <p>{a.p}</p>
           </li>
