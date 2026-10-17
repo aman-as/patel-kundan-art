@@ -25,7 +25,7 @@ export default defineConfig({
   // Fully static output — nothing to run on a server, deploys anywhere.
   output: 'static',
 
-  integrations: [sitemap()],
+  integrations: [sitemap({ filter: (page) => !page.includes('/our-work/') })],
 
   // Build straight into docs/ and commit it. GitHub Pages can serve a site
   // directly from this folder with no build step and no GitHub Actions, which
