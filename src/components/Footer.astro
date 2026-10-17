@@ -1,15 +1,22 @@
 ---
+/**
+ * Quiet footer: the mark, the address and the two numbers. No email or
+ * Instagram — the standing rule (19 Sep 2026) keeps both off printed and
+ * public collateral.
+ */
 import Mark from './Mark.astro';
-import { site, contacts, formatPhone, wa, tel, waMessages, fullAddress } from '../data/site';
+import { site, contacts, formatPhone, tel } from '../data/site';
 const year = new Date().getFullYear();
 ---
 
 <footer class="site-footer">
   <div class="wrap grid">
-    <div>
-      <Mark size="52px" />
-      <p class="name">{site.brand}</p>
-      <p class="muted">Kundan &amp; Customized Jewellery<br />Manufacturing &amp; Job Work</p>
+    <div class="sign">
+      <Mark size="64px" />
+      <div>
+        <p class="name">{site.brand}</p>
+        <p class="muted">Kundan jewellery manufacturing<br />Gold &amp; silver, by hand</p>
+      </div>
     </div>
 
     <div>
@@ -19,29 +26,25 @@ const year = new Date().getFullYear();
         {site.address.locality}<br />
         {site.address.city} {site.address.postalCode}
       </address>
-      <p><a class="link" href={site.mapsUrl} rel="noopener" target="_blank">View on Google Maps</a></p>
+      <p class="maps"><a class="link" href={site.mapsUrl} rel="noopener" target="_blank">Open in Google Maps</a></p>
     </div>
 
     <div>
-      <h2 class="h">Contact</h2>
+      <h2 class="h">Call or WhatsApp</h2>
       <ul class="list">
         {contacts.map((c) => (
           <li>
-            <a class="link" href={c.call ? tel(c.number) : wa(waMessages.general, c.number)}>
-              {formatPhone(c.number)}
-            </a>
-            <span class="muted"> — {c.name}</span>
+            <a class="num" href={tel(c.number)}>{formatPhone(c.number)}</a>
+            <span class="muted">{c.name}</span>
           </li>
         ))}
-        <li><a class="link" href={`mailto:${site.emails.primary}`}>{site.emails.primary}</a></li>
-        <li><a class="link" href={site.social.instagram} rel="noopener" target="_blank">Instagram</a></li>
       </ul>
     </div>
   </div>
 
   <div class="wrap legal">
-    <p class="muted">{site.entities.join(' · ')} · Karol Bagh, New Delhi</p>
-    <p class="muted">© {year} {site.brand}</p>
+    <p>{site.entities.join(' · ')} · Karol Bagh, New Delhi</p>
+    <p>© {year} {site.brand}</p>
   </div>
 </footer>
 
@@ -49,41 +52,46 @@ const year = new Date().getFullYear();
   .site-footer {
     background: var(--ink);
     color: var(--text-on-ink);
-    padding-block: clamp(2.5rem, 1.8rem + 3vw, 4rem) 2rem;
+    border-top: 1px solid var(--ink-line);
+    padding-block: clamp(3rem, 2rem + 4vw, 5rem) 2rem;
   }
-  .grid {
-    display: grid;
-    gap: 2.25rem;
+  .grid { display: grid; gap: 2.5rem; }
+  @media (min-width: 760px) {
+    .grid { grid-template-columns: 1.3fr 1fr 1fr; gap: 3rem; }
   }
-  @media (min-width: 720px) {
-    .grid { grid-template-columns: 1.2fr 1fr 1fr; gap: 3rem; }
-  }
-  .name {
-    font-family: var(--font-display);
-    font-size: 1.45rem;
-    margin-top: 0.85rem;
-  }
+  .sign { display: flex; gap: 1.1rem; align-items: center; }
+  .name { font-family: var(--font-display); font-size: 1.5rem; line-height: 1.2; }
   .h {
     font-family: var(--font-ui);
     font-size: 0.7rem;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--brass-soft);
-    margin-bottom: 0.85rem;
+    margin-bottom: 0.9rem;
   }
-  .muted { color: var(--text-on-ink-muted); font-size: 0.92rem; font-style: normal; }
-  .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; font-size: 0.92rem; }
+  .muted { color: var(--text-on-ink-muted); font-size: 0.92rem; font-style: normal; line-height: 1.6; }
+  .maps { margin-top: 0.75rem; font-size: 0.92rem; }
   .link { color: var(--text-on-ink); text-decoration: none; border-bottom: 1px solid var(--ink-line); }
   .link:hover { border-bottom-color: var(--brass-soft); }
+  .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.8rem; }
+  .list li { display: grid; gap: 0.1rem; }
+  .num {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    color: var(--text-on-ink);
+    text-decoration: none;
+  }
+  .num:hover { color: var(--brass-soft); }
   .legal {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem 1.5rem;
     justify-content: space-between;
-    margin-top: 2.75rem;
+    margin-top: 3rem;
     padding-top: 1.5rem;
     border-top: 1px solid var(--ink-line);
-    font-size: 0.82rem;
+    font-size: 0.8rem;
+    color: var(--text-on-ink-muted);
   }
 </style>

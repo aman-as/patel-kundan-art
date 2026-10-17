@@ -13,18 +13,19 @@
  */
 interface Props {
   lines: string[];
-  /** The word the visitor flies through at the end. */
-  finale: string;
+  /** Optional word the visitor flies through at the end. Without it the
+   *  last statement simply stays on screen as the stage lets go. */
+  finale?: string;
 }
 const { lines, finale } = Astro.props;
 ---
 
-<section class="words on-ink" data-words aria-label={[...lines, finale].join(' ')}>
+<section class="words on-ink" data-words data-finale={finale ? '' : undefined} aria-label={[...lines, finale].filter(Boolean).join(' ')}>
   <div class="words__stage">
     <div class="words__glow" aria-hidden="true"></div>
     <ol class="words__lines" aria-hidden="true">
       {lines.map((l) => <li><span>{l}</span></li>)}
-      <li class="words__finale"><span>{finale}</span></li>
+      {finale && <li class="words__finale"><span>{finale}</span></li>}
     </ol>
   </div>
 </section>
@@ -61,6 +62,7 @@ const { lines, finale } = Astro.props;
 
   /* ---------------- pinned, scroll-driven version ---------------- */
   :global(.story) .words { height: 520svh; padding: 0; border: 0; }
+  :global(.story) .words:not([data-finale]) { height: 380svh; }
   :global(.story) .words__stage {
     position: sticky;
     top: 0;
@@ -121,6 +123,7 @@ const { lines, finale } = Astro.props;
     const setHdr = () => { if (header) root.style.setProperty('--hdr', `${header.offsetHeight}px`); };
     const items = blocks.map((el) => ({
       el,
+      finale: el.hasAttribute('data-finale'),
       stage: el.querySelector<HTMLElement>('.words__stage')!,
       lines: Array.from(el.querySelectorAll<HTMLElement>('.words__lines li')),
     }));
@@ -129,10 +132,21 @@ const { lines, finale } = Astro.props;
     const frame = () => {
       ticking = false;
       const vh = window.innerHeight;
-      items.forEach(({ el, stage, lines }) => {
+      items.forEach(({ el, stage, lines, finale }) => {
         const r = el.getBoundingClientRect();
         if (r.bottom < -vh || r.top > vh * 2) return;
         const p = clamp(-r.top / Math.max(r.height - vh, 1));
+        if (!finale) {
+          // statements share the whole run; the last one stays once it is up
+          const n = lines.length, span = 0.94 / n;
+          lines.forEach((li, i) => {
+            let t = clamp((p - i * span) / span);
+            if (i === 0 && p < span * 0.2) t = Math.max(t, 0.2);
+            if (i === n - 1) t = Math.min(t, 0.6);
+            li.style.setProperty('--t', t.toFixed(3));
+          });
+          return;
+        }
         // statements share the first 72%; the finale arrives just after,
         // holds, and the last 20% is the fly-through
         const n = lines.length - 1, span = 0.72 / n;

@@ -1,0 +1,173 @@
+---
+/**
+ * FILM HERO — the opening chapter.
+ *
+ * Film A ("From sketch to gold") fills the screen and plays forward as the
+ * visitor scrolls, backwards as they scroll up. The headline and buttons sit
+ * over it and fade as the gold appears.
+ *
+ * Until the film exists, `wide`/`tall` are left out and a dark, warm still
+ * stands in. The section works the same either way.
+ *
+ * Files: public/video/<name>.mp4, encoded with a keyframe on every few frames
+ * so seeking is instant (see scripts note in the plan). `tall` is used on
+ * portrait screens, `wide` everywhere else.
+ */
+import Mark from './Mark.astro';
+import { url } from '../data/site';
+
+interface Props {
+  wide?: string;
+  tall?: string;
+  poster?: string;
+}
+const { wide, tall, poster } = Astro.props;
+const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
+---
+
+<section class="film on-ink" data-film data-wide={src(wide)} data-tall={src(tall)}>
+  <div class="film__stage">
+    <div class="film__media" aria-hidden="true">
+      {wide || tall ? (
+        <video muted playsinline preload="auto" poster={poster && url(`/video/${poster}`)}></video>
+      ) : (
+        <div class="film__still">
+          <Mark size="min(78vmin, 640px)" color="rgba(233, 205, 134, 0.07)" class="film__mark" />
+        </div>
+      )}
+    </div>
+    <div class="film__shade" aria-hidden="true"></div>
+    <div class="wrap film__copy enter">
+      <slot />
+    </div>
+    <p class="film__hint" aria-hidden="true">Scroll</p>
+  </div>
+</section>
+
+<style>
+  .film { position: relative; }
+  .film__stage {
+    position: relative;
+    min-height: calc(100svh - 60px);
+    display: grid;
+    align-items: end;
+    overflow: hidden;
+  }
+  .film__media, .film__shade { position: absolute; inset: 0; }
+  .film__media video { width: 100%; height: 100%; object-fit: cover; }
+  .film__still {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 72% 58%, rgba(214, 170, 48, 0.22), transparent 60%),
+      radial-gradient(ellipse 50% 40% at 20% 100%, rgba(233, 205, 134, 0.08), transparent 70%),
+      var(--ink);
+  }
+  .film__still :global(.film__mark) {
+    position: absolute;
+    right: -8vmin;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .film__shade {
+    background: linear-gradient(to top, rgba(10, 9, 11, 0.92) 0%, rgba(10, 9, 11, 0.5) 38%, transparent 70%);
+  }
+  .film__copy {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 1.15rem;
+    justify-items: start;
+    padding-block: 4rem clamp(3rem, 2rem + 6svh, 6rem);
+  }
+  .film__copy :global(h1) {
+    font-size: clamp(2.9rem, 1.6rem + 6.4vw, 7rem);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    max-width: 12ch;
+  }
+  .film__copy :global(.lede) { max-width: 44ch; color: var(--silver-soft); }
+  .film__hint { display: none; }
+
+  /* ---------------- pinned, scroll-driven version ---------------- */
+  :global(.story) .film { height: 340svh; }
+  :global(.story) .film:not([data-wide]):not([data-tall]) { height: 150svh; }
+  :global(.story) .film__stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 0;
+  }
+  :global(.story) .film__copy {
+    padding-bottom: calc(var(--sticky-bar) + 2.5rem);
+    opacity: calc(1 - clamp(0, (var(--p, 0) - 0.12) * 3.2, 1));
+    transform: translate3d(0, calc(var(--p, 0) * -60px), 0);
+  }
+  @media (min-width: 800px) {
+    :global(.story) .film__copy { padding-bottom: clamp(3rem, 2rem + 8svh, 7rem); }
+  }
+  :global(.story) .film__shade { opacity: calc(1 - var(--p, 0) * 0.6); }
+  :global(.story) .film__still { transform: scale(calc(1 + var(--p, 0) * 0.12)); }
+  :global(.story) .film__still :global(.film__mark) {
+    opacity: calc(0.6 + var(--p, 0) * 2);
+    filter: drop-shadow(0 0 calc(var(--p, 0) * 30px) rgba(233, 205, 134, 0.3));
+  }
+  :global(.story) .film__hint {
+    display: block;
+    position: absolute;
+    right: var(--gutter);
+    bottom: calc(var(--sticky-bar) + 1.25rem);
+    z-index: 1;
+    font-size: 0.7rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--text-on-ink-muted);
+    opacity: calc(1 - var(--p, 0) * 8);
+    writing-mode: vertical-rl;
+  }
+  @media (min-width: 800px) {
+    :global(.story) .film__hint { bottom: 2rem; }
+  }
+</style>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const films = Array.from(document.querySelectorAll<HTMLElement>('[data-film]'));
+
+  films.forEach((el) => {
+    const video = el.querySelector<HTMLVideoElement>('video');
+    const portrait = window.matchMedia('(orientation: portrait)').matches;
+    const src = (portrait ? el.dataset.tall : el.dataset.wide) || el.dataset.wide || el.dataset.tall;
+    if (video && src) video.src = src;
+
+    if (reduce) return; // the still or the poster frame, nothing moves
+    document.documentElement.classList.add('story');
+    const clamp = (v: number) => Math.min(1, Math.max(0, v));
+
+    let ticking = false, target = 0;
+    const frame = () => {
+      ticking = false;
+      const vh = window.innerHeight;
+      const r = el.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > vh) return;
+      const p = clamp(-r.top / Math.max(r.height - vh, 1));
+      el.style.setProperty('--p', p.toFixed(4));
+      if (video && video.duration) {
+        // the film ends a little before the stage lets go, so the last
+        // frame (the finished gold) holds for a moment
+        target = clamp(p / 0.85) * (video.duration - 0.05);
+        if (Math.abs(video.currentTime - target) > 0.02) video.currentTime = target;
+      }
+    };
+    const request = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
+    window.addEventListener('scroll', request, { passive: true });
+    window.addEventListener('resize', request, { passive: true });
+    // iOS will not seek a video that has never started; a muted play/pause
+    // on the first touch unlocks it
+    video?.addEventListener('loadedmetadata', request);
+    window.addEventListener('touchstart', () => {
+      if (video && video.paused) video.play().then(() => video.pause()).catch(() => {});
+    }, { once: true, passive: true });
+    frame();
+  });
+</script>

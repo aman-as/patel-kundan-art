@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
+import ContactButtons from '../components/ContactButtons.astro';
 import { site, contacts, formatPhone, wa, tel, waMessages } from '../data/site';
 ---
 
@@ -12,7 +13,9 @@ import { site, contacts, formatPhone, wa, tel, waMessages } from '../data/site';
     eyebrow="Contact"
     title="Call, or send a photograph on WhatsApp."
     lede="A photograph of what you need made is the quickest way to start a conversation."
-  />
+  >
+    <ContactButtons class="big" />
+  </PageHero>
 
   <section class="section">
     <div class="wrap cols">
@@ -35,12 +38,6 @@ import { site, contacts, formatPhone, wa, tel, waMessages } from '../data/site';
             </li>
           ))}
         </ul>
-
-        <h2 class="h">Email</h2>
-        <p><a class="plain" href={`mailto:${site.emails.primary}`}>{site.emails.primary}</a></p>
-
-        <h2 class="h">Instagram</h2>
-        <p><a class="plain" href={site.social.instagram} rel="noopener" target="_blank">@patelkundanart</a></p>
       </div>
 
       <div>
@@ -77,6 +74,7 @@ import { site, contacts, formatPhone, wa, tel, waMessages } from '../data/site';
 </BaseLayout>
 
 <style>
+  :global(.big .btn) { min-height: 58px; padding-inline: 1.9em; font-size: 1.05rem; }
   .cols { display: grid; gap: 2.75rem; }
   @media (min-width: 820px) { .cols { grid-template-columns: 1fr 1fr; gap: 4rem; } }
   .h {
