@@ -1,4 +1,8 @@
 ---
+/**
+ * Opening screen for the inner pages: very large type on black, revealed
+ * line by line, with a soft warm glow. Same voice as the home page opening.
+ */
 interface Props {
   eyebrow: string;
   title: string;
@@ -8,7 +12,8 @@ const { eyebrow, title, lede } = Astro.props;
 ---
 
 <section class="page-hero on-ink">
-  <div class="wrap inner">
+  <div class="glow" aria-hidden="true"></div>
+  <div class="wrap inner enter">
     <p class="eyebrow">{eyebrow}</p>
     <h1>{title}</h1>
     {lede && <p class="lede">{lede}</p>}
@@ -17,12 +22,31 @@ const { eyebrow, title, lede } = Astro.props;
 </section>
 
 <style>
-  .page-hero h1 { font-size: var(--step-3); max-width: 20ch; }
-  .inner {
-    padding-block: clamp(2.5rem, 2rem + 3.5vw, 4.5rem);
+  .page-hero {
+    position: relative;
+    overflow: hidden;
+    min-height: min(78svh, 760px);
     display: grid;
-    gap: 1rem;
+    align-items: end;
+  }
+  .glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 55% 60% at 85% 30%, rgba(214, 170, 48, 0.16), transparent 65%);
+  }
+  .inner {
+    position: relative;
+    padding-block: clamp(4rem, 3rem + 6vw, 7rem) clamp(3rem, 2rem + 4vw, 5rem);
+    display: grid;
+    gap: 1.15rem;
     justify-items: start;
   }
-  .inner :global(.lede) { max-width: 52ch; }
+  .page-hero h1 {
+    font-size: clamp(2.7rem, 1.4rem + 5.6vw, 6.4rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    max-width: 14ch;
+  }
+  .inner :global(.lede) { max-width: 50ch; color: var(--silver-soft); }
+  .inner :global(.btn-row) { margin-top: 0.5rem; }
 </style>

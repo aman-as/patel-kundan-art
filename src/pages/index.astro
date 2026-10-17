@@ -1,25 +1,20 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactButtons from '../components/ContactButtons.astro';
-import HeroCanvas from '../components/HeroCanvas.astro';
+import FilmHero from '../components/FilmHero.astro';
 import ScrollWords from '../components/ScrollWords.astro';
-import KundanMotif from '../components/KundanMotif.astro';
-import WordRail from '../components/WordRail.astro';
+import StepFilms from '../components/StepFilms.astro';
 import { site, url } from '../data/site';
 
-const makes = [
-  'Kundan', 'Jadau', 'Polki', 'Antique finish', 'Bridal sets',
-  'Chokers', 'Rani haar', 'Bangles', 'Earrings', 'Pendants', 'Rings',
-  'Silver jewellery',
-];
-
-const steps: [string, string][] = [
-  ['Design', 'You send a photograph, a drawing or a piece to copy.'],
-  ['Weight', 'We tell you what the piece needs before anything begins.'],
-  ['Gold in', 'Received, weighed and entered in the job register.'],
-  ['Ghaat', 'The gold framework is built by hand.'],
-  ['Kundan setting', 'The specialist stage, and the one we are known for.'],
-  ['Finish', 'Polished, weighed out, delivered against the same register.'],
+/* Clips live in public/video/. Add the file name here once a clip exists;
+   until then each step shows its dark still. */
+const steps = [
+  { name: 'Design', detail: 'You send a photograph, a drawing or a piece to copy.' },
+  { name: 'Weight', detail: 'We tell you what the piece needs before anything begins.' },
+  { name: 'Gold in', detail: 'Received, weighed and entered in the job register.' },
+  { name: 'Ghaat', detail: 'The gold framework is built by hand.' },
+  { name: 'Kundan setting', detail: 'The specialist stage, and the one we are known for.' },
+  { name: 'Finish', detail: 'Polished, weighed out, delivered against the same register.' },
 ];
 ---
 
@@ -28,102 +23,77 @@ const steps: [string, string][] = [
   description={site.description}
   isHome
 >
-  <!-- HERO -->
-  <section class="hero on-ink">
-    <HeroCanvas />
-    <div class="wrap hero__inner">
-      <div class="hero__text enter">
-        <p class="eyebrow">Kundan &amp; Jadau Jewellery Manufacturing</p>
-        <h1>You bring the design.<br />We make it.</h1>
-        <p class="lede">{site.subline}</p>
-        <ContactButtons class="hero__cta" waLabel="WhatsApp us" />
-        <p class="firststep">
-          Send one photograph. We will tell you what the piece will weigh and
-          what the work involves — before you commit anything.
+  <!-- 1. OPENING: Film A, "From sketch to gold" -->
+  <FilmHero wide="film-wide.mp4" tall="film-tall.mp4" poster="film-poster.jpg">
+    <p class="eyebrow">Kundan &amp; Jadau Jewellery Manufacturing · Karol Bagh</p>
+    <h1>You bring the design. We make it.</h1>
+    <p class="lede">{site.subline}</p>
+    <ContactButtons waLabel="WhatsApp us" />
+  </FilmHero>
+
+  <!-- 2. THE PROMISE -->
+  <ScrollWords lines={['Gold is our trade.', 'Kundan is our craft.', 'Every piece, by hand.']} />
+
+  <!-- 3. WHY KUNDAN, NOW -->
+  <section class="section on-ink why">
+    <div class="wrap">
+      <p class="eyebrow">Why kundan, now</p>
+      <h2 class="why__h" data-scrub>
+        <span data-scrub-text>Your customer still wants a set</span>
+        <span class="gild" data-scrub-text>that looks like a set.</span>
+      </h2>
+      <div class="why__cols">
+        <p class="lede">
+          With gold where it is, weight is what kills the sale. Kundan and polki
+          give a piece visual size without the gold weight behind it — which is
+          what a customer can still say yes to this season.
         </p>
+        <p class="lede why__gold">It is the reason this is the work we chose to be good at.</p>
       </div>
     </div>
   </section>
 
-  <!-- GIANT TYPE, PINNED: ends by flying through the word -->
-  <ScrollWords
-    lines={['Gold is our trade.', 'Kundan is our craft.', 'Every piece, by hand.']}
-    finale="Kundan."
-  />
+  <!-- 4. HOW A JOB RUNS: one clip per stage -->
+  <StepFilms steps={steps} eyebrow="How a job runs" title="From a photograph on WhatsApp to a finished piece.">
+    <p class="more"><a class="ulink" href={url('/workshop/')}>More about how we work →</a></p>
+  </StepFilms>
 
-  <!-- THE LIGHTWEIGHT ANGLE -->
-  <section class="section on-ink lightweight">
-    <div class="wrap wrap--narrow">
-      <p class="eyebrow">Why kundan, now</p>
-      <h2 class="scrub-h" data-scrub>
-        <span data-scrub-text>Your customer still wants a set</span>
-        <span class="gild" data-scrub-text>that looks like a set.</span>
-      </h2>
-      <p class="lede">
-        With gold where it is, weight is what kills the sale. Kundan and polki
-        give a piece visual size without the gold weight behind it — which is
-        what a customer can still say yes to this season.
-      </p>
-      <p class="lede">
-        It is the reason this is the work we chose to be good at.
-      </p>
-    </div>
-  </section>
-
-  <!-- THE FORK -->
-  <section class="section">
+  <!-- 5. TWO WAYS TO WORK WITH US -->
+  <section class="section fork-wrap">
     <div class="wrap">
       <p class="eyebrow">Who we work with</p>
       <h2>Two ways to work with us.</h2>
       <div class="fork">
         <a class="path reveal reveal--left" href={url('/for-jewellers/')}>
+          <span class="path__n">01</span>
           <h3>For jewellers &amp; businesses</h3>
           <p>
             Manufacturing and job work for retail jewellers. Your design stays yours,
             and every job is weighed in and weighed out against a written register.
           </p>
-          <span class="path__go">Trade &amp; job work →</span>
+          <span class="path__go">Trade &amp; job work <span aria-hidden="true">→</span></span>
         </a>
         <a class="path reveal reveal--right" href={url('/custom-orders/')}>
+          <span class="path__n">02</span>
           <h3>For individuals</h3>
           <p>
             One piece, made to order — and jewellery you already own, remade.
             The set from a wedding a generation ago that nobody wears, turned
             into something that gets worn.
           </p>
-          <span class="path__go">Custom orders &amp; remaking old gold →</span>
+          <span class="path__go">Custom orders &amp; remaking old gold <span aria-hidden="true">→</span></span>
         </a>
       </div>
     </div>
   </section>
 
-  <!-- WHAT WE MAKE: giant words sliding sideways -->
-  <WordRail
-    words={makes}
-    eyebrow="What we make"
-    title="Kundan is our specialisation.<br />Gold is our trade, and we work in silver too."
-  />
-  <section class="section on-ink makes-note">
-    <div class="wrap">
-      <p class="prose note">
-        Silver we take on properly, not as a favour — a kundan setting is the
-        same work whichever metal it sits in.
-      </p>
-      <p class="prose note">
-        Every piece is made to order, and each one is different. Send us a
-        photograph or a reference and we will tell you whether we can make it.
-      </p>
+  <!-- 6. SEND ONE PHOTOGRAPH: closes on the last frame of Film A -->
+  <section class="closing on-ink">
+    <div class="closing__still" aria-hidden="true">
+      <img src={url('/video/film-end.jpg')} alt="" loading="lazy" decoding="async" width="1600" height="900" />
     </div>
-  </section>
-
-  <!-- HOW A JOB RUNS: a kundan medallion drawn as you scroll -->
-  <KundanMotif steps={steps} eyebrow="How a job runs" title="From a photograph on WhatsApp to a finished piece.">
-    <p class="more"><a class="ulink" href={url('/workshop/')}>More about how we work →</a></p>
-  </KundanMotif>
-
-  <!-- CLOSING -->
-  <section class="section on-ink closing">
-    <div class="wrap wrap--narrow">
+    <div class="wrap closing__copy">
+      <p class="eyebrow">Start with one photograph</p>
       <h2>Send one photograph of what you need made.</h2>
       <p class="lede">
         We will tell you what it will weigh, what the work involves, and honestly
@@ -135,99 +105,116 @@ const steps: [string, string][] = [
 </BaseLayout>
 
 <style>
-  .hero {
-    position: relative;
-    overflow: hidden;
+  /* ---- why kundan ---- */
+  .why { border-top: 1px solid var(--ink-line); }
+  .why__h {
+    font-size: clamp(2.6rem, 1.4rem + 5.6vw, 6.4rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    max-width: 14ch;
+    margin-top: 1.25rem;
+  }
+  .why__cols {
     display: grid;
-    align-items: center;
+    gap: 1.25rem;
+    margin-top: clamp(2rem, 1.5rem + 2vw, 3.5rem);
   }
-  @media (min-width: 900px) { .hero { min-height: min(70vh, 600px); } }
-  /* Scrim between the dust and the words. It must sit ABOVE the canvas
-     (z-index 1) — as a z-index:0 sibling the canvas simply painted over it.
-     The linear pass darkens the text column; the radial keeps the middle of
-     the mark from washing out the headline. */
-  .hero::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    background: linear-gradient(90deg,
-      rgba(10, 9, 11, 0.9) 0%, rgba(10, 9, 11, 0.6) 26%,
-      rgba(10, 9, 11, 0.24) 44%, transparent 62%);
+  @media (min-width: 900px) {
+    .why__cols { grid-template-columns: 1.3fr 1fr; gap: 4rem; align-items: end; }
   }
-  /* Phones: the mark sits upper-right, beside the headline, so the scrim
-     holds the left text column and releases just past halfway. */
-  @media (max-width: 899px) {
-    .hero::after {
-      background: linear-gradient(90deg,
-        rgba(10, 9, 11, 0.96) 0%, rgba(10, 9, 11, 0.92) 47%,
-        rgba(10, 9, 11, 0.3) 61%, transparent 80%);
-    }
-  }
-  .hero__inner { position: relative; z-index: 2;
-    /* The mark now sits to the RIGHT at every width, so the text no longer
-       needs to clear anything above it. */
-    padding-block: clamp(2.25rem, 1.75rem + 2.5vw, 3.25rem);
-    display: grid;
-    gap: 2rem;
-    align-items: center;
-  }
-  .hero__text { display: grid; gap: 1.15rem; justify-items: start; }
-  .hero h1 { max-width: 15ch; }
-  .hero .lede { max-width: 46ch; }
-  .hero__cta { margin-top: 0.6rem; }
+  .why__gold { color: var(--brass-soft) !important; }
 
-  .firststep {
-    max-width: 44ch;
-    margin-top: 0.35rem;
-    font-size: 0.95rem;
-    line-height: 1.55;
-    color: var(--silver-soft);
-  }
-  .lightweight { border-top: 1px solid var(--ink-line); }
-  .lightweight h2 { margin-bottom: 1.15rem; }
-  .scrub-h { font-size: var(--step-4); max-width: 18ch; }
-  .lightweight .lede + .lede { margin-top: 1rem; color: var(--brass-soft); }
+  .more { margin-top: 1.5rem; }
+  .more a { font-size: 0.95rem; color: var(--brass-soft); }
 
-  .more { margin-top: 2.25rem; }
-  .more a {
-    font-size: 0.95rem;
-    text-decoration: none;
-    border-bottom: 1px solid currentColor;
-    padding-bottom: 2px;
-  }
-  .on-ink .more a { color: var(--brass-soft); }
-
+  /* ---- the fork ---- */
+  .fork-wrap { background: var(--ivory); }
+  .fork-wrap h2 { font-size: clamp(2.2rem, 1.5rem + 3vw, 4rem); margin-top: 0.75rem; }
   .fork {
     display: grid;
     gap: 1.25rem;
-    margin-top: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem);
+    margin-top: clamp(2rem, 1.5rem + 2vw, 3.5rem);
   }
-  @media (min-width: 780px) { .fork { grid-template-columns: 1fr 1fr; gap: 1.75rem; } }
+  @media (min-width: 820px) { .fork { grid-template-columns: 1fr 1fr; gap: 1.5rem; } }
   .path {
-    display: block;
-    padding: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 0.9rem;
+    min-height: clamp(18rem, 14rem + 12vw, 26rem);
+    padding: clamp(1.75rem, 1.2rem + 2vw, 3rem);
+    background: #fff;
     border: 1px solid var(--ivory-line);
     border-radius: var(--radius);
-    background: #fff;
     text-decoration: none;
-    transition: border-color 0.2s ease, transform 0.2s ease;
+    overflow: hidden;
+    transition: border-color 0.3s ease, transform 0.5s cubic-bezier(0.22, 0.8, 0.24, 1), box-shadow 0.5s ease;
   }
-  .path:hover { border-color: var(--brass); transform: translateY(-2px); }
-  .path p { color: var(--text-muted); margin-top: 0.7rem; }
-  .path__go {
-    display: inline-block;
-    margin-top: 1.1rem;
-    color: var(--brass);
-    font-size: 0.9rem;
-    font-weight: 500;
+  .path::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--brass), #e9cd86);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.6s cubic-bezier(0.22, 0.8, 0.24, 1);
   }
+  .path:hover { border-color: var(--ivory-line); transform: translateY(-4px); box-shadow: 0 30px 60px -35px rgba(10, 9, 11, 0.35); }
+  .path:hover::after { transform: scaleX(1); }
+  .path__n { font-family: var(--font-display); font-size: 1.1rem; color: var(--brass); }
+  .path h3 { font-size: clamp(1.8rem, 1.3rem + 1.8vw, 2.8rem); line-height: 1.05; }
+  .path p { color: var(--text-muted); max-width: 42ch; }
+  .path__go { margin-top: auto; padding-top: 1rem; color: var(--brass); font-size: 0.92rem; font-weight: 500; }
 
-  .note { margin-top: 1.25rem; color: var(--text-on-ink-muted); }
-  .makes-note { padding-top: 0; }
-
-
-  .closing { text-align: left; }
-  .closing__cta { margin-top: 1.75rem; }
+  /* ---- closing ---- */
+  .closing {
+    position: relative;
+    overflow: hidden;
+    min-height: 100svh;
+    display: grid;
+    align-items: center;
+    border-top: 1px solid var(--ink-line);
+  }
+  .closing__still {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 55% at 75% 50%, rgba(214, 170, 48, 0.2), transparent 65%),
+      var(--ink);
+  }
+  .closing__still img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 50%;
+    opacity: 0.32;
+  }
+  .closing__still::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(10, 9, 11, 0.85), rgba(10, 9, 11, 0.2) 75%);
+  }
+  @media (min-width: 900px) {
+    .closing__still img { left: 28%; width: 72%; opacity: 0.6; }
+  }
+  .closing__copy {
+    position: relative;
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+    padding-block: var(--section);
+  }
+  .closing h2 {
+    font-size: clamp(2.6rem, 1.4rem + 5.4vw, 6.2rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    max-width: 13ch;
+  }
+  .closing .lede { max-width: 46ch; }
+  .closing__cta { margin-top: 0.75rem; }
+  .closing__cta :global(.btn) { min-height: 58px; padding-inline: 1.9em; font-size: 1.05rem; }
 </style>

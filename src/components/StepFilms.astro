@@ -1,0 +1,273 @@
+---
+/**
+ * STEP FILMS — "How a job runs", one clip per stage.
+ *
+ * The stage pins. A large panel shows the clip for the current step (clips
+ * B1–B6, short muted loops) with the step's name, words and a counter beside
+ * it. Scrolling moves to the next step: its clip fades in and starts, the
+ * last one pauses, and a gold line fills.
+ *
+ * A step with no clip yet shows a dark still with its number, so the section
+ * can go live before every clip exists. With reduced motion or no JavaScript
+ * the steps are an ordinary list, each with its still or clip's first frame.
+ */
+import { url } from '../data/site';
+
+interface Props {
+  steps: { name: string; detail: string; clip?: string }[];
+  eyebrow: string;
+  title: string;
+}
+const { steps, eyebrow, title } = Astro.props;
+const total = String(steps.length).padStart(2, '0');
+const n = (i: number) => String(i + 1).padStart(2, '0');
+// with no clips at all, the panel becomes pure type: a giant numeral per step
+const typeOnly = steps.every((s) => !s.clip);
+---
+
+<section class:list={['sf on-ink', { 'sf--type': typeOnly }]} data-steps>
+  <div class="sf__stage">
+    <div class="wrap sf__grid">
+      <div class="sf__panel">
+        {steps.map((s, i) => (
+          <figure class="sf__clip" data-i={i}>
+            {s.clip ? (
+              <video muted loop playsinline preload="none" data-src={url(`/video/${s.clip}`)} aria-hidden="true"></video>
+            ) : (
+              <div class="sf__still" aria-hidden="true"><span>{n(i)}</span></div>
+            )}
+          </figure>
+        ))}
+        <span class="sf__frame" aria-hidden="true"></span>
+      </div>
+
+      <div class="sf__text">
+        <p class="eyebrow">{eyebrow}</p>
+        <h2>{title}</h2>
+        <p class="sf__count" aria-hidden="true"><b data-steps-count>01</b><span>/ {total}</span></p>
+        <ol class="sf__list">
+          {steps.map((s, i) => (
+            <li>
+              <span class="sf__n">{n(i)}</span>
+              <h3>{s.name}</h3>
+              <p>{s.detail}</p>
+            </li>
+          ))}
+        </ol>
+        <span class="sf__bar" aria-hidden="true"><span></span></span>
+        <slot />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sf { padding-block: var(--section); border-top: 1px solid var(--ink-line); }
+  .sf__grid { display: grid; gap: 2rem; }
+  .sf__panel { display: grid; gap: 1rem; }
+  .sf__clip { aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--radius); background: #000; }
+  .sf__clip video { width: 100%; height: 100%; object-fit: cover; }
+  .sf__still {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(ellipse 60% 70% at 60% 55%, rgba(214, 170, 48, 0.16), transparent 70%),
+      #0e0d10;
+  }
+  .sf__still span {
+    font-family: var(--font-display);
+    font-size: clamp(5rem, 3rem + 10vw, 11rem);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(233, 205, 134, 0.45);
+  }
+  .sf__frame, .sf__count, .sf__bar { display: none; }
+  .sf__list { list-style: none; margin: 1.5rem 0 0; padding: 0; display: grid; gap: 1.2rem; }
+  .sf__n { display: block; font-size: 0.75rem; letter-spacing: 0.16em; color: var(--brass-soft); }
+  .sf__list h3 { font-size: var(--step-2); margin-top: 0.2rem; }
+  .sf__list p { color: var(--text-on-ink-muted); margin-top: 0.3rem; max-width: 40ch; }
+
+  /* ---------------- pinned, scroll-driven version ---------------- */
+  :global(.story) .sf { height: 640svh; padding: 0; }
+  :global(.story) .sf__stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding-block: calc(var(--hdr, 60px) + 1rem) calc(var(--sticky-bar) + 1rem);
+  }
+  @media (min-width: 900px) {
+    :global(.story) .sf__stage { padding-bottom: 2rem; }
+    :global(.story) .sf__grid {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+      gap: clamp(2.5rem, 2rem + 3vw, 5rem);
+      align-items: center;
+    }
+  }
+  :global(.story) .sf__panel {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    max-height: 70svh;
+  }
+  :global(.story) .sf__clip {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: scale(1.04);
+    transition: opacity 0.7s ease, transform 1.2s cubic-bezier(0.22, 0.8, 0.24, 1);
+  }
+  :global(.story) .sf__clip.is-current { opacity: 1; transform: none; }
+  :global(.story) .sf__frame {
+    display: block;
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(233, 205, 134, 0.18);
+    border-radius: var(--radius);
+    pointer-events: none;
+  }
+  :global(.story) .sf__count {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    font-family: var(--font-display);
+    color: var(--silver-soft);
+    letter-spacing: 0.08em;
+  }
+  :global(.story) .sf__count b {
+    font-weight: 500;
+    font-size: clamp(2.8rem, 2rem + 3vw, 5rem);
+    line-height: 0.9;
+    color: var(--brass-soft);
+    letter-spacing: 0;
+  }
+  :global(.story) .sf__list { position: relative; display: block; min-height: 7.5em; margin-top: 1rem; }
+  :global(.story) .sf__list li {
+    position: absolute;
+    inset: 0 0 auto 0;
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+    transition: opacity 0.45s ease, transform 0.55s cubic-bezier(0.22, 0.8, 0.24, 1);
+  }
+  :global(.story) .sf__list li.is-current { opacity: 1; transform: none; transition-delay: 0.1s; }
+  :global(.story) .sf__list .sf__n { display: none; }
+  :global(.story) .sf__bar {
+    display: block;
+    height: 1px;
+    max-width: 280px;
+    margin-top: 1.25rem;
+    background: var(--ink-line);
+  }
+  :global(.story) .sf__bar span {
+    display: block;
+    height: 100%;
+    background: var(--brass-soft);
+    transform: scaleX(var(--p, 0));
+    transform-origin: left;
+  }
+
+  /* type-only: no box, just a very large outlined numeral */
+  .sf--type .sf__clip, .sf--type .sf__still { background: transparent; }
+  .sf--type .sf__clip { aspect-ratio: auto; }
+  .sf--type .sf__still { justify-items: center; }
+  .sf--type .sf__still span {
+    font-size: clamp(9rem, 5rem + 18vw, 24rem);
+    letter-spacing: -0.04em;
+    -webkit-text-stroke: 1.5px rgba(233, 205, 134, 0.75);
+  }
+  :global(.story) .sf--type { height: 520svh; }
+  :global(.story) .sf--type .sf__frame, :global(.story) .sf--type .sf__count { display: none; }
+  :global(.story) .sf--type .sf__panel { aspect-ratio: auto; height: 62svh; width: 100%; max-height: none; }
+  :global(.story) .sf--type .sf__still span { font-size: min(52svh, 30vw); }
+  :global(.story) .sf--type .sf__clip { transform: translate3d(0, 4%, 0); transition: opacity 0.3s ease, transform 0.9s cubic-bezier(0.22, 0.8, 0.24, 1); }
+  :global(.story) .sf--type .sf__clip.is-current { transform: none; transition-delay: 0.25s; }
+
+  /* phones: the clip on top (its middle square), the words under it */
+  @media (max-width: 899px) {
+    :global(.story) .sf__grid { gap: 1rem; }
+    :global(.story) .sf__panel {
+      aspect-ratio: 1;
+      width: min(100%, calc(100svh - var(--hdr, 60px) - var(--sticky-bar) - 270px));
+      min-width: 200px;
+      margin-inline: auto;
+    }
+    :global(.story) .sf--type .sf__panel { aspect-ratio: auto; height: 30svh; width: 100%; }
+    :global(.story) .sf--type .sf__still span { font-size: min(30svh, 15rem); }
+    :global(.story) .sf .eyebrow, :global(.story) .sf h2 { display: none; }
+    :global(.story) .sf__count { margin-top: 0; }
+    :global(.story) .sf__count b { font-size: 2.4rem; }
+    :global(.story) .sf__list { min-height: 7em; margin-top: 0.4rem; }
+    :global(.story) .sf__list h3 { font-size: var(--step-1); }
+    :global(.story) .sf__list p { font-size: 0.95rem; }
+    :global(.story) .sf__bar { margin-top: 0.5rem; }
+    :global(.story) .sf .more { display: none; }
+  }
+</style>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const blocks = Array.from(document.querySelectorAll<HTMLElement>('[data-steps]'));
+
+  if (!reduce && blocks.length) {
+    const root = document.documentElement;
+    root.classList.add('story');
+    const clamp = (v: number) => Math.min(1, Math.max(0, v));
+    const header = document.querySelector<HTMLElement>('header');
+    const setHdr = () => { if (header) root.style.setProperty('--hdr', `${header.offsetHeight}px`); };
+
+    const items = blocks.map((el) => ({
+      el,
+      clips: Array.from(el.querySelectorAll<HTMLElement>('.sf__clip')),
+      steps: Array.from(el.querySelectorAll<HTMLElement>('.sf__list li')),
+      count: el.querySelector<HTMLElement>('[data-steps-count]'),
+      bar: el.querySelector<HTMLElement>('.sf__bar span'),
+      cur: -1,
+    }));
+
+    // a clip loads only when its step is close, and plays only while current
+    const load = (fig: HTMLElement | undefined) => {
+      const v = fig?.querySelector<HTMLVideoElement>('video');
+      if (v && !v.src && v.dataset.src) { v.src = v.dataset.src; v.preload = 'auto'; }
+      return v;
+    };
+
+    let ticking = false;
+    const frame = () => {
+      ticking = false;
+      const vh = window.innerHeight;
+      items.forEach((s) => {
+        const r = s.el.getBoundingClientRect();
+        if (r.bottom < -vh || r.top > vh * 2) {
+          if (s.cur !== -1) { s.clips.forEach((c) => c.querySelector('video')?.pause()); s.cur = -1; }
+          return;
+        }
+        const p = clamp(-r.top / Math.max(r.height - vh, 1));
+        if (s.bar) s.bar.style.setProperty('--p', p.toFixed(3));
+        const n = s.steps.length;
+        const cur = Math.min(n - 1, Math.floor(p * n));
+        load(s.clips[cur]); load(s.clips[cur + 1]);
+        if (cur === s.cur) return;
+        s.cur = cur;
+        s.clips.forEach((c, i) => {
+          c.classList.toggle('is-current', i === cur);
+          const v = c.querySelector<HTMLVideoElement>('video');
+          if (!v) return;
+          if (i === cur) v.play().catch(() => {});
+          else v.pause();
+        });
+        s.steps.forEach((li, i) => li.classList.toggle('is-current', i === cur));
+        if (s.count) s.count.textContent = String(cur + 1).padStart(2, '0');
+      });
+    };
+    const request = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
+    window.addEventListener('scroll', request, { passive: true });
+    window.addEventListener('resize', () => { setHdr(); request(); }, { passive: true });
+    setHdr();
+    frame();
+  }
+</script>

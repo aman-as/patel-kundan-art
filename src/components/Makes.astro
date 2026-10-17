@@ -1,0 +1,54 @@
+---
+/**
+ * What we make — set as an index: large serif names on hairlines, two or
+ * three columns, each line rising in turn as the list scrolls into view.
+ */
+interface Props {
+  title?: string;
+  class?: string;
+}
+const { title = 'What we make', class: cls = '' } = Astro.props;
+const makes = [
+  'Kundan', 'Jadau', 'Polki', 'Antique finish', 'Bridal sets', 'Chokers',
+  'Rani haar', 'Bangles', 'Earrings', 'Pendants', 'Rings', 'Silver jewellery',
+];
+---
+
+<section class={`section makes ${cls}`}>
+  <div class="wrap">
+    <p class="eyebrow">{title}</p>
+    <ul class="makes__list stagger reveal">
+      {makes.map((m, i) => <li style={`--i:${i}`}><span>{String(i + 1).padStart(2, '0')}</span>{m}</li>)}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .makes__list {
+    list-style: none;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: clamp(1.25rem, 1rem + 2vw, 3rem);
+  }
+  @media (min-width: 900px) { .makes__list { grid-template-columns: repeat(3, 1fr); } }
+  .makes__list li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding-block: 0.9rem;
+    border-top: 1px solid var(--ivory-line);
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 1rem + 1vw, 1.9rem);
+    line-height: 1.15;
+  }
+  .makes__list li span {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--brass);
+  }
+  :global(.on-ink) .makes__list li { border-top-color: var(--ink-line); }
+  :global(.on-ink) .makes__list li span { color: var(--brass-soft); }
+</style>
