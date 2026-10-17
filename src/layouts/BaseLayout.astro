@@ -7,15 +7,19 @@ import StickyContactBar from '../components/StickyContactBar.astro';
 import SiteMotion from '../components/SiteMotion.astro';
 import ScrollStory from '../components/ScrollStory.astro';
 import { site, fullAddress, contacts, formatPhone, url } from '../data/site';
+import garamond from '../assets/fonts/eb-garamond-latin.woff2?url';
+import inter from '../assets/fonts/inter-latin.woff2?url';
 
 interface Props {
   title: string;
   description: string;
   /** Set on the page that should carry the LocalBusiness schema (home only). */
   isHome?: boolean;
+  /** Keeps the page out of Google (the not-found page). */
+  noindex?: boolean;
 }
 
-const { title, description, isHome = false } = Astro.props;
+const { title, description, isHome = false, noindex = false } = Astro.props;
 // every page is built as a folder, so its address ends in a slash
 const canonical = new URL(Astro.url.pathname.replace(/\/?$/, '/'), Astro.site).href;
 /* Derived from astro.config, so the schema follows the site when the domain
@@ -71,7 +75,7 @@ if (site.foundedYear) schema.foundingDate = String(site.foundedYear);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.brand} />
@@ -80,26 +84,31 @@ if (site.foundedYear) schema.foundingDate = String(site.foundedYear);
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content="en_IN" />
     <meta property="og:image" content={shareImage} />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="720" />
     <meta name="twitter:card" content="summary_large_image" />
 
     <meta name="theme-color" content="#0A090B" />
     <meta name="format-detection" content="telephone=yes" />
     <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
     <link rel="sitemap" href={url('/sitemap-index.xml')} />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap"
-    />
+    {/* the two font files (global.css) start loading with the page */}
+    <link rel="preload" href={garamond} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={inter} as="font" type="font/woff2" crossorigin />
 
     {isHome && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
 
     {/* Marks the document as script-capable before first paint, so the
         scroll fade-in can hide sections without ever hiding them from a
         visitor (or a crawler) that has no JavaScript. */}
-    <script is:inline>document.documentElement.classList.add('js');</script>
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      // the scroll-story layout is set before the first paint, so nothing
+      // jumps when the page scripts arrive a moment later
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('story');
+    </script>
   </head>
 
   <body>

@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ContactButtons from '../components/ContactButtons.astro';
+import { url } from '../data/site';
+---
+
+<BaseLayout
+  title="Page not found — Patel Kundan Art"
+  description="This page could not be found. Call or WhatsApp Patel Kundan Art, kundan jewellery makers in Karol Bagh, Delhi."
+  noindex
+>
+  <PageHero
+    eyebrow="Page not found"
+    title="This page is not here."
+    lede="The link may be old or mistyped. The workshop is still one call or one WhatsApp away."
+  >
+    <ContactButtons />
+    <p class="home"><a href={url('/')}>Go to the home page →</a></p>
+  </PageHero>
+</BaseLayout>
+
+<style>
+  .home { margin-top: 0.5rem; }
+  .home a {
+    color: var(--brass-soft);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(233, 205, 134, 0.35);
+  }
+  .home a:hover { border-bottom-color: var(--brass-soft); }
+</style>

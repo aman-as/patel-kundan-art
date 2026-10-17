@@ -21,7 +21,7 @@ const current = (href: string) => (path === href ? 'page' : undefined);
 <header class="site-header">
   <div class="wrap bar">
     <a class="brand" href={url('/')} aria-label={`${site.brand}, home`}>
-      <Mark size="34px" />
+      <Mark size="34px" decorative />
       <span class="brand__name">{site.brand}</span>
     </a>
 
@@ -54,12 +54,23 @@ const current = (href: string) => (path === href ? 'page' : undefined);
 
 <style>
   .site-header {
-    background: rgba(10, 9, 11, 0.92);
     color: var(--text-on-ink);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  /* The tint and blur sit on a layer behind the bar, not on the header
+     itself: a backdrop-filter on the header would make it the box the
+     fixed phone menu is measured against, squeezing the menu into 60px. */
+  .site-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgba(10, 9, 11, 0.92);
     backdrop-filter: saturate(140%) blur(14px);
     -webkit-backdrop-filter: saturate(140%) blur(14px);
+    transition: background-color 0.35s ease;
   }
+  :global(.site-header.is-stuck)::before { background: rgba(20, 16, 13, 0.9); }
   .bar {
     display: flex;
     align-items: center;
@@ -142,13 +153,16 @@ const current = (href: string) => (path === href ? 'page' : undefined);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    /* a sideways phone is shorter than the menu: it scrolls on its own */
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
   .sheet ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
   .sheet a {
     display: block;
     padding-block: 0.6rem;
     font-family: var(--font-display);
-    font-size: clamp(2rem, 1.4rem + 3vw, 2.8rem);
+    font-size: clamp(1.6rem, min(1.4rem + 3vw, 7svh), 2.8rem);
     line-height: 1.1;
     color: var(--text-on-ink);
     text-decoration: none;
@@ -158,6 +172,10 @@ const current = (href: string) => (path === href ? 'page' : undefined);
   }
   .sheet a[aria-current='page'] { color: var(--brass-soft); }
   .sheet__addr { font-size: 0.85rem; color: var(--text-on-ink-muted); }
+  /* the page behind an open menu stays still */
+  @media (max-width: 899px) {
+    :global(html:has(details.mob[open])) { overflow: hidden; }
+  }
   @keyframes sheetIn {
     from { opacity: 0; transform: translate3d(0, 14px, 0); }
     to { opacity: 1; transform: none; }
@@ -180,3 +198,14 @@ const current = (href: string) => (path === href ? 'page' : undefined);
     .call__long { display: inline; }
   }
 </style>
+
+<script>
+  // Escape closes the phone menu and hands focus back to its button
+  const menu = document.querySelector<HTMLDetailsElement>('details.mob');
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && menu?.open) {
+      menu.open = false;
+      menu.querySelector('summary')?.focus();
+    }
+  });
+</script>

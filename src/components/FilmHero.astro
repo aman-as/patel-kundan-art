@@ -80,6 +80,14 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
   .film__shade {
     background: linear-gradient(to top, rgba(10, 9, 11, 0.92) 0%, rgba(10, 9, 11, 0.5) 38%, transparent 70%);
   }
+  /* on a wide screen the words sit on the left, over the bright paper */
+  @media (min-width: 800px) {
+    .film__shade {
+      background:
+        linear-gradient(to top, rgba(10, 9, 11, 0.92) 0%, rgba(10, 9, 11, 0.5) 38%, transparent 70%),
+        linear-gradient(to right, rgba(10, 9, 11, 0.62) 0%, rgba(10, 9, 11, 0.28) 42%, transparent 66%);
+    }
+  }
   /* on a phone the words fill the lower two thirds of the screen */
   @media (max-width: 799px) {
     .film__shade {
@@ -95,7 +103,9 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
     padding-block: 4rem clamp(3rem, 2rem + 6svh, 6rem);
   }
   .film__copy :global(h1) {
-    font-size: clamp(2.9rem, 1.6rem + 6.4vw, 7rem);
+    /* sized by the screen's height too, so a short or sideways phone still
+       shows the buttons */
+    font-size: clamp(2.9rem, min(1.6rem + 6.4vw, 14svh), 7rem);
     line-height: 0.98;
     letter-spacing: -0.02em;
     max-width: 12ch;
@@ -109,8 +119,10 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
 
   /* without the scroll story the statements are a plain list under the film */
   .film__lines {
+    position: relative;
+    z-index: 1;
     list-style: none;
-    padding-block: 2.5rem;
+    padding: 2.5rem 0;
     display: grid;
     gap: 0.3rem;
     font-family: var(--font-display);
@@ -156,7 +168,9 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
   }
   :global(.story) .film__lines li {
     position: absolute;
-    inset-inline: var(--gutter);
+    /* the list already sits on the page's margins, so the words line up
+       with the headline */
+    inset-inline: 0;
     bottom: calc(var(--sticky-bar) + 3rem);
     max-width: 11ch;
     color: #f4ead2;
@@ -196,6 +210,18 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
   }
   @media (min-width: 800px) {
     :global(.story) .film__hint { bottom: 2rem; }
+  }
+
+  /* very short screens: the eyebrow goes, and on a sideways phone the lede,
+     so the headline and both buttons still fit above the call bar */
+  @media (max-height: 620px) and (max-width: 799px) {
+    .film__copy :global(.eyebrow) { display: none; }
+  }
+  @media (max-height: 500px) {
+    .film__copy :global(.eyebrow), .film__copy :global(.lede) { display: none; }
+    .film__copy { gap: 0.8rem; padding-top: 1rem; }
+    .film__copy :global(h1) { font-size: clamp(2.2rem, 13svh, 3.4rem); }
+    :global(.story) .film__copy { padding-bottom: calc(var(--sticky-bar) + 0.75rem); }
   }
 </style>
 
