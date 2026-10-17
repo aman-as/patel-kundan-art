@@ -1,17 +1,11 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactButtons from '../components/ContactButtons.astro';
 import HeroCanvas from '../components/HeroCanvas.astro';
-import Showcase from '../components/Showcase.astro';
-import Reel from '../components/Reel.astro';
+import ScrollWords from '../components/ScrollWords.astro';
+import KundanMotif from '../components/KundanMotif.astro';
+import WordRail from '../components/WordRail.astro';
 import { site, url } from '../data/site';
-
-const featured = (await getCollection('products', (p) => p.data.featured)).sort(
-  (a, b) => a.data.order - b.data.order
-);
-
-const hero = featured.find((p) => p.id === 'choker-peacock') ?? featured[0];
 
 const makes = [
   'Kundan', 'Jadau', 'Polki', 'Antique finish', 'Bridal sets',
@@ -19,7 +13,7 @@ const makes = [
   'Silver jewellery',
 ];
 
-const steps = [
+const steps: [string, string][] = [
   ['Design', 'You send a photograph, a drawing or a piece to copy.'],
   ['Weight', 'We tell you what the piece needs before anything begins.'],
   ['Gold in', 'Received, weighed and entered in the job register.'],
@@ -51,22 +45,11 @@ const steps = [
     </div>
   </section>
 
-  <!-- SHOWCASE: one piece, pinned, pulling back from the centre stone -->
-  <Showcase
-    image={hero.data.image}
-    alt={hero.data.alt}
-    focus="50% 19%"
-    lines={[
-      'Every stone, set by hand.',
-      'Every frame, built at our bench.',
-      'Kundan, made in Karol Bagh.',
-    ]}
+  <!-- GIANT TYPE, PINNED: ends by flying through the word -->
+  <ScrollWords
+    lines={['Gold is our trade.', 'Kundan is our craft.', 'Every piece, by hand.']}
+    finale="Kundan."
   />
-
-  <!-- SELECTED WORK -->
-  <Reel items={featured} eyebrow="Selected work" title="Made by hand, at our own bench.">
-    <p class="more"><a class="ulink" href={url('/our-work/')}>See more of our work →</a></p>
-  </Reel>
 
   <!-- THE LIGHTWEIGHT ANGLE -->
   <section class="section on-ink lightweight">
@@ -114,50 +97,29 @@ const steps = [
     </div>
   </section>
 
-  <!-- WHAT WE MAKE -->
-  <section class="section on-sunk">
+  <!-- WHAT WE MAKE: giant words sliding sideways -->
+  <WordRail
+    words={makes}
+    eyebrow="What we make"
+    title="Kundan is our specialisation.<br />Gold is our trade, and we work in silver too."
+  />
+  <section class="section on-ink makes-note">
     <div class="wrap">
-      <p class="eyebrow">What we make</p>
-      <h2>Kundan is our specialisation.<br />Gold is our trade — and we work in silver too.</h2>
-      <ul class="tags stagger reveal">
-        {makes.map((m, i) => <li style={`--i:${i}`}>{m}</li>)}
-      </ul>
       <p class="prose note">
         Silver we take on properly, not as a favour — a kundan setting is the
         same work whichever metal it sits in.
       </p>
       <p class="prose note">
-        Every piece is made to order. Because each one is different, only a small
-        part of what we have made is shown here — send us a reference and we will
-        tell you whether we can make it.
+        Every piece is made to order, and each one is different. Send us a
+        photograph or a reference and we will tell you whether we can make it.
       </p>
     </div>
   </section>
 
-  <!-- HOW A JOB RUNS -->
-  <section class="section">
-    <div class="wrap">
-      <div class="storyline">
-        <div class="storyline__pin">
-          <p class="eyebrow">How a job runs</p>
-          <h2>From a photograph on WhatsApp to a finished piece.</h2>
-          <p class="storyline__count" aria-hidden="true">
-            <b data-thread-count="home">01</b><span>/ {String(steps.length).padStart(2, '0')}</span>
-          </p>
-          <p class="more"><a class="ulink" href={url('/workshop/')}>More about how we work →</a></p>
-        </div>
-        <ol class="thread" data-thread="home">
-          {steps.map(([name, detail], i) => (
-            <li>
-              <span class="thread__n">{String(i + 1).padStart(2, '0')}</span>
-              <h3>{name}</h3>
-              <p>{detail}</p>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </div>
-  </section>
+  <!-- HOW A JOB RUNS: a kundan medallion drawn as you scroll -->
+  <KundanMotif steps={steps} eyebrow="How a job runs" title="From a photograph on WhatsApp to a finished piece.">
+    <p class="more"><a class="ulink" href={url('/workshop/')}>More about how we work →</a></p>
+  </KundanMotif>
 
   <!-- CLOSING -->
   <section class="section on-ink closing">
@@ -228,7 +190,6 @@ const steps = [
   .scrub-h { font-size: var(--step-4); max-width: 18ch; }
   .lightweight .lede + .lede { margin-top: 1rem; color: var(--brass-soft); }
 
-  .work h2 { margin-bottom: clamp(2rem, 1.5rem + 2vw, 3rem); }
   .more { margin-top: 2.25rem; }
   .more a {
     font-size: 0.95rem;
@@ -263,22 +224,8 @@ const steps = [
     font-weight: 500;
   }
 
-  .tags {
-    list-style: none;
-    margin: 1.75rem 0 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  .tags li {
-    padding: 0.45em 0.95em;
-    border: 1px solid var(--ivory-line);
-    border-radius: 999px;
-    background: var(--ivory);
-    font-size: 0.9rem;
-  }
-  .note { margin-top: 1.75rem; color: var(--text-muted); }
+  .note { margin-top: 1.25rem; color: var(--text-on-ink-muted); }
+  .makes-note { padding-top: 0; }
 
 
   .closing { text-align: left; }

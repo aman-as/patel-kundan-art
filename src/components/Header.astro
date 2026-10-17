@@ -3,10 +3,9 @@ import Mark from './Mark.astro';
 import { site, url } from '../data/site';
 
 const nav = [
-  { href: url('/our-work/'), label: 'Our Work' },
-  { href: url('/for-jewellers/'), label: 'For Jewellers' },
-  { href: url('/custom-orders/'), label: 'Custom Orders' },
   { href: url('/workshop/'), label: 'The Workshop' },
+  { href: url('/custom-orders/'), label: 'Custom Orders' },
+  { href: url('/for-jewellers/'), label: 'For Jewellers' },
   { href: url('/contact/'), label: 'Contact' },
 ];
 const path = Astro.url.pathname;
@@ -37,7 +36,7 @@ const path = Astro.url.pathname;
 </header>
 
 <style>
-  /* No hamburger, no JavaScript. Five links scroll horizontally on small
+  /* No hamburger, no JavaScript. Four links scroll horizontally on small
      screens — fewer taps than a menu and nothing to break. */
   .site-header {
     background: var(--ink);
