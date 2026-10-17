@@ -163,6 +163,14 @@ const current = (href: string) => (path === href ? 'page' : undefined);
     to { opacity: 1; transform: none; }
   }
 
+  /* the smallest phones (320px wide) */
+  @media (max-width: 359px) {
+    .bar { gap: 0.6rem; }
+    .brand { gap: 0.45rem; }
+    .brand__name { font-size: 1.05rem; }
+    .call { padding: 0 0.8rem; }
+  }
+
   @media (min-width: 900px) {
     .bar { height: 72px; gap: 2.5rem; }
     .brand__name { font-size: 1.35rem; }

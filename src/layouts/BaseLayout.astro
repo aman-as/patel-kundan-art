@@ -16,10 +16,14 @@ interface Props {
 }
 
 const { title, description, isHome = false } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
+// every page is built as a folder, so its address ends in a slash
+const canonical = new URL(Astro.url.pathname.replace(/\/?$/, '/'), Astro.site).href;
 /* Derived from astro.config, so the schema follows the site when the domain
    changes instead of pointing at a URL that does not exist yet. */
-const homeUrl = new URL(import.meta.env.BASE_URL, Astro.site).href;
+const homeUrl = new URL(import.meta.env.BASE_URL.replace(/\/?$/, '/'), Astro.site).href;
+/* The picture WhatsApp and Google show when a link to the site is shared:
+   the opening frame of the film (a sketch, not a finished piece). */
+const shareImage = new URL(url('/video/film-poster.jpg'), Astro.site).href;
 
 /* ---------------------------------------------------------------------------
    Structured data is generated from src/data/site.ts, so what Google reads can
@@ -31,11 +35,10 @@ const schema: Record<string, unknown> = {
   '@type': ['LocalBusiness', 'JewelryStore'],
   '@id': `${homeUrl}#business`,
   name: site.brand,
-  alternateName: site.entities,
+  alternateName: site.entities.filter((n) => n !== site.brand),
   description: site.description,
   url: homeUrl,
   telephone: contacts.filter((c) => c.call).map((c) => formatPhone(c.number)),
-  email: site.emails.primary,
   address: {
     '@type': 'PostalAddress',
     streetAddress: `${site.address.street}, ${site.address.locality}`,
@@ -46,7 +49,6 @@ const schema: Record<string, unknown> = {
   },
   geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng },
   hasMap: site.mapsUrl,
-  sameAs: [site.social.instagram],
   areaServed: 'IN',
   knowsAbout: ['Kundan jewellery', 'Jadau jewellery', 'Polki', 'Gold jewellery', 'Silver jewellery', 'Jewellery manufacturing', 'Jewellery job work'],
 };
@@ -77,6 +79,7 @@ if (site.foundedYear) schema.foundingDate = String(site.foundedYear);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content="en_IN" />
+    <meta property="og:image" content={shareImage} />
     <meta name="twitter:card" content="summary_large_image" />
 
     <meta name="theme-color" content="#0A090B" />

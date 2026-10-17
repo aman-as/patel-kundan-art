@@ -72,6 +72,12 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
   .film__shade {
     background: linear-gradient(to top, rgba(10, 9, 11, 0.92) 0%, rgba(10, 9, 11, 0.5) 38%, transparent 70%);
   }
+  /* on a phone the words fill the lower two thirds of the screen */
+  @media (max-width: 799px) {
+    .film__shade {
+      background: linear-gradient(to top, rgba(10, 9, 11, 0.94) 0%, rgba(10, 9, 11, 0.72) 45%, rgba(10, 9, 11, 0.3) 72%, transparent 88%);
+    }
+  }
   .film__copy {
     position: relative;
     z-index: 1;
@@ -87,10 +93,21 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
     max-width: 12ch;
   }
   .film__copy :global(.lede) { max-width: 44ch; color: var(--silver-soft); }
+  /* the film opens on cream paper, where gold and silver type wash out */
+  .film__copy :global(.eyebrow),
+  .film__copy :global(.lede),
+  .film__copy :global(h1) { text-shadow: 0 1px 14px rgba(10, 9, 11, 0.75), 0 0 2px rgba(10, 9, 11, 0.5); }
   .film__hint { display: none; }
 
   /* ---------------- pinned, scroll-driven version ---------------- */
-  :global(.story) .film { height: 340svh; }
+  /* The header is sticky, so once the stage pins it sits under the header.
+     Pull the section up by the header's height so it starts there on load
+     too; otherwise the bottom of the stage (and the hero's Call button) starts
+     below the fold, behind the phone call bar. */
+  :global(.story) .film { height: 340svh; margin-top: -60px; }
+  @media (min-width: 900px) {
+    :global(.story) .film { margin-top: -72px; }
+  }
   :global(.story) .film:not([data-wide]):not([data-tall]) { height: 150svh; }
   :global(.story) .film__stage {
     position: sticky;
