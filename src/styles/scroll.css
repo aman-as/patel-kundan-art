@@ -63,6 +63,9 @@
 .story .reveal--rule.is-visible::before { transform: scaleX(1); }
 
 /* ---- cards arrive from the side they point to ---- */
+/* clip, not hidden: the 40px start offset must not widen the page, and the
+   sticky storyline panel still needs main to be a non-scrolling box */
+.story main { overflow-x: clip; }
 .story .reveal--left  { transform: translate3d(-40px, 0, 0); }
 .story .reveal--right { transform: translate3d(40px, 0, 0); }
 .story .reveal--left.is-visible,
