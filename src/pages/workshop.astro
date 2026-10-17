@@ -44,19 +44,24 @@ const steps = [
   <!-- THE PROCESS -->
   <section class="section on-ink">
     <div class="wrap">
-      <p class="eyebrow">How a job runs</p>
-      <h2>Seven stages, and a written record at both ends.</h2>
-      <ol class="flow">
-        {steps.map(([name, detail], i) => (
-          <li class="reveal">
-            <span class="flow__n">{String(i + 1).padStart(2, '0')}</span>
-            <div>
+      <div class="storyline">
+        <div class="storyline__pin">
+          <p class="eyebrow">How a job runs</p>
+          <h2>Seven stages, and a written record at both ends.</h2>
+          <p class="storyline__count" aria-hidden="true">
+            <b data-thread-count="workshop">01</b><span>/ {String(steps.length).padStart(2, '0')}</span>
+          </p>
+        </div>
+        <ol class="thread" data-thread="workshop">
+          {steps.map(([name, detail], i) => (
+            <li>
+              <span class="thread__n">{String(i + 1).padStart(2, '0')}</span>
               <h3>{name}</h3>
               <p>{detail}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
+            </li>
+          ))}
+        </ol>
+      </div>
     </div>
   </section>
 
@@ -94,30 +99,5 @@ const steps = [
 </BaseLayout>
 
 <style>
-  .flow {
-    list-style: none;
-    margin: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem) 0 0;
-    padding: 0;
-    display: grid;
-    gap: 0;
-    max-width: 720px;
-  }
-  .flow li {
-    display: grid;
-    grid-template-columns: 3.25rem 1fr;
-    gap: 1rem;
-    padding-block: 1.35rem;
-    border-top: 1px solid var(--ink-line);
-  }
-  .flow li:last-child { border-bottom: 1px solid var(--ink-line); }
-  .flow__n {
-    font-family: var(--font-ui);
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
-    color: var(--brass-soft);
-    padding-top: 0.45rem;
-  }
-  .flow h3 { font-size: var(--step-1); }
-  .flow p { color: var(--text-on-ink-muted); font-size: 0.95rem; margin-top: 0.25rem; }
   .cta { margin-top: 1.75rem; }
 </style>

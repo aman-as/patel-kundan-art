@@ -62,7 +62,10 @@ const steps = [
   <section class="section on-ink lightweight">
     <div class="wrap wrap--narrow">
       <p class="eyebrow">Why kundan, now</p>
-      <h2>Your customer still wants a set that looks like a set.</h2>
+      <h2 class="scrub-h" data-scrub>
+        <span data-scrub-text>Your customer still wants a set</span>
+        <span class="gild" data-scrub-text>that looks like a set.</span>
+      </h2>
       <p class="lede">
         With gold where it is, weight is what kills the sale. Kundan and polki
         give a piece visual size without the gold weight behind it — which is
@@ -80,7 +83,7 @@ const steps = [
       <p class="eyebrow">Who we work with</p>
       <h2>Two ways to work with us.</h2>
       <div class="fork">
-        <a class="path reveal" href={url('/for-jewellers/')}>
+        <a class="path reveal reveal--left" href={url('/for-jewellers/')}>
           <h3>For jewellers &amp; businesses</h3>
           <p>
             Manufacturing and job work for retail jewellers. Your design stays yours,
@@ -88,7 +91,7 @@ const steps = [
           </p>
           <span class="path__go">Trade &amp; job work →</span>
         </a>
-        <a class="path reveal" href={url('/custom-orders/')}>
+        <a class="path reveal reveal--right" href={url('/custom-orders/')}>
           <h3>For individuals</h3>
           <p>
             One piece, made to order — and jewellery you already own, remade.
@@ -106,8 +109,8 @@ const steps = [
     <div class="wrap">
       <p class="eyebrow">What we make</p>
       <h2>Kundan is our specialisation.<br />Gold is our trade — and we work in silver too.</h2>
-      <ul class="tags">
-        {makes.map((m) => <li>{m}</li>)}
+      <ul class="tags stagger reveal">
+        {makes.map((m, i) => <li style={`--i:${i}`}>{m}</li>)}
       </ul>
       <p class="prose note">
         Silver we take on properly, not as a favour — a kundan setting is the
@@ -124,18 +127,25 @@ const steps = [
   <!-- HOW A JOB RUNS -->
   <section class="section">
     <div class="wrap">
-      <p class="eyebrow">How a job runs</p>
-      <h2>From a photograph on WhatsApp to a finished piece.</h2>
-      <ol class="steps">
-        {steps.map(([name, detail], i) => (
-          <li class="reveal">
-            <span class="steps__n">{String(i + 1).padStart(2, '0')}</span>
-            <h3>{name}</h3>
-            <p>{detail}</p>
-          </li>
-        ))}
-      </ol>
-      <p class="more"><a class="ulink" href={url('/workshop/')}>More about how we work →</a></p>
+      <div class="storyline">
+        <div class="storyline__pin">
+          <p class="eyebrow">How a job runs</p>
+          <h2>From a photograph on WhatsApp to a finished piece.</h2>
+          <p class="storyline__count" aria-hidden="true">
+            <b data-thread-count="home">01</b><span>/ {String(steps.length).padStart(2, '0')}</span>
+          </p>
+          <p class="more"><a class="ulink" href={url('/workshop/')}>More about how we work →</a></p>
+        </div>
+        <ol class="thread" data-thread="home">
+          {steps.map(([name, detail], i) => (
+            <li>
+              <span class="thread__n">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{name}</h3>
+              <p>{detail}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
     </div>
   </section>
 
@@ -205,6 +215,7 @@ const steps = [
   }
   .lightweight { border-top: 1px solid var(--ink-line); }
   .lightweight h2 { margin-bottom: 1.15rem; }
+  .scrub-h { font-size: var(--step-4); max-width: 18ch; }
   .lightweight .lede + .lede { margin-top: 1rem; color: var(--brass-soft); }
 
   .work h2 { margin-bottom: clamp(2rem, 1.5rem + 2vw, 3rem); }
@@ -259,27 +270,6 @@ const steps = [
   }
   .note { margin-top: 1.75rem; color: var(--text-muted); }
 
-  .steps {
-    list-style: none;
-    margin: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem) 0 0;
-    padding: 0;
-    display: grid;
-    gap: 1.5rem;
-    counter-reset: step;
-  }
-  @media (min-width: 640px) { .steps { grid-template-columns: repeat(2, 1fr); gap: 2rem; } }
-  @media (min-width: 1000px) { .steps { grid-template-columns: repeat(3, 1fr); } }
-  .steps li { padding-top: 1rem; border-top: 1px solid var(--ivory-line); }
-  .steps__n {
-    display: block;
-    font-family: var(--font-ui);
-    font-size: 0.75rem;
-    letter-spacing: 0.14em;
-    color: var(--brass);
-    margin-bottom: 0.5rem;
-  }
-  .steps h3 { font-size: var(--step-1); }
-  .steps p { color: var(--text-muted); font-size: 0.94rem; margin-top: 0.3rem; }
 
   .closing { text-align: left; }
   .closing__cta { margin-top: 1.75rem; }

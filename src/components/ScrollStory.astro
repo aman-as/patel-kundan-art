@@ -1,0 +1,162 @@
+---
+/**
+ * Scroll storytelling. One script, no libraries, layered on SiteMotion.
+ *
+ *  - a gold hairline at the top that fills as the page is read
+ *  - hero text drifts up and dims as the visitor scrolls past it
+ *  - section headings rise out of a mask; eyebrows draw a short gold rule
+ *  - [data-scrub]   words brighten one by one as the passage is scrolled
+ *  - [data-thread]  a gold thread runs down a list of steps, filling with
+ *                   scroll, and the step at the reading line lights up;
+ *                   [data-thread-count] shows which step is current
+ *  - [data-parallax] images drift slightly inside their frames
+ *
+ * Every effect writes CSS variables or classes only; the look lives in
+ * styles/scroll.css. With JavaScript off, or with reduced motion requested,
+ * the page reads as a normal, fully visible document.
+ */
+---
+
+<div class="read-progress" aria-hidden="true"><span></span></div>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const root = document.documentElement;
+  const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+
+  if (!reduce) {
+    root.classList.add('story');
+
+    /* ---------- headings and copy reveal site-wide ---------- */
+    // Pages do not need to opt in: headings, eyebrows and body copy below the
+    // first screen all rise into place. Hero content keeps its own entrance.
+    const auto = document.querySelectorAll<HTMLElement>(
+      'main .section h2:not(.visually-hidden), main .section .eyebrow, ' +
+      'main .section .lede, main .section .prose > p, main .section .note, ' +
+      'main .section .more, main .section .cta, main .section .closing__cta'
+    );
+    auto.forEach((el) => {
+      if (el.closest('[data-scrub]') || el.classList.contains('reveal')) return;
+      el.classList.add('reveal');
+      if (el.tagName === 'H2') el.classList.add('reveal--rise');
+      if (el.classList.contains('eyebrow')) el.classList.add('reveal--rule');
+    });
+    // SiteMotion's observer only saw the original .reveal elements, so watch
+    // the new ones here with the same behaviour.
+    const io = new IntersectionObserver((entries) => {
+      entries.filter((e) => e.isIntersecting).forEach((e, i) => {
+        const el = e.target as HTMLElement;
+        el.style.transitionDelay = `${Math.min(i, 5) * 70}ms`;
+        el.classList.add('is-visible');
+        io.unobserve(el);
+      });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    auto.forEach((el) => { if (!el.classList.contains('is-visible')) io.observe(el); });
+
+    /* ---------- word scrub ---------- */
+    const scrubs = Array.from(document.querySelectorAll<HTMLElement>('[data-scrub]'));
+    const scrubWords: HTMLElement[][] = scrubs.map((block) => {
+      const words: HTMLElement[] = [];
+      block.querySelectorAll<HTMLElement>('[data-scrub-text]').forEach((t) => {
+        const text = t.textContent ?? '';
+        t.textContent = '';
+        // screen readers get the sentence whole; the word spans are visual only
+        const sr = document.createElement('span');
+        sr.className = 'visually-hidden';
+        sr.textContent = text.trim();
+        t.append(sr);
+        text.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { t.append(part); return; }
+          const s = document.createElement('span');
+          s.className = 'w';
+          s.setAttribute('aria-hidden', 'true');
+          s.textContent = part;
+          t.append(s);
+          words.push(s);
+        });
+      });
+      return words;
+    });
+
+    /* ---------- gold thread ---------- */
+    const threads = Array.from(document.querySelectorAll<HTMLElement>('[data-thread]'));
+    const counters = new Map<HTMLElement, HTMLElement | null>();
+    threads.forEach((t) => {
+      const id = t.dataset.thread;
+      counters.set(t, id ? document.querySelector<HTMLElement>(`[data-thread-count="${id}"]`) : null);
+    });
+
+    /* ---------- parallax + hero ---------- */
+    const parallax = Array.from(document.querySelectorAll<HTMLElement>('[data-parallax]'));
+    const heroes = Array.from(document.querySelectorAll<HTMLElement>('.hero__inner, .page-hero .inner'));
+    const bar = document.querySelector<HTMLElement>('.read-progress span');
+
+    let ticking = false;
+    const frame = () => {
+      ticking = false;
+      const vh = window.innerHeight;
+      const max = root.scrollHeight - vh;
+
+      if (bar) bar.style.transform = `scaleX(${max > 0 ? clamp(window.scrollY / max) : 0})`;
+
+      heroes.forEach((h) => {
+        const r = h.getBoundingClientRect();
+        // 0 while the hero sits in place, 1 once it has scrolled fully away
+        const p = clamp(-r.top / Math.max(r.height, 1));
+        h.style.setProperty('--out', p.toFixed(3));
+      });
+
+      scrubs.forEach((block, i) => {
+        const r = block.getBoundingClientRect();
+        // lights up as the passage travels from 85% to 35% of the viewport
+        const p = clamp((vh * 0.85 - r.top) / (vh * 0.5 + r.height * 0.5));
+        const words = scrubWords[i];
+        const lit = p * words.length;
+        words.forEach((w, j) => {
+          const on = clamp(lit - j);
+          w.style.setProperty('--lit', on.toFixed(2));
+        });
+      });
+
+      threads.forEach((t) => {
+        const r = t.getBoundingClientRect();
+        const line = vh * 0.55; // the reading line
+        t.style.setProperty('--fill', clamp((line - r.top) / Math.max(r.height, 1)).toFixed(3));
+        let current = -1;
+        const steps = t.querySelectorAll<HTMLElement>(':scope > li');
+        steps.forEach((li, j) => {
+          const lr = li.getBoundingClientRect();
+          const passed = lr.top < line;
+          li.classList.toggle('is-past', passed);
+          if (passed) current = j;
+        });
+        steps.forEach((li, j) => li.classList.toggle('is-current', j === current));
+        const c = counters.get(t);
+        if (c) {
+          const n = Math.max(current, 0) + 1;
+          const label = String(n).padStart(2, '0');
+          if (c.dataset.n !== label) {
+            c.dataset.n = label;
+            c.classList.remove('tick');
+            void c.offsetWidth; // restart the flip animation
+            c.textContent = label;
+            c.classList.add('tick');
+          }
+        }
+      });
+
+      parallax.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > vh) return;
+        // -1 when the frame enters at the bottom, +1 when it leaves at the top
+        const p = clamp((vh - r.top) / (vh + r.height)) * 2 - 1;
+        el.style.setProperty('--py', p.toFixed(3));
+      });
+    };
+    const request = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
+    window.addEventListener('scroll', request, { passive: true });
+    window.addEventListener('resize', request, { passive: true });
+    frame();
+  }
+</script>
