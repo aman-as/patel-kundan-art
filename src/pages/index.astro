@@ -1,14 +1,17 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ProductGrid from '../components/ProductGrid.astro';
 import ContactButtons from '../components/ContactButtons.astro';
 import HeroCanvas from '../components/HeroCanvas.astro';
+import Showcase from '../components/Showcase.astro';
+import Reel from '../components/Reel.astro';
 import { site, url } from '../data/site';
 
 const featured = (await getCollection('products', (p) => p.data.featured)).sort(
   (a, b) => a.data.order - b.data.order
 );
+
+const hero = featured.find((p) => p.id === 'choker-peacock') ?? featured[0];
 
 const makes = [
   'Kundan', 'Jadau', 'Polki', 'Antique finish', 'Bridal sets',
@@ -48,15 +51,22 @@ const steps = [
     </div>
   </section>
 
+  <!-- SHOWCASE: one piece, pinned, pulling back from the centre stone -->
+  <Showcase
+    image={hero.data.image}
+    alt={hero.data.alt}
+    focus="50% 19%"
+    lines={[
+      'Every stone, set by hand.',
+      'Every frame, built at our bench.',
+      'Kundan, made in Karol Bagh.',
+    ]}
+  />
+
   <!-- SELECTED WORK -->
-  <section class="section on-ink work">
-    <div class="wrap">
-      <p class="eyebrow">Selected work</p>
-      <h2>Made by hand, at our own bench.</h2>
-      <ProductGrid items={featured} />
-      <p class="more"><a class="ulink" href={url('/our-work/')}>See more of our work →</a></p>
-    </div>
-  </section>
+  <Reel items={featured} eyebrow="Selected work" title="Made by hand, at our own bench.">
+    <p class="more"><a class="ulink" href={url('/our-work/')}>See more of our work →</a></p>
+  </Reel>
 
   <!-- THE LIGHTWEIGHT ANGLE -->
   <section class="section on-ink lightweight">

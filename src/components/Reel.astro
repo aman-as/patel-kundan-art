@@ -1,0 +1,251 @@
+---
+/**
+ * REEL — selected work as a pinned sideways gallery.
+ *
+ * While the visitor scrolls down, the section holds still and the pieces glide
+ * past from right to left; the one nearest the middle comes forward and the
+ * others step back. A counter and a gold hairline show how far along it is.
+ *
+ * With JavaScript off or reduced motion requested (no .story class), it is an
+ * ordinary row the visitor can swipe, with snap points.
+ */
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  items: CollectionEntry<'products'>[];
+  eyebrow: string;
+  title: string;
+}
+const { items, eyebrow, title } = Astro.props;
+const total = String(items.length).padStart(2, '0');
+---
+
+<section class="reel on-ink" data-reel>
+  <div class="reel__stage">
+    <div class="wrap reel__head">
+      <div>
+        <p class="eyebrow">{eyebrow}</p>
+        <h2>{title}</h2>
+      </div>
+      <p class="reel__count" aria-hidden="true"><b data-reel-count>01</b> / {total}</p>
+    </div>
+    <ul class="reel__track">
+      {items.map((p, i) => (
+        <li class="reel__item">
+          <div class="reel__frame">
+            <Image
+              src={p.data.image}
+              alt={p.data.alt}
+              widths={[360, 540, 760]}
+              sizes="(min-width: 900px) 34vw, 74vw"
+              format="webp"
+              quality={82}
+              loading={i < 2 ? 'eager' : 'lazy'}
+              decoding="async"
+            />
+          </div>
+          <p class="reel__cat">{p.data.category}</p>
+          <h3>{p.data.title}</h3>
+          <p class="reel__note">{p.data.note}</p>
+        </li>
+      ))}
+    </ul>
+    <div class="wrap reel__foot">
+      <span class="reel__bar" aria-hidden="true"><span></span></span>
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .reel { padding-block: var(--section); }
+  .reel__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1.5rem;
+  }
+  .reel__count {
+    display: none;
+    font-family: var(--font-display);
+    color: var(--silver-soft);
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+  .reel__count b {
+    font-weight: 500;
+    font-size: clamp(2.4rem, 1.8rem + 2.5vw, 4rem);
+    color: var(--brass-soft);
+    letter-spacing: 0;
+  }
+  .reel__track {
+    list-style: none;
+    margin: clamp(1.75rem, 1.4rem + 1.5vw, 2.75rem) 0 0;
+    padding: 0 var(--gutter);
+    display: flex;
+    gap: clamp(1rem, 0.6rem + 2vw, 2.5rem);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .reel__track::-webkit-scrollbar { display: none; }
+  .reel__item {
+    flex: 0 0 min(74vw, 380px);
+    scroll-snap-align: center;
+  }
+  .reel__frame {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--ink);
+    border-radius: var(--radius);
+  }
+  .reel__frame :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 42%;
+  }
+  .reel__cat {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--brass-soft);
+  }
+  .reel h3 { font-size: var(--step-1); margin-top: 0.35rem; }
+  .reel__note { color: var(--text-on-ink-muted); font-size: 0.94rem; margin-top: 0.35rem; }
+  .reel__foot { margin-top: 1.5rem; display: grid; gap: 1rem; }
+  .reel__bar { display: none; }
+
+  /* ---------------- pinned, scroll-driven version ---------------- */
+  :global(.story) .reel { padding: 0; height: var(--reel-h, 300svh); }
+  :global(.story) .reel__stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: safe center;
+    /* the site header stays on top of the pinned stage, so clear it */
+    padding-block: calc(var(--hdr, 80px) + 0.5rem) calc(var(--sticky-bar) + 0.75rem);
+  }
+  @media (min-width: 900px) {
+    :global(.story) .reel__stage { padding-bottom: 2rem; }
+  }
+  :global(.story) .reel__count { display: block; }
+  :global(.story) .reel__track {
+    overflow: visible;
+    scroll-snap-type: none;
+    /* first card starts centred-left; the track slides by --x pixels */
+    /* first and last piece both stop in the middle of the screen */
+    --item: min(74vw, 380px);
+    padding-inline: calc((100vw - var(--item)) / 2);
+    transform: translate3d(calc(var(--x, 0) * -1px), 0, 0);
+    will-change: transform;
+  }
+  @media (min-width: 900px) {
+    /* sized from the screen height so heading, photo and caption all fit */
+    :global(.story) .reel__track { --item: min(34vw, calc(min(100svh - var(--hdr, 80px) - 360px, 640px) * 0.8)); }
+  }
+  /* phones: keep the photo short enough that the caption fits under it */
+  @media (max-width: 899px) {
+    :global(.story) .reel__frame {
+      aspect-ratio: auto;
+      height: max(180px, min(92vw, 100svh - var(--hdr, 150px) - var(--sticky-bar) - 250px));
+    }
+    :global(.story) .reel__note { display: none; }
+    :global(.story) .reel__track { margin-top: 1.25rem; }
+  }
+  :global(.story) .reel__item {
+    flex-basis: var(--item);
+    transform: scale(calc(0.86 + var(--f, 0) * 0.14));
+    opacity: calc(0.4 + var(--f, 0) * 0.6);
+    transform-origin: 50% 60%;
+    will-change: transform, opacity;
+  }
+  :global(.story) .reel__item :global(img) {
+    /* the photo slides a little inside its frame, against the track */
+    transform: translate3d(calc(var(--d, 0) * 6%), 0, 0) scale(1.14);
+  }
+  :global(.story) .reel__bar {
+    display: block;
+    height: 1px;
+    background: var(--ink-line);
+    max-width: 320px;
+  }
+  :global(.story) .reel__bar span {
+    display: block;
+    height: 100%;
+    background: var(--brass-soft);
+    transform: scaleX(var(--p, 0));
+    transform-origin: left;
+  }
+</style>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reels = Array.from(document.querySelectorAll<HTMLElement>('[data-reel]'));
+
+  if (!reduce && reels.length) {
+    document.documentElement.classList.add('story');
+    const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+    const state = reels.map((el) => ({
+      el,
+      track: el.querySelector<HTMLElement>('.reel__track')!,
+      items: Array.from(el.querySelectorAll<HTMLElement>('.reel__item')),
+      bar: el.querySelector<HTMLElement>('.reel__bar span'),
+      count: el.querySelector<HTMLElement>('[data-reel-count]'),
+      travel: 0,
+    }));
+
+    // The section is as tall as the sideways distance plus one screen, so one
+    // pixel of scrolling down moves the track one pixel left.
+    const header = document.querySelector<HTMLElement>('header');
+    const measure = () => {
+      if (header) document.documentElement.style.setProperty('--hdr', `${header.offsetHeight}px`);
+      state.forEach((s) => {
+        s.track.style.setProperty('--x', '0');
+        s.travel = Math.max(s.track.scrollWidth - window.innerWidth, 0);
+        s.el.style.setProperty('--reel-h', `${s.travel + window.innerHeight * 1.15}px`);
+      });
+    };
+
+    let ticking = false;
+    const frame = () => {
+      ticking = false;
+      const vh = window.innerHeight, mid = window.innerWidth / 2;
+      state.forEach((s) => {
+        const r = s.el.getBoundingClientRect();
+        if (r.bottom < -vh || r.top > vh * 2) return;
+        const p = clamp(-r.top / Math.max(r.height - vh, 1));
+        s.track.style.setProperty('--x', (p * s.travel).toFixed(1));
+        if (s.bar) s.bar.style.setProperty('--p', p.toFixed(3));
+        let best = 0, bestF = -1;
+        s.items.forEach((it, i) => {
+          const ir = it.getBoundingClientRect();
+          const d = (ir.left + ir.width / 2 - mid) / window.innerWidth; // -0.5 … 0.5 on screen
+          const f = clamp(1 - Math.abs(d) * 1.6);
+          it.style.setProperty('--f', f.toFixed(3));
+          it.style.setProperty('--d', clamp(d, -1, 1).toFixed(3));
+          if (f > bestF) { bestF = f; best = i; }
+        });
+        if (s.count) s.count.textContent = String(best + 1).padStart(2, '0');
+      });
+    };
+    const request = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
+    window.addEventListener('scroll', request, { passive: true });
+    // Phones fire resize when the address bar slides; only a width change
+    // alters the layout, so only that re-measures (avoids a jump mid-scroll).
+    let lastW = window.innerWidth;
+    window.addEventListener('resize', () => {
+      if (window.innerWidth !== lastW) { lastW = window.innerWidth; measure(); }
+      request();
+    }, { passive: true });
+    window.addEventListener('load', () => { measure(); request(); });
+    measure();
+    frame();
+  }
+</script>
