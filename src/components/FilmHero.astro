@@ -20,8 +20,11 @@ interface Props {
   wide?: string;
   tall?: string;
   poster?: string;
+  /** Short statements that take turns over the film once the headline has
+   *  gone, each timed to a stage of it (see `windows` in the script). */
+  lines?: string[];
 }
-const { wide, tall, poster } = Astro.props;
+const { wide, tall, poster, lines = [] } = Astro.props;
 const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
 ---
 
@@ -40,6 +43,11 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
     <div class="wrap film__copy enter">
       <slot />
     </div>
+    {lines.length > 0 && (
+      <ol class="wrap film__lines">
+        {lines.map((l) => <li>{l}</li>)}
+      </ol>
+    )}
     <p class="film__hint" aria-hidden="true">Scroll</p>
   </div>
 </section>
@@ -99,12 +107,24 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
   .film__copy :global(h1) { text-shadow: 0 1px 14px rgba(10, 9, 11, 0.75), 0 0 2px rgba(10, 9, 11, 0.5); }
   .film__hint { display: none; }
 
+  /* without the scroll story the statements are a plain list under the film */
+  .film__lines {
+    list-style: none;
+    padding-block: 2.5rem;
+    display: grid;
+    gap: 0.3rem;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.4rem + 3vw, 4rem);
+    line-height: 1.05;
+    color: var(--brass-soft);
+  }
+
   /* ---------------- pinned, scroll-driven version ---------------- */
   /* The header is sticky, so once the stage pins it sits under the header.
      Pull the section up by the header's height so it starts there on load
      too; otherwise the bottom of the stage (and the hero's Call button) starts
      below the fold, behind the phone call bar. */
-  :global(.story) .film { height: 340svh; margin-top: -60px; }
+  :global(.story) .film { height: 420svh; margin-top: -60px; }
   @media (min-width: 900px) {
     :global(.story) .film { margin-top: -72px; }
   }
@@ -117,8 +137,40 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
   }
   :global(.story) .film__copy {
     padding-bottom: calc(var(--sticky-bar) + 2.5rem);
-    opacity: calc(1 - clamp(0, (var(--p, 0) - 0.12) * 3.2, 1));
-    transform: translate3d(0, calc(var(--p, 0) * -60px), 0);
+    opacity: calc(1 - clamp(0, (var(--p, 0) - 0.06) * 7, 1));
+    transform: translate3d(0, calc(var(--p, 0) * -160px), 0);
+  }
+  :global(.story) .film__copy.is-gone { visibility: hidden; }
+
+  /* the statements sit where the headline was, one at a time */
+  :global(.story) .film__lines {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: 1;
+    height: 100%;
+    padding: 0;
+    pointer-events: none;
+    font-size: clamp(2.7rem, 1.2rem + 5.4vw, 7.2rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  :global(.story) .film__lines li {
+    position: absolute;
+    inset-inline: var(--gutter);
+    bottom: calc(var(--sticky-bar) + 3rem);
+    max-width: 11ch;
+    color: #f4ead2;
+    text-shadow: 0 2px 24px rgba(10, 9, 11, 0.8), 0 0 2px rgba(10, 9, 11, 0.5);
+    opacity: var(--a, 0);
+    transform: translate3d(0, calc((1 - var(--a, 0)) * 28px), 0);
+    filter: blur(calc((1 - var(--a, 0)) * 6px));
+  }
+  @media (min-width: 800px) {
+    :global(.story) .film__lines li {
+      bottom: clamp(3rem, 2rem + 8svh, 7rem);
+      max-width: none;
+      white-space: nowrap;
+    }
   }
   @media (min-width: 800px) {
     :global(.story) .film__copy { padding-bottom: clamp(3rem, 2rem + 8svh, 7rem); }
@@ -153,6 +205,12 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
 
   films.forEach((el) => {
     const video = el.querySelector<HTMLVideoElement>('video');
+    const copy = el.querySelector<HTMLElement>('.film__copy');
+    const lines = Array.from(el.querySelectorAll<HTMLElement>('.film__lines li'));
+    // when each statement is on screen, as a share of the scroll: over the
+    // melting gold, over the ghaat and setting, and over the finished piece
+    // (the last one stays as the stage lets go)
+    const windows = [[0.22, 0.36], [0.39, 0.6], [0.67, 1.4]];
     const portrait = window.matchMedia('(orientation: portrait)').matches;
     const src = (portrait ? el.dataset.tall : el.dataset.wide) || el.dataset.wide || el.dataset.tall;
     if (video && src) video.src = src;
@@ -169,6 +227,13 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
       if (r.bottom < 0 || r.top > vh) return;
       const p = clamp(-r.top / Math.max(r.height - vh, 1));
       el.style.setProperty('--p', p.toFixed(4));
+      copy?.classList.toggle('is-gone', p > 0.21);
+      lines.forEach((li, i) => {
+        const [a, b] = windows[i] ?? [2, 2];
+        const edge = (b - a) * 0.25;
+        const v = Math.min(clamp((p - a) / edge), clamp((b - p) / edge));
+        li.style.setProperty('--a', v.toFixed(3));
+      });
       if (video && video.duration) {
         // the film ends a little before the stage lets go, so the last
         // frame (the finished gold) holds for a moment

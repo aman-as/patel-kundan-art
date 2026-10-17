@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactButtons from '../components/ContactButtons.astro';
 import FilmHero from '../components/FilmHero.astro';
-import ScrollWords from '../components/ScrollWords.astro';
 import StepFilms from '../components/StepFilms.astro';
 import { site, url } from '../data/site';
 
@@ -24,41 +23,19 @@ const steps = [
   isHome
 >
   <!-- 1. OPENING: Film A, "From sketch to gold" -->
-  <FilmHero wide="film-wide.mp4" tall="film-tall.mp4" poster="film-poster.jpg">
+  <FilmHero
+    wide="film-wide.mp4"
+    tall="film-tall.mp4"
+    poster="film-poster.jpg"
+    lines={['Gold is our trade.', 'Kundan is our craft.', 'Every piece, by hand.']}
+  >
     <p class="eyebrow">Kundan &amp; Jadau Jewellery Manufacturing · Karol Bagh</p>
     <h1>You bring the design. We make it.</h1>
     <p class="lede">{site.subline}</p>
     <ContactButtons waLabel="WhatsApp us" />
   </FilmHero>
 
-  <!-- 2. THE PROMISE -->
-  <ScrollWords lines={['Gold is our trade.', 'Kundan is our craft.', 'Every piece, by hand.']} />
-
-  <!-- 3. WHY KUNDAN, NOW -->
-  <section class="section on-ink why">
-    <div class="wrap">
-      <p class="eyebrow">Why kundan, now</p>
-      <h2 class="why__h" data-scrub>
-        <span data-scrub-text>Your customer still wants a set</span>
-        <span class="gild" data-scrub-text>that looks like a set.</span>
-      </h2>
-      <div class="why__cols">
-        <p class="lede">
-          With gold where it is, weight is what kills the sale. Kundan and polki
-          give a piece visual size without the gold weight behind it — which is
-          what a customer can still say yes to this season.
-        </p>
-        <p class="lede why__gold">It is the reason this is the work we chose to be good at.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- 4. HOW A JOB RUNS: one clip per stage -->
-  <StepFilms steps={steps} eyebrow="How a job runs" title="From a photograph on WhatsApp to a finished piece.">
-    <p class="more"><a class="ulink" href={url('/workshop/')}>More about how we work →</a></p>
-  </StepFilms>
-
-  <!-- 5. TWO WAYS TO WORK WITH US -->
+  <!-- 2. TWO WAYS TO WORK WITH US -->
   <section class="section fork-wrap">
     <div class="wrap">
       <p class="eyebrow">Who we work with</p>
@@ -87,7 +64,31 @@ const steps = [
     </div>
   </section>
 
-  <!-- 6. SEND ONE PHOTOGRAPH: closes on the last frame of Film A -->
+  <!-- 3. HOW A JOB RUNS -->
+  <StepFilms steps={steps} eyebrow="How a job runs" title="From a photograph on WhatsApp to a finished piece.">
+    <p class="more"><a class="ulink" href={url('/workshop/')}>More about how we work →</a></p>
+  </StepFilms>
+
+  <!-- 4. WHY KUNDAN, NOW -->
+  <section class="section on-ink why">
+    <div class="wrap">
+      <p class="eyebrow">Why kundan, now</p>
+      <h2 class="why__h" data-scrub>
+        <span data-scrub-text>Your customer still wants a set</span>
+        <span class="gild" data-scrub-text>that looks like a set.</span>
+      </h2>
+      <div class="why__cols">
+        <p class="lede">
+          With gold where it is, weight is what kills the sale. Kundan and polki
+          give a piece visual size without the gold weight behind it — which is
+          what a customer can still say yes to this season.
+        </p>
+        <p class="lede why__gold">It is the reason this is the work we chose to be good at.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. SEND ONE PHOTOGRAPH: closes on the last frame of Film A -->
   <section class="closing on-ink">
     <div class="closing__still" aria-hidden="true">
       <img src={url('/video/film-end.jpg')} alt="" loading="lazy" decoding="async" width="1600" height="900" />
@@ -114,14 +115,24 @@ const steps = [
     max-width: 14ch;
     margin-top: 1.25rem;
   }
+  /* the paragraph and its closing line read as one block */
   .why__cols {
     display: grid;
-    gap: 1.25rem;
+    gap: 1.1rem;
+    max-width: 58ch;
     margin-top: clamp(2rem, 1.5rem + 2vw, 3.5rem);
   }
+  /* on a wide screen the heading runs the full width in two lines, and the
+     words sit under it on the right, below where the heading ends */
   @media (min-width: 900px) {
-    .why__cols { grid-template-columns: 1.3fr 1fr; gap: 4rem; align-items: end; }
+    .why__h {
+      max-width: none;
+      font-size: clamp(3rem, 0.6rem + 4.6vw, 6.4rem);
+    }
+    .why__h > :global(span) { display: block; }
+    .why__cols { margin-left: auto; margin-right: 4%; }
   }
+  .why__gold { padding-top: 1.1rem; border-top: 1px solid rgba(233, 205, 134, 0.3); }
   .why__gold { color: var(--brass-soft) !important; }
 
   .more { margin-top: 1.5rem; }
