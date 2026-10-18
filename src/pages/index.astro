@@ -7,7 +7,7 @@ import { url } from '../data/site';
 
 const steps = [
   { name: 'Your design', detail: 'A sketch, a picture, a piece you love, or just an idea. We start from whatever you have.' },
-  { name: 'Weight and estimate', detail: 'Before any work begins, we tell you what the piece will weigh and what the work involves.' },
+  { name: 'Weight and estimate', detail: 'Before work begins, we discuss the estimated weight, materials and work involved.' },
   { name: 'Gold received', detail: 'If you give us gold, it is weighed in front of you and written into the job register. You can also pay for the gold and the making together.' },
   { name: 'Ghaat', detail: 'The gold framework is built by hand.' },
   { name: 'Specialist Craftsmanship & Setting', detail: 'The making, stone-setting and finishing processes are selected according to the jewellery design and materials.' },
@@ -53,7 +53,8 @@ const trust = [
     wide="film-wide.mp4"
     tall="film-tall.mp4"
     poster="film-poster.jpg"
-    lines={['Gold is our trade.', 'Kundan is our craft.', 'Every piece, by hand.']}
+    posterTall="film-poster-tall.jpg"
+    lines={['Gold and silver, shaped to your design.', 'Kundan is our craft.', 'Every piece, by hand.']}
   >
     <p class="eyebrow">Kundan &amp; jadau specialists · Karol Bagh, Delhi</p>
     <h1 class="hero__h1">Kundan jewellery specialists. <span class="h1__sub">Custom gold and silver, made to order.</span></h1>
@@ -197,19 +198,15 @@ const trust = [
     text-shadow: 0 1px 10px rgba(22, 17, 13, 0.8);
   }
   /* on a phone the headline, the words and both buttons fit above the call
-     bar: a smaller headline, a shorter line of words, no trust line */
+     bar (the sizes are set in FilmHero), with no trust line */
   @media (max-width: 799px) {
-    :global(.film__copy) .hero__h1 { font-size: clamp(2.3rem, 1.2rem + 5vw, 3.2rem); max-width: none; }
-    :global(.film__copy) .hero__lede { font-size: 1.02rem; }
+    :global(.film__copy) .hero__h1 { max-width: none; }
     .trust-line { display: none; }
   }
   /* on a wide screen "Kundan jewellery" holds one line, so the opening
      clears the header on a laptop */
   @media (min-width: 800px) {
     :global(.film__copy) .hero__h1 { max-width: 15ch; }
-  }
-  @media (max-height: 700px) and (max-width: 799px) {
-    :global(.film__copy) .eyebrow { display: none; }
   }
 
   .skip-film a {
@@ -300,6 +297,18 @@ const trust = [
   }
   @media (min-width: 900px) {
     .closing__still img { left: 28%; width: 72%; opacity: 0.6; }
+  }
+  /* a phone or tablet: the picture is centred on the pendant (57% across the
+     frame) and sized so the whole pendant fits the width of the screen */
+  @media (max-width: 899px) {
+    .closing__still img {
+      left: 50%;
+      top: 50%;
+      width: auto;
+      max-width: none;
+      height: min(100%, 190vw);
+      transform: translate(-57%, -50%);
+    }
   }
   .closing__copy {
     position: relative;
