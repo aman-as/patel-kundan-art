@@ -3,21 +3,49 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactButtons from '../components/ContactButtons.astro';
 import FilmHero from '../components/FilmHero.astro';
 import JobThread from '../components/JobThread.astro';
-import { site, url } from '../data/site';
+import { url } from '../data/site';
 
 const steps = [
   { name: 'Your design', detail: 'A sketch, a picture, a piece you love, or just an idea. We start from whatever you have.' },
   { name: 'Weight and estimate', detail: 'Before any work begins, we tell you what the piece will weigh and what the work involves.' },
-  { name: 'Gold received', detail: 'Your gold is weighed in front of you and written into the job register.' },
+  { name: 'Gold received', detail: 'If you give us gold, it is weighed in front of you and written into the job register. You can also pay for the gold and the making together.' },
   { name: 'Ghaat', detail: 'The gold framework is built by hand.' },
   { name: 'Kundan setting', detail: 'Each stone is set in pure gold foil, the traditional way. It is the craft our workshop is named for.' },
   { name: 'Finish and weigh out', detail: 'Polished, checked and weighed out against the same register entry, then handed back to you.' },
 ];
+
+const capabilities = [
+  'Kundan & jadau',
+  'Custom gold jewellery',
+  'Custom silver jewellery',
+  'Bridal and occasion jewellery',
+  'Earrings, pendants, rings and bangles',
+  'Bespoke designs and job work',
+];
+
+const trust = [
+  {
+    h: 'Materials are handled with care',
+    p: 'When gold is handed over for a job, it is weighed and recorded in our job register. At handover, the finished work and the gold are accounted for against that record.',
+  },
+  {
+    h: 'The work is discussed before it begins',
+    p: 'We talk through the design, the work involved and the estimate before you decide to go ahead.',
+  },
+  {
+    h: 'A direct conversation with the workshop',
+    p: 'You speak directly with the people who discuss the orders, set the kundan and finish the pieces.',
+  },
+  {
+    h: 'Made for the requirement',
+    p: "A single personal piece and a jeweller's repeat requirement are different jobs. We discuss each one according to what it needs.",
+  },
+];
 ---
 
 <BaseLayout
-  title="Patel Kundan Art — Kundan Jewellery Manufacturer, Karol Bagh"
-  description={site.description}
+  title="Kundan Jewellery Manufacturer in Karol Bagh, Delhi | Patel Kundan Art"
+  description="Patel Kundan Art is a family-run jewellery manufacturing workshop in Karol Bagh, Delhi, specialising in kundan and jadau, with custom gold and silver jewellery for individuals and jewellers."
   isHome
 >
   <!-- 1. OPENING: Film A, "From sketch to gold" -->
@@ -27,121 +55,175 @@ const steps = [
     poster="film-poster.jpg"
     lines={['Gold is our trade.', 'Kundan is our craft.', 'Every piece, by hand.']}
   >
-    <p class="eyebrow">Kundan &amp; Jadau Jewellery Manufacturing · Karol Bagh</p>
-    <h1>You bring the design. We make it.</h1>
-    <p class="lede">{site.subline}</p>
-    <ContactButtons waLabel="WhatsApp us" />
+    <p class="eyebrow">Kundan &amp; jadau specialists · Karol Bagh, Delhi</p>
+    <h1 class="hero__h1">Kundan jewellery specialists. <span class="h1__sub">Custom gold and silver, made to order.</span></h1>
+    <p class="lede hero__lede">
+      A family-run jewellery manufacturing workshop in Karol Bagh, Delhi. From kundan
+      and jadau to other gold and silver styles, we work from your design, reference or idea.
+    </p>
+    <ContactButtons showCall={false} link={{ href: url('/for-jewellers/'), label: 'Manufacturing for Jewellers' }} />
+    <p class="trust-line">Custom orders · Jewellery job work · For individuals and jewellers</p>
   </FilmHero>
 
-  <!-- 2. TWO WAYS TO WORK WITH US -->
-  <section class="section fork-wrap">
+  <!-- 2. WHAT WE DO, and the two ways in -->
+  <section class="section">
     <div class="wrap">
-      <p class="eyebrow">Who we work with</p>
-      <h2>Two ways to work with us.</h2>
+      <div class="split">
+        <div>
+          <p class="eyebrow">What we do</p>
+          <h2>One workshop. Different ideas. Jewellery made to order.</h2>
+        </div>
+        <div class="prose">
+          <p>
+            Kundan and jadau are our speciality, but our work is not limited to one style.
+            We take on custom gold and silver jewellery and discuss each design on its own
+            terms, whether you are creating one meaningful piece for yourself or sourcing
+            manufacturing for your jewellery business.
+          </p>
+          <p>
+            We start by understanding what you want made, the design or reference you have,
+            and the materials and finish you need. Before work begins, we discuss the process,
+            the estimate and the next steps with you.
+          </p>
+        </div>
+      </div>
+
       <div class="fork">
-        <a class="path reveal reveal--left" href={url('/for-jewellers/')}>
+        <a class="path reveal reveal--left" href={url('/custom-orders/')}>
           <span class="path__n">01</span>
-          <h3>For jewellers &amp; businesses</h3>
+          <h3>For individuals &amp; families</h3>
           <p>
-            Manufacturing and job work for retail jewellers. Your design stays yours,
-            and every job is weighed in and weighed out against a written register.
+            Have a design in mind, a photograph for reference, or jewellery you would like
+            to remake? Tell us what you want to create. We will discuss the design, materials,
+            estimated weight, making work and practical next steps with you.
           </p>
-          <span class="path__go">Trade &amp; job work <span aria-hidden="true">→</span></span>
+          <span class="path__go">Explore custom jewellery <span aria-hidden="true">→</span></span>
         </a>
-        <a class="path reveal reveal--right" href={url('/custom-orders/')}>
+        <a class="path reveal reveal--right" href={url('/for-jewellers/')}>
           <span class="path__n">02</span>
-          <h3>For individuals</h3>
+          <h3>For jewellers &amp; jewellery businesses</h3>
           <p>
-            One piece, made to order, or jewellery you already own, made new.
-            The wedding set from a generation ago becomes something you love to wear.
+            Looking for a workshop to make a customer design, work from a sample, or support
+            repeat manufacturing? We handle custom jewellery manufacturing and job work, with
+            kundan and jadau as our speciality.
           </p>
-          <span class="path__go">Custom orders &amp; remaking old gold <span aria-hidden="true">→</span></span>
+          <span class="path__go">Explore trade &amp; job work <span aria-hidden="true">→</span></span>
         </a>
       </div>
     </div>
   </section>
 
-  <!-- 3. HOW A JOB RUNS -->
-  <JobThread id="job" steps={steps} eyebrow="How a job runs" title="Six steps from your idea to the finished piece.">
+  <!-- 3. THE SPECIALITY, AND MORE -->
+  <section class="section on-sunk">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">Our speciality, and more</p>
+        <h2>Rooted in kundan. Open to your design.</h2>
+      </div>
+      <div>
+        <div class="prose">
+          <p>
+            Kundan setting asks for patience, a steady hand and close attention to how the
+            stone, its setting and the finished piece work together. It is the craft at the
+            heart of Patel Kundan Art.
+          </p>
+          <p>
+            We also work on other custom gold and silver jewellery. Share a reference, sketch,
+            sample or description, and we can discuss how to approach it. The right process
+            depends on the design and the materials involved.
+          </p>
+        </div>
+        <ul class="tags stagger reveal" aria-label="What we take on">
+          {capabilities.map((c, i) => <li style={`--i:${i}`}>{c}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. HOW A JOB RUNS -->
+  <JobThread id="job" tone="ivory" steps={steps} eyebrow="How a job runs" title="Six steps from your idea to the finished piece.">
     <p class="more"><a class="ulink" href={url('/workshop/#how-a-piece-is-made')}>See how a kundan piece is made →</a></p>
   </JobThread>
 
-  <!-- 4. WHY KUNDAN, NOW -->
-  <section class="section on-ink why">
+  <!-- 5. TRUST -->
+  <section class="section on-sunk">
     <div class="wrap">
-      <p class="eyebrow">Why kundan, now</p>
-      <h2 class="why__h" data-scrub>
-        <span data-scrub-text>Your customer still wants a set</span>
-        <span class="gild" data-scrub-text>that looks like a set.</span>
-      </h2>
-      <div class="why__cols">
-        <p class="lede">
-          With gold where it is, every gram counts. Kundan and polki give a piece
-          a rich, full look without the gold weight, and that is a set a customer
-          can say yes to this season.
-        </p>
-        <p class="lede why__gold">It is the reason this is the work we chose to be good at.</p>
-      </div>
+      <p class="eyebrow">Trust is part of the work</p>
+      <h2 class="trust__h">Clear about the work. Careful with what matters.</h2>
+      <ul class="points">
+        {trust.map((t, i) => (
+          <li class={`reveal ${i % 2 ? 'reveal--right' : 'reveal--left'}`}>
+            <h3>{t.h}</h3>
+            <p>{t.p}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   </section>
 
-  <!-- 5. START A CONVERSATION: closes on the last frame of Film A -->
+  <!-- 6. START A CONVERSATION: closes on the last frame of Film A -->
   <section class="closing on-ink">
     <div class="closing__still" aria-hidden="true">
       <img src={url('/video/film-end.jpg')} alt="" loading="lazy" decoding="async" width="1600" height="900" />
     </div>
     <div class="wrap closing__copy">
-      <p class="eyebrow">Start a conversation</p>
-      <h2>Tell us what you would like made.</h2>
+      <p class="eyebrow">Have something in mind?</p>
+      <h2>Start with a conversation.</h2>
       <p class="lede">
-        Call or WhatsApp us. We will tell you what the piece will weigh and what
-        the work involves, before you commit to anything.
+        You can come with a finished design or just the beginning of an idea. Tell us what
+        you want made, and we will discuss what is possible, the work involved and the next steps.
       </p>
-      <ContactButtons class="closing__cta" />
+      <ContactButtons class="closing__cta" waLabel="Discuss your design" />
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  /* ---- why kundan ---- */
-  .why { border-top: 1px solid var(--ink-line); }
-  .why__h {
-    font-size: clamp(2.6rem, 1.4rem + 5.6vw, 6.4rem);
-    line-height: 1;
-    letter-spacing: -0.02em;
-    max-width: 14ch;
-    margin-top: 1.25rem;
+  /* ---- opening ---- */
+  .h1__sub {
+    display: block;
+    margin-top: 0.35em;
+    font-size: 0.48em;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--brass-soft);
   }
-  /* the paragraph and its closing line read as one block */
-  .why__cols {
-    display: grid;
-    gap: 1.1rem;
-    max-width: 58ch;
-    margin-top: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  .trust-line {
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    color: var(--silver-soft);
+    text-shadow: 0 1px 10px rgba(22, 17, 13, 0.8);
   }
-  /* on a wide screen the heading runs the full width in two lines, and the
-     words sit under it on the right, below where the heading ends */
-  @media (min-width: 900px) {
-    .why__h {
-      max-width: none;
-      font-size: clamp(3rem, 0.6rem + 4.6vw, 6.4rem);
-    }
-    .why__h > :global(span) { display: block; }
-    .why__cols { margin-left: auto; margin-right: 4%; }
+  /* on a phone the headline, the words and both buttons fit above the call
+     bar: a smaller headline, a shorter line of words, no trust line */
+  @media (max-width: 799px) {
+    :global(.film__copy) .hero__h1 { font-size: clamp(2.3rem, 1.2rem + 5vw, 3.2rem); max-width: none; }
+    :global(.film__copy) .hero__lede { font-size: 1.02rem; }
+    .trust-line { display: none; }
   }
-  .why__gold { padding-top: 1.1rem; border-top: 1px solid rgba(233, 205, 134, 0.3); }
-  .why__gold { color: var(--brass-soft) !important; }
+  /* on a wide screen "Kundan jewellery" holds one line, so the opening
+     clears the header on a laptop */
+  @media (min-width: 800px) {
+    :global(.film__copy) .hero__h1 { max-width: 15ch; }
+  }
+  @media (max-height: 700px) and (max-width: 799px) {
+    :global(.film__copy) .eyebrow { display: none; }
+  }
 
   .more { margin-top: 1.5rem; }
-  .more a { font-size: 0.95rem; color: var(--brass-soft); }
+  .more a { font-size: 0.95rem; color: var(--brass); }
+
+  /* ---- the speciality ---- */
+  .tags { margin-top: 1.75rem; }
+
+  /* ---- trust ---- */
+  .trust__h { max-width: 24ch; margin-top: 0.75rem; }
 
   /* ---- the fork ---- */
-  .fork-wrap { background: var(--ivory); }
-  .fork-wrap h2 { font-size: clamp(2.2rem, 1.5rem + 3vw, 4rem); margin-top: 0.75rem; }
   .fork {
     display: grid;
     gap: 1.25rem;
-    margin-top: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+    margin-top: clamp(2.5rem, 2rem + 2.5vw, 4rem);
   }
   @media (min-width: 820px) { .fork { grid-template-columns: 1fr 1fr; gap: 1.5rem; } }
   .path {
@@ -149,9 +231,9 @@ const steps = [
     display: grid;
     align-content: start;
     gap: 0.9rem;
-    min-height: clamp(18rem, 14rem + 12vw, 26rem);
+    min-height: clamp(16rem, 13rem + 10vw, 22rem);
     padding: clamp(1.75rem, 1.2rem + 2vw, 3rem);
-    background: #fff;
+    background: var(--card);
     border: 1px solid var(--ivory-line);
     border-radius: var(--radius);
     text-decoration: none;
@@ -163,16 +245,16 @@ const steps = [
     position: absolute;
     left: 0; right: 0; bottom: 0;
     height: 2px;
-    background: linear-gradient(90deg, var(--brass), #e9cd86);
+    background: var(--brass);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 0.6s cubic-bezier(0.22, 0.8, 0.24, 1);
   }
-  .path:hover { border-color: var(--ivory-line); transform: translateY(-4px); box-shadow: 0 30px 60px -35px rgba(10, 9, 11, 0.35); }
+  .path:hover { transform: translateY(-4px); box-shadow: 0 30px 60px -35px rgba(43, 34, 28, 0.35); }
   .path:hover::after { transform: scaleX(1); }
   .path__n { font-family: var(--font-display); font-size: 1.1rem; color: var(--brass); }
-  .path h3 { font-size: clamp(1.8rem, 1.3rem + 1.8vw, 2.8rem); line-height: 1.05; }
-  .path p { color: var(--text-muted); max-width: 42ch; }
+  .path h3 { font-size: clamp(1.7rem, 1.3rem + 1.6vw, 2.6rem); line-height: 1.05; }
+  .path p { color: var(--text-muted); max-width: 46ch; }
   .path__go { margin-top: auto; padding-top: 1rem; color: var(--brass); font-size: 0.92rem; font-weight: 500; }
 
   /* ---- closing ---- */
@@ -182,7 +264,6 @@ const steps = [
     min-height: 100svh;
     display: grid;
     align-items: center;
-    border-top: 1px solid var(--ink-line);
   }
   .closing__still {
     position: absolute;
@@ -204,7 +285,7 @@ const steps = [
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to right, rgba(10, 9, 11, 0.85), rgba(10, 9, 11, 0.2) 75%);
+    background: linear-gradient(to right, rgba(22, 17, 13, 0.85), rgba(22, 17, 13, 0.2) 75%);
   }
   @media (min-width: 900px) {
     .closing__still img { left: 28%; width: 72%; opacity: 0.6; }

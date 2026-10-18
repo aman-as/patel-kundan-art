@@ -5,86 +5,91 @@ import ContactButtons from '../components/ContactButtons.astro';
 import CraftStages from '../components/CraftStages.astro';
 import { site } from '../data/site';
 
-// ⁠ (a word joiner) keeps "24-carat" on one line on phones
+// The stages a kundan piece can pass through. Which ones a piece needs
+// depends on its design; the page never says who does which stage.
 const stages = [
   {
     title: 'Drawing', word: 'नक्शा', roman: 'Naksha',
-    text: 'Every piece starts as a drawing, with each stone marked in its place. The drawing travels with the piece from one craftsman to the next.',
+    text: 'A design or reference guides the layout, the proportions and where each stone and decorative detail will sit.',
     who: 'The naqqash or chitera, the designer',
   },
   {
     title: 'Frame', word: 'घाट', roman: 'Ghaat',
-    text: 'Thin strips of gold are cut, shaped and soldered by hand into the frame of the piece, with a small seat for every stone. Everything that follows is built on this frame.',
+    text: 'The gold framework gives the piece its form, with a seat for every stone. Everything that follows is built on it.',
     who: 'The sonar, the goldsmith',
   },
   {
     title: 'Engraving', word: 'खुदाई', roman: 'Khudai',
-    text: 'Where the piece will carry enamel, the gold is engraved by hand, so that each colour has a hollow to sit in.',
+    text: 'Where the design carries enamel, the gold is engraved so that each colour has a hollow to sit in.',
     who: 'The engraver',
   },
   {
     title: 'Enamel', word: 'मीना', roman: 'Meena',
-    text: 'Colour is laid into the engraving and the piece is fired once for every colour, starting with white and ending with red. All of this happens before a single stone is set.',
+    text: 'For designs with meenakari, the colour work is completed as the design requires, before the stones are set.',
     who: 'The meenakar',
     look: 'A smooth, finished back',
   },
   {
     title: 'Lac bed', word: 'लाख', roman: 'Laakh',
-    text: 'The hollows of the frame are filled with warm lac, a natural resin. It is the bed that holds each stone and its foil in place.',
+    text: 'In traditional kundan work, the hollows of the frame are filled with lac, a natural resin that forms the bed for each stone.',
     who: 'The setter',
   },
   {
     title: 'Setting', word: 'जड़ाई', roman: 'Jadai',
-    text: 'Each stone goes in over a thin silver foil that brings out its brilliance. Strips of pure 24-\u2060carat kundan gold are then folded in around it, layer on layer, until the stone is held by a wall of gold. The gold is worked cold, by hand.',
+    text: 'Each stone is set and held in place with kundan, thin foil of pure gold pressed in around it. Kundan setting is our speciality. The materials and method depend on the piece, and we explain the approach when we discuss the job.',
     who: 'The jadiya or kundansaz, the setter',
     look: 'Even, tight gold edges, and stones that do not move when pressed',
-    ours: 'Anil Singh',
   },
   {
     title: 'Finishing', word: 'छिलाई', roman: 'Chhilai',
-    text: 'The setting is cleaned and the gold is polished, edge by edge, until every line of the piece is crisp.',
+    text: 'The piece is cleaned and finished according to the design, with attention to the edges, the setting and how it looks as a whole.',
     who: 'The finisher',
-    ours: 'Sunil Singh',
   },
   {
     title: 'Stringing', word: 'पटवा', roman: 'Patwa',
-    text: 'Last, the silk threads, pearls and beads are added, knotted and braided by hand, and the piece is ready to wear.',
+    text: 'Where the design needs them, silk threads, pearls and beads are added, and the piece is assembled, ready to wear.',
     who: 'The patwa, the stringer',
   },
 ];
 
 const words = [
-  { term: 'Kundan', meaning: 'Pure 24-\u2060carat gold, beaten into thin foil and pressed around each stone, with no claws to hold it.' },
+  { term: 'Kundan', meaning: 'Pure gold, beaten into thin foil and pressed around each stone, with no claws to hold it.' },
   { term: 'Jadau', meaning: 'The craft of setting stones into gold this way. The word comes from jad, to embed.' },
-  { term: 'Polki', meaning: 'Flat, uncut diamonds, set in kundan over silver foil.' },
+  { term: 'Polki', meaning: 'Flat, uncut diamonds, traditionally set in kundan.' },
   { term: 'Kundan-meena', meaning: 'Kundan setting on the front, enamel on the back.' },
 ];
 ---
 
 <BaseLayout
-  title="The Workshop — Handmade Kundan Jewellery, Karol Bagh, Delhi"
-  description="A family workshop in Karol Bagh, Delhi. Two brothers, one bench, and a written record of every gram of gold that comes in and goes out."
+  title="Our Workshop & Kundan Craft | Patel Kundan Art, Delhi"
+  description="Meet Patel Kundan Art, a family-run jewellery manufacturing workshop in Karol Bagh, Delhi, specialising in kundan and jadau and undertaking custom gold and silver jewellery work."
 >
   <PageHero
-    eyebrow="The workshop"
-    title="Two brothers, one bench, in Karol Bagh, Delhi."
-    lede="Patel Kundan Art is a family workshop in Karol Bagh. Sunil Singh takes the orders and finishes the pieces; his younger brother Anil Singh does the kundan setting. Every piece is made here, at our own bench."
-  />
-
+    eyebrow="Our workshop · Karol Bagh, New Delhi"
+    title="A family workshop, built around the craft."
+    lede="Patel Kundan Art is a family-run jewellery manufacturing workshop in Karol Bagh, Delhi. Kundan setting is our speciality, and we make custom gold and silver jewellery for individuals, retail jewellers and jewellery businesses."
+  >
+    <p class="people">Sunil Singh handles orders and finishing. Anil Singh specialises in kundan setting.</p>
+    <ContactButtons waLabel="Speak to the workshop" />
+  </PageHero>
 
   <section class="section">
-    <div class="wrap wrap--narrow prose">
-      <h2>What we do</h2>
-      <p>
-        We manufacture kundan and jadau jewellery by hand, to order, for retail
-        jewellers and for individuals. Kundan setting is the specialisation — it is
-        the slowest, most particular stage of making a piece, and it is the one that
-        decides whether the finished jewellery holds together.
-      </p>
-      <p>
-        We are manufacturers. Every piece that leaves our bench is made for the
-        person who ordered it.
-      </p>
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">What we make</p>
+        <h2>Kundan is our speciality. It is not our only work.</h2>
+      </div>
+      <div class="prose">
+        <p>
+          We manufacture kundan and jadau jewellery and also take on other gold and silver
+          jewellery. Work may begin with a drawing, a photograph, a sample, an existing piece
+          or a conversation about the result you want.
+        </p>
+        <p>
+          The techniques and stages involved depend on the design, and we explain the approach
+          before the job is confirmed.
+        </p>
+      </div>
     </div>
   </section>
 
@@ -92,41 +97,76 @@ const words = [
   <CraftStages
     id="how-a-piece-is-made"
     eyebrow="How a kundan piece is made"
-    title="Eight stages, from the first drawing to the last thread."
-    lede="Kundan work was perfected in the Mughal and Rajput courts, and it is still made by hand, one stage at a time, with a specialist for each. This is the whole journey, in order."
+    title="The details behind a kundan piece."
+    lede="Kundan jewellery brings several stages of craft together. Depending on the design, a piece may pass through drawing, a framework, engraving and enamel, the setting of the stones, finishing and stringing. Each stage shapes how the finished piece looks and holds together."
     stages={stages}
     words={words}
   />
 
   <!-- THE REGISTER -->
+  <section class="section">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">Materials &amp; accountability</p>
+        <h2>Every job begins with clarity.</h2>
+      </div>
+      <div class="prose">
+        <p>
+          When a job involves gold you give us, it is weighed and written into our job
+          register when it comes in. The weighing, the work and the handover are discussed
+          before the job goes ahead. When the piece is finished, it is weighed against the
+          same entry.
+        </p>
+        <p>
+          Many customers do not bring gold at all, and pay for the gold and the making together.
+          Either way, the design, the weight and the work are agreed before we start.
+        </p>
+        <p>
+          We take this seriously because the material has value, and often carries personal
+          or business meaning as well.
+        </p>
+        <!-- TODO: photograph of a real register page goes here. It is the single
+             most persuasive image the site can carry. -->
+      </div>
+    </div>
+  </section>
+
   <section class="section on-sunk">
-    <div class="wrap wrap--narrow prose">
-      <p class="eyebrow">The job register</p>
-      <h2>Every gram is written down, in and out.</h2>
-      <p>
-        When somebody hands over gold — a retailer sending a month's work, or a
-        family bringing a set to be remade — the first thing that happens is that it
-        is weighed and written into the job register. When the finished piece goes
-        back, it is weighed against the same entry.
-      </p>
-      <p>
-        We do this on every job, big or small, because in this trade trust begins
-        with the gold.
-      </p>
-      <!-- TODO: photograph of a real register page goes here. It is the single
-           most persuasive image the site can carry. -->
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">Our approach</p>
+        <h2>Craft deserves clear communication.</h2>
+      </div>
+      <div class="prose">
+        <p>
+          Good work begins with listening carefully. We discuss the design and what you need,
+          make clear what the job involves, and give an estimate and expected timeline before
+          work begins.
+        </p>
+        <p>
+          If a design has a limitation, we explain it plainly rather than make a promise we
+          cannot keep.
+        </p>
+      </div>
     </div>
   </section>
 
   <section class="section on-ink page-close">
     <div class="wrap wrap--narrow">
-      <h2>Come and see the workshop.</h2>
+      <h2>Meet us at the workshop.</h2>
       <p class="lede">
-        We are at {site.address.street}, off {site.address.locality}.
-        Call before you come and one of us will be at the bench.
+        We are at {site.address.street}, {site.address.locality}, New Delhi. Call or message
+        before visiting so we can arrange a convenient time.
       </p>
-      <ContactButtons />
+      <ContactButtons waLabel="Message us" link={{ href: site.mapsUrl, label: 'Get Directions', external: true }} />
     </div>
   </section>
 </BaseLayout>
 
+<style>
+  .people {
+    max-width: 50ch;
+    font-size: 0.98rem;
+    color: var(--brass-soft);
+  }
+</style>

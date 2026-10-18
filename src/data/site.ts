@@ -38,10 +38,10 @@ export const primary = contacts[0];
 /** Prefilled WhatsApp openers. A blank message box loses enquiries; a
  *  prefilled one also pre-qualifies who is writing. */
 export const waMessages = {
-  general: 'Hello, I saw your website. I would like to discuss some jewellery work.',
-  trade: 'Hello, I am a jeweller and I need kundan manufacturing work. My shop is in ',
-  custom: 'Hello, I would like to get a piece of jewellery made to order.',
-  remake: 'Hello, I have some old gold jewellery I would like remade.',
+  general: 'Hello, I saw your website. I would like to discuss a jewellery design.',
+  trade: 'Hello, I am a jeweller and I would like to discuss manufacturing or job work. My shop is in ',
+  custom: 'Hello, I would like to discuss a custom piece of jewellery.',
+  remake: 'Hello, I have some old jewellery I would like to discuss remaking.',
 } as const;
 
 export const wa = (msg: string = waMessages.general, number: string = primary.number) =>
@@ -54,7 +54,7 @@ export const tel = (number: string = primary.number) => `tel:+${number}`;
  *
  * The site currently lives under a sub-path on GitHub Pages
  * (/patel-kundan-art/), and will later sit at the root of its own domain.
- * Always write links as url('/our-work/') rather than href="/our-work/" —
+ * Always write links as url('/workshop/') rather than href="/workshop/" —
  * a hard-coded leading slash breaks the moment the base path changes.
  */
 export const url = (path: string) => {
@@ -62,18 +62,27 @@ export const url = (path: string) => {
   return `${base}${path.startsWith('/') ? path : `/${path}`}`;
 };
 
+/** The five pages, in menu order. The header and footer both read this. */
+export const pages = [
+  { path: '/', label: 'Home' },
+  { path: '/workshop/', label: 'Our Workshop' },
+  { path: '/custom-orders/', label: 'For Individuals' },
+  { path: '/for-jewellers/', label: 'For Jewellers' },
+  { path: '/contact/', label: 'Contact' },
+] as const;
+
 export const site = {
   brand: 'Patel Kundan Art',
   mark: 'कुंदन वाला',
   markRoman: 'Kundanwala',
 
-  headline: 'You bring the design. We make it.',
-  subline:
-    'Kundan & Customized Jewellery, by hand, in Karol Bagh, Delhi — for jewellers and for families.',
+  /** One line on what the business is, for the footer. */
+  tagline:
+    'Kundan and jadau jewellery specialists. Custom gold and silver jewellery manufacturing for individuals and jewellers.',
 
   /** Short description used for meta tags and structured data. */
   description:
-    'Kundan and jadau jewellery manufacturing and job work in Karol Bagh, Delhi. Gold and silver, handmade to order for jewellery retailers and for individuals.',
+    'Patel Kundan Art is a family-run jewellery manufacturing workshop in Karol Bagh, Delhi, specialising in kundan and jadau, with custom gold and silver jewellery for individuals and jewellers.',
 
   url: 'https://patelkundanart.com',
 

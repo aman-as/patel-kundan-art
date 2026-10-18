@@ -9,17 +9,19 @@
  * Without JavaScript, or with reduced motion, it is an ordinary list.
  */
 interface Props {
+  /** Dark (ink) or light (ivory) section. */
+  tone?: 'ink' | 'ivory';
   /** Ties the counter to its thread; unique on the page. */
   id: string;
   eyebrow: string;
   title: string;
   steps: { name: string; detail: string }[];
 }
-const { id, eyebrow, title, steps } = Astro.props;
+const { id, eyebrow, title, steps, tone = 'ink' } = Astro.props;
 const n = (i: number) => String(i + 1).padStart(2, '0');
 ---
 
-<section class="section on-ink">
+<section class={`section ${tone === 'ink' ? 'on-ink' : ''}`}>
   <div class="wrap">
     <div class="storyline">
       <div class="storyline__pin">

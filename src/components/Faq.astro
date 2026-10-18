@@ -1,0 +1,67 @@
+---
+/**
+ * Questions people ask, each one opening on a tap. Built on <details>, so it
+ * opens and closes with the keyboard and a screen reader, and with no
+ * JavaScript at all.
+ */
+interface Props {
+  title?: string;
+  items: { q: string; a: string }[];
+  class?: string;
+}
+const { title = 'Questions people ask', items, class: cls = '' } = Astro.props;
+---
+
+<section class={`section faq ${cls}`}>
+  <div class="wrap wrap--narrow">
+    <h2>{title}</h2>
+    <div class="faq__list">
+      {items.map((it) => (
+        <details>
+          <summary><span>{it.q}</span></summary>
+          <p>{it.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq h2 { font-size: var(--step-3); }
+  .faq__list { margin-top: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem); border-bottom: 1px solid var(--ivory-line); }
+  details { border-top: 1px solid var(--ivory-line); }
+  summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    min-height: 56px;
+    padding-block: 1rem;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    line-height: 1.3;
+  }
+  summary::-webkit-details-marker { display: none; }
+  /* a plus that turns into a minus */
+  summary::after {
+    content: '';
+    flex: none;
+    width: 14px;
+    height: 14px;
+    background:
+      linear-gradient(var(--brass), var(--brass)) center / 14px 1.5px no-repeat,
+      linear-gradient(var(--brass), var(--brass)) center / 1.5px 14px no-repeat;
+    transition: transform 0.25s ease;
+  }
+  details[open] summary::after {
+    background: linear-gradient(var(--brass), var(--brass)) center / 14px 1.5px no-repeat;
+  }
+  summary:hover span { color: var(--brass); }
+  details p {
+    padding: 0 2.5rem 1.35rem 0;
+    color: var(--text-muted);
+    max-width: 62ch;
+  }
+</style>

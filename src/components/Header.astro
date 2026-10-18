@@ -1,20 +1,16 @@
 ---
 /**
- * Slim header. Logo on the left; on wide screens the four links and a Call
+ * Slim header. Logo on the left; on wide screens the five links and a Call
  * button on the right. On phones: the logo, a Call button and a menu that
  * opens a full-screen sheet. The menu is a <details> element, so it opens and
  * closes with no JavaScript at all.
  */
 import Mark from './Mark.astro';
-import { site, url, tel, primary, formatPhone } from '../data/site';
+import { site, url, tel, primary, formatPhone, pages } from '../data/site';
 
-const nav = [
-  { href: url('/workshop/'), label: 'The Workshop' },
-  { href: url('/custom-orders/'), label: 'Custom Orders' },
-  { href: url('/for-jewellers/'), label: 'For Jewellers' },
-  { href: url('/contact/'), label: 'Contact' },
-];
-const path = Astro.url.pathname;
+const nav = pages.map((p) => ({ href: url(p.path), label: p.label }));
+// every page is built as a folder, so its address ends in a slash
+const path = Astro.url.pathname.replace(/\/?$/, '/');
 const current = (href: string) => (path === href ? 'page' : undefined);
 ---
 
@@ -65,7 +61,7 @@ const current = (href: string) => (path === href ? 'page' : undefined);
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: rgba(10, 9, 11, 0.92);
+    background: rgba(22, 17, 13, 0.92);
     backdrop-filter: saturate(140%) blur(14px);
     -webkit-backdrop-filter: saturate(140%) blur(14px);
     transition: background-color 0.35s ease;
@@ -93,7 +89,7 @@ const current = (href: string) => (path === href ? 'page' : undefined);
   }
 
   .desk { display: none; }
-  .desk ul { display: flex; gap: 2rem; margin: 0; padding: 0; list-style: none; }
+  .desk ul { display: flex; gap: clamp(1.1rem, 0.1rem + 1.6vw, 2rem); margin: 0; padding: 0; list-style: none; }
   .desk a {
     font-size: 0.85rem;
     letter-spacing: 0.04em;
@@ -190,10 +186,13 @@ const current = (href: string) => (path === href ? 'page' : undefined);
   }
 
   @media (min-width: 900px) {
-    .bar { height: 72px; gap: 2.5rem; }
+    .bar { height: 72px; gap: clamp(1.25rem, 0.2rem + 2vw, 2.5rem); }
     .brand__name { font-size: 1.35rem; }
     .desk { display: block; }
     .mob { display: none; }
+  }
+  /* the number itself fits beside five links only on a wide screen */
+  @media (min-width: 1200px) {
     .call__short { display: none; }
     .call__long { display: inline; }
   }

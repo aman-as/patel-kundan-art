@@ -2,19 +2,46 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import ContactButtons from '../components/ContactButtons.astro';
+import Faq from '../components/Faq.astro';
 import { site, contacts, formatPhone, wa, tel, waMessages } from '../data/site';
+
+const share = [
+  'What you would like made, repaired or remade',
+  'A photo, sketch or design reference, if you have one',
+  'Whether it is an individual order or trade / job work',
+  'Any known material, approximate weight, quantity or target date',
+];
+
+const faq = [
+  {
+    q: 'Do you only make kundan jewellery?',
+    a: 'No. Kundan and jadau are our specialities, but we also take on custom gold and silver jewellery beyond these styles. Share your design or reference so we can discuss the work involved.',
+  },
+  {
+    q: 'Do you work with individual customers as well as jewellers?',
+    a: 'Yes. We discuss individual custom orders, and manufacturing and job work for retail jewellers and jewellery businesses.',
+  },
+  {
+    q: 'Can you make silver jewellery too?',
+    a: 'Yes, we take on custom silver jewellery as well as gold. The design and the work required decide the approach and the estimate.',
+  },
+  {
+    q: 'Where is the workshop?',
+    a: `At ${site.address.street}, ${site.address.locality}, New Delhi ${site.address.postalCode}. Please call or message before visiting.`,
+  },
+];
 ---
 
 <BaseLayout
-  title="Contact — Patel Kundan Art, Beadonpura, Karol Bagh, Delhi"
-  description="Call or WhatsApp Patel Kundan Art. Kundan jewellery manufacturing and job work at 2561/6, 1st Floor, Beadonpura, Karol Bagh, New Delhi 110005."
+  title="Contact Patel Kundan Art | Kundan Jewellery Workshop, Karol Bagh"
+  description="Contact Patel Kundan Art in Beadonpura, Karol Bagh, New Delhi, for custom kundan, jadau and other gold and silver jewellery manufacturing."
 >
   <PageHero
-    eyebrow="Contact"
-    title="Call us, or message us on WhatsApp."
-    lede="If you have a picture of the design, send it with your message. It helps us answer faster."
+    eyebrow="Contact the workshop"
+    title="Tell us what you would like made."
+    lede="A design, a reference photograph, a piece you own, or a manufacturing requirement for your business? Call or message us. A picture or a few details help us understand your enquiry more quickly."
   >
-    <ContactButtons class="big" />
+    <ContactButtons class="big" waLabel="WhatsApp the workshop" />
   </PageHero>
 
   <section class="section">
@@ -31,7 +58,7 @@ import { site, contacts, formatPhone, wa, tel, waMessages } from '../data/site';
                 {c.call && c.whatsapp && <span class="sep">·</span>}
                 {c.whatsapp && (
                   <a href={wa(waMessages.general, c.number)} rel="noopener" target="_blank">
-                    WhatsApp{!c.call && ` ${formatPhone(c.number)}`}
+                    WhatsApp {c.name.split(' ')[0]}{!c.call && ` ${formatPhone(c.number)}`}
                   </a>
                 )}
               </p>
@@ -41,13 +68,14 @@ import { site, contacts, formatPhone, wa, tel, waMessages } from '../data/site';
       </div>
 
       <div>
-        <h2 class="h">Workshop</h2>
+        <h2 class="h">Visit {site.brand}</h2>
         <address>
           {site.address.street}<br />
           {site.address.locality}<br />
-          {site.address.city} {site.address.postalCode}
+          {site.address.city} {site.address.postalCode}, India
         </address>
-        <p class="mt"><a class="plain" href={site.mapsUrl} rel="noopener" target="_blank">Open in Google Maps →</a></p>
+        <p class="mt note">Please call or message before visiting so we can arrange a convenient time.</p>
+        <p class="mt"><a class="btn btn--line" href={site.mapsUrl} rel="noopener" target="_blank">Get Directions</a></p>
 
         {site.hours.length > 0 && (
           <>
@@ -71,6 +99,24 @@ import { site, contacts, formatPhone, wa, tel, waMessages } from '../data/site';
       </div>
     </div>
   </section>
+
+  <section class="section on-sunk">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">Your first message</p>
+        <h2>What should you share in your first message?</h2>
+      </div>
+      <div class="prose">
+        <p>A few details are enough to start the conversation:</p>
+        <ul class="share">
+          {share.map((s) => <li>{s}</li>)}
+        </ul>
+        <p>You do not need to prepare a formal specification before contacting us.</p>
+      </div>
+    </div>
+  </section>
+
+  <Faq items={faq} />
 </BaseLayout>
 
 <style>
@@ -92,10 +138,18 @@ import { site, contacts, formatPhone, wa, tel, waMessages } from '../data/site';
   .person { font-family: var(--font-display); font-size: var(--step-1); }
   .role { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
   .links { margin-top: 0.35rem; }
-  .links a { color: var(--brass); text-decoration: none; border-bottom: 1px solid var(--ivory-line); }
+  .links a {
+    display: inline-block;
+    padding-block: 0.55rem;
+    color: var(--brass);
+    text-decoration: none;
+    border-bottom: 1px solid var(--ivory-line);
+  }
   .links a:hover { border-bottom-color: var(--brass); }
   .sep { color: var(--text-muted); margin-inline: 0.5rem; }
-  .plain { color: var(--brass); text-decoration: none; border-bottom: 1px solid var(--ivory-line); }
+  .note { color: var(--text-muted); font-size: 0.95rem; max-width: 40ch; }
+  .share { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.45rem; }
+  .share li::marker { color: var(--brass); }
   address { font-style: normal; line-height: 1.7; }
   .hours { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.3rem; }
   .mt { margin-top: 1rem; }
