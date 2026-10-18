@@ -7,19 +7,19 @@ import Makes from '../components/Makes.astro';
 const assurances = [
   {
     h: 'Your design stays yours',
-    p: 'What you give us is made for you. We do not resell a retailer\'s design to the next shop that walks in.',
+    p: 'What you give us is made for you alone, and your designs stay with your shop.',
   },
   {
     h: 'Gold in, gold out',
-    p: 'Every job is weighed in and weighed out against a written register. You get an account of the metal, not an assurance about it.',
+    p: 'Every job is weighed in and weighed out against a written register, so you always have a clear account of your gold.',
   },
   {
-    h: 'One bench, not a middleman',
+    h: 'Direct from our workshop',
     p: 'The work is done in our own workshop in Karol Bagh. When you call, you are speaking to the people setting the stones.',
   },
   {
-    h: 'Made to order only',
-    p: 'We have no shop, no window and no stock on display. We are not selling to the customer you are selling to.',
+    h: 'Made for your counter',
+    p: 'Every piece is made to order for the jeweller who asked for it. We are your workshop, so your customers stay yours.',
   },
 ];
 ---
@@ -34,15 +34,15 @@ const assurances = [
     lede="We manufacture kundan, jadau and antique-finish jewellery for retail jewellers and jewellery businesses. You bring the design, the reference or the requirement — we make the piece."
   >
     <p class="first">
-      Send one photograph on WhatsApp. We will tell you what the piece will
-      weigh and what the work involves — before you commit anything.
+      Call us or message us on WhatsApp about the piece. We will tell you what
+      it will weigh and what the work involves, before you commit to anything.
     </p>
     <ContactButtons message="trade" waLabel="WhatsApp us about trade work" />
   </PageHero>
 
   <section class="section">
     <div class="wrap">
-      <p class="eyebrow">What a retailer is actually deciding</p>
+      <p class="eyebrow">What matters to a retailer</p>
       <h2>Four things you want settled before you hand over gold.</h2>
       <ul class="cards">
         {assurances.map((a, i) => (
@@ -61,43 +61,39 @@ const assurances = [
     <div class="wrap wrap--narrow prose">
       <h2>The piece your customer can still say yes to</h2>
       <p>
-        Weight is what kills the sale at these metal prices. Kundan and polki
+        At today's gold prices, every gram counts. Kundan and polki
         give a piece visual size without the gold weight behind it — the set
         still looks like a set, and the bill is one your customer can pay.
-        Lightweight is where the demand has gone, and it happens to be the work
-        we specialise in.
+        Lightweight is where demand has moved, and it is the work we specialise in.
       </p>
       <h2>What we can take on</h2>
       <p>
         Kundan and jadau setting is our specialisation. Beyond that we manufacture
         across gold jewellery — bridal sets, chokers, rani haar, bangles, earrings,
         pendants and rings, in antique and polished finishes. Gold is the bulk of
-        what leaves this bench; silver we take on properly — the setting work is
-        the same work.
+        what leaves this bench, and silver pieces get the same setting work and
+        the same care.
       </p>
       <p>
-        Work can start from your design, a photograph, a sample piece, or a rough
-        idea we develop with you. Repeat orders and continuing lines are the work we
-        would rather have.
+        Work can start from your design, a sample piece, or a rough idea we
+        develop with you. Repeat orders and continuing lines are always welcome.
       </p>
-      <h2>What we will not put in writing on a website</h2>
+      <h2>Rates and delivery times</h2>
       <p>
         Rates, minimum quantities and delivery times depend on the piece, the season
-        and how much work is on the bench. Anyone who publishes those numbers is
-        guessing, and you would have to renegotiate them anyway. Call us and we will
-        give you a straight answer for your specific job.
+        and how much work is on the bench, so we quote for each job. Call us and we
+        will give you clear figures for yours.
       </p>
     </div>
   </section>
 
-  <section class="section on-ink">
+  <section class="section on-ink page-close">
     <div class="wrap wrap--narrow">
-      <h2>Send us a design and we will tell you what it takes.</h2>
+      <h2>Tell us about the job, and we will tell you what it involves.</h2>
       <p class="lede">
-        A photograph on WhatsApp is enough to start. If it is not work we can do
-        well, we will say so.
+        One call or one WhatsApp message is enough to start.
       </p>
-      <ContactButtons class="cta" message="trade" waLabel="WhatsApp us about trade work" />
+      <ContactButtons message="trade" waLabel="WhatsApp us about trade work" />
     </div>
   </section>
 </BaseLayout>
@@ -114,7 +110,6 @@ const assurances = [
   .cards li { padding-top: 1.1rem; border-top: 1px solid var(--ivory-line); }
   .cards h3 { font-size: var(--step-1); }
   .cards p { color: var(--text-muted); margin-top: 0.45rem; }
-  .cta { margin-top: 1.75rem; }
   .first {
     max-width: 46ch;
     margin-top: 0.5rem;

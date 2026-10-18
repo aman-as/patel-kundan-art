@@ -1,0 +1,46 @@
+---
+/**
+ * JOB THREAD — "How a job runs" as a gold thread.
+ *
+ * The heading and a large step counter sit on the left (pinned on wide
+ * screens); the steps run down a vertical thread that fills with gold as the
+ * page is read, lighting each step as it reaches the reading line. The look
+ * lives in styles/scroll.css (.storyline, .thread) and ScrollStory drives it.
+ * Without JavaScript, or with reduced motion, it is an ordinary list.
+ */
+interface Props {
+  /** Ties the counter to its thread; unique on the page. */
+  id: string;
+  eyebrow: string;
+  title: string;
+  steps: { name: string; detail: string }[];
+}
+const { id, eyebrow, title, steps } = Astro.props;
+const n = (i: number) => String(i + 1).padStart(2, '0');
+---
+
+<section class="section on-ink">
+  <div class="wrap">
+    <div class="storyline">
+      <div class="storyline__pin">
+        <p class="eyebrow">{eyebrow}</p>
+        <h2>{title}</h2>
+        <p class="storyline__count" aria-hidden="true">
+          <b data-thread-count={id}>01</b><span>/ {n(steps.length - 1)}</span>
+        </p>
+      </div>
+      <div>
+        <ol class="thread" data-thread={id}>
+          {steps.map((s, i) => (
+            <li>
+              <span class="thread__n">{n(i)}</span>
+              <h3>{s.name}</h3>
+              <p>{s.detail}</p>
+            </li>
+          ))}
+        </ol>
+        <slot />
+      </div>
+    </div>
+  </div>
+</section>

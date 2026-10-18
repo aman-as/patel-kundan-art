@@ -2,18 +2,16 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactButtons from '../components/ContactButtons.astro';
 import FilmHero from '../components/FilmHero.astro';
-import StepFilms from '../components/StepFilms.astro';
+import JobThread from '../components/JobThread.astro';
 import { site, url } from '../data/site';
 
-/* Clips live in public/video/. Add the file name here once a clip exists;
-   until then each step shows its dark still. */
 const steps = [
-  { name: 'Design', detail: 'You send a photograph, a drawing or a piece to copy.' },
-  { name: 'Weight', detail: 'We tell you what the piece needs before anything begins.' },
-  { name: 'Gold in', detail: 'Received, weighed and entered in the job register.' },
+  { name: 'Your design', detail: 'A sketch, a picture, a piece you love, or just an idea. We start from whatever you have.' },
+  { name: 'Weight and estimate', detail: 'Before any work begins, we tell you what the piece will weigh and what the work involves.' },
+  { name: 'Gold received', detail: 'Your gold is weighed in front of you and written into the job register.' },
   { name: 'Ghaat', detail: 'The gold framework is built by hand.' },
-  { name: 'Kundan setting', detail: 'The specialist stage, and the one we are known for.' },
-  { name: 'Finish', detail: 'Polished, weighed out, delivered against the same register.' },
+  { name: 'Kundan setting', detail: 'Each stone is set in pure gold foil, the traditional way. It is the craft our workshop is named for.' },
+  { name: 'Finish and weigh out', detail: 'Polished, checked and weighed out against the same register entry, then handed back to you.' },
 ];
 ---
 
@@ -54,9 +52,8 @@ const steps = [
           <span class="path__n">02</span>
           <h3>For individuals</h3>
           <p>
-            One piece, made to order — and jewellery you already own, remade.
-            The set from a wedding a generation ago that nobody wears, turned
-            into something that gets worn.
+            One piece, made to order, or jewellery you already own, made new.
+            The wedding set from a generation ago becomes something you love to wear.
           </p>
           <span class="path__go">Custom orders &amp; remaking old gold <span aria-hidden="true">→</span></span>
         </a>
@@ -65,9 +62,9 @@ const steps = [
   </section>
 
   <!-- 3. HOW A JOB RUNS -->
-  <StepFilms steps={steps} eyebrow="How a job runs" title="From a photograph on WhatsApp to a finished piece.">
-    <p class="more"><a class="ulink" href={url('/workshop/')}>More about how we work →</a></p>
-  </StepFilms>
+  <JobThread id="job" steps={steps} eyebrow="How a job runs" title="Six steps from your idea to the finished piece.">
+    <p class="more"><a class="ulink" href={url('/workshop/#how-a-piece-is-made')}>See how a kundan piece is made →</a></p>
+  </JobThread>
 
   <!-- 4. WHY KUNDAN, NOW -->
   <section class="section on-ink why">
@@ -79,26 +76,26 @@ const steps = [
       </h2>
       <div class="why__cols">
         <p class="lede">
-          With gold where it is, weight is what kills the sale. Kundan and polki
-          give a piece visual size without the gold weight behind it — which is
-          what a customer can still say yes to this season.
+          With gold where it is, every gram counts. Kundan and polki give a piece
+          a rich, full look without the gold weight, and that is a set a customer
+          can say yes to this season.
         </p>
         <p class="lede why__gold">It is the reason this is the work we chose to be good at.</p>
       </div>
     </div>
   </section>
 
-  <!-- 5. SEND ONE PHOTOGRAPH: closes on the last frame of Film A -->
+  <!-- 5. START A CONVERSATION: closes on the last frame of Film A -->
   <section class="closing on-ink">
     <div class="closing__still" aria-hidden="true">
       <img src={url('/video/film-end.jpg')} alt="" loading="lazy" decoding="async" width="1600" height="900" />
     </div>
     <div class="wrap closing__copy">
-      <p class="eyebrow">Start with one photograph</p>
-      <h2>Send one photograph of what you need made.</h2>
+      <p class="eyebrow">Start a conversation</p>
+      <h2>Tell us what you would like made.</h2>
       <p class="lede">
-        We will tell you what it will weigh, what the work involves, and honestly
-        whether it is a piece we can do well. Before you commit anything.
+        Call or WhatsApp us. We will tell you what the piece will weigh and what
+        the work involves, before you commit to anything.
       </p>
       <ContactButtons class="closing__cta" />
     </div>

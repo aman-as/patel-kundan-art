@@ -2,15 +2,62 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import ContactButtons from '../components/ContactButtons.astro';
+import CraftStages from '../components/CraftStages.astro';
 import { site } from '../data/site';
 
-const steps = [
-  ['Design or reference', 'A photograph on WhatsApp, a drawing, or a piece to copy. Most jobs start with a photograph.'],
-  ['Weight and estimate', 'We tell you what the piece needs and what the work involves before anything is committed.'],
-  ['Gold received', 'Weighed and entered in the job register, in front of you.'],
-  ['Ghaat — the framework', 'The gold structure of the piece is built by hand.'],
-  ['Kundan setting', 'Stones set in the traditional way. This is the stage the workshop is named for.'],
-  ['Finish and weigh out', 'Polished and checked, then weighed out and delivered against the same register it came in on.'],
+// ⁠ (a word joiner) keeps "24-carat" on one line on phones
+const stages = [
+  {
+    title: 'Drawing', word: 'नक्शा', roman: 'Naksha',
+    text: 'Every piece starts as a drawing, with each stone marked in its place. The drawing travels with the piece from one craftsman to the next.',
+    who: 'The naqqash or chitera, the designer',
+  },
+  {
+    title: 'Frame', word: 'घाट', roman: 'Ghaat',
+    text: 'Thin strips of gold are cut, shaped and soldered by hand into the frame of the piece, with a small seat for every stone. Everything that follows is built on this frame.',
+    who: 'The sonar, the goldsmith',
+  },
+  {
+    title: 'Engraving', word: 'खुदाई', roman: 'Khudai',
+    text: 'Where the piece will carry enamel, the gold is engraved by hand, so that each colour has a hollow to sit in.',
+    who: 'The engraver',
+  },
+  {
+    title: 'Enamel', word: 'मीना', roman: 'Meena',
+    text: 'Colour is laid into the engraving and the piece is fired once for every colour, starting with white and ending with red. All of this happens before a single stone is set.',
+    who: 'The meenakar',
+    look: 'A smooth, finished back',
+  },
+  {
+    title: 'Lac bed', word: 'लाख', roman: 'Laakh',
+    text: 'The hollows of the frame are filled with warm lac, a natural resin. It is the bed that holds each stone and its foil in place.',
+    who: 'The setter',
+  },
+  {
+    title: 'Setting', word: 'जड़ाई', roman: 'Jadai',
+    text: 'Each stone goes in over a thin silver foil that brings out its brilliance. Strips of pure 24-\u2060carat kundan gold are then folded in around it, layer on layer, until the stone is held by a wall of gold. The gold is worked cold, by hand.',
+    who: 'The jadiya or kundansaz, the setter',
+    look: 'Even, tight gold edges, and stones that do not move when pressed',
+    ours: 'Anil Singh',
+  },
+  {
+    title: 'Finishing', word: 'छिलाई', roman: 'Chhilai',
+    text: 'The setting is cleaned and the gold is polished, edge by edge, until every line of the piece is crisp.',
+    who: 'The finisher',
+    ours: 'Sunil Singh',
+  },
+  {
+    title: 'Stringing', word: 'पटवा', roman: 'Patwa',
+    text: 'Last, the silk threads, pearls and beads are added, knotted and braided by hand, and the piece is ready to wear.',
+    who: 'The patwa, the stringer',
+  },
+];
+
+const words = [
+  { term: 'Kundan', meaning: 'Pure 24-\u2060carat gold, beaten into thin foil and pressed around each stone, with no claws to hold it.' },
+  { term: 'Jadau', meaning: 'The craft of setting stones into gold this way. The word comes from jad, to embed.' },
+  { term: 'Polki', meaning: 'Flat, uncut diamonds, set in kundan over silver foil.' },
+  { term: 'Kundan-meena', meaning: 'Kundan setting on the front, enamel on the back.' },
 ];
 ---
 
@@ -21,7 +68,7 @@ const steps = [
   <PageHero
     eyebrow="The workshop"
     title="Two brothers, one bench, in Karol Bagh, Delhi."
-    lede="Patel Kundan Art is a family workshop in Karol Bagh. Sunil Singh takes the orders and finishes the pieces; his younger brother Anil Singh does the kundan setting. The work is not sent out."
+    lede="Patel Kundan Art is a family workshop in Karol Bagh. Sunil Singh takes the orders and finishes the pieces; his younger brother Anil Singh does the kundan setting. Every piece is made here, at our own bench."
   />
 
 
@@ -35,35 +82,21 @@ const steps = [
         decides whether the finished jewellery holds together.
       </p>
       <p>
-        We are manufacturers, not a shop. There is no window and no stock on display.
-        Everything that leaves the bench was ordered by someone first.
+        We are manufacturers. Every piece that leaves our bench is made for the
+        person who ordered it.
       </p>
     </div>
   </section>
 
-  <!-- THE PROCESS -->
-  <section class="section on-ink">
-    <div class="wrap">
-      <div class="storyline">
-        <div class="storyline__pin">
-          <p class="eyebrow">How a job runs</p>
-          <h2>Six stages, and a written record at both ends.</h2>
-          <p class="storyline__count" aria-hidden="true">
-            <b data-thread-count="workshop">01</b><span>/ {String(steps.length).padStart(2, '0')}</span>
-          </p>
-        </div>
-        <ol class="thread" data-thread="workshop">
-          {steps.map(([name, detail], i) => (
-            <li>
-              <span class="thread__n">{String(i + 1).padStart(2, '0')}</span>
-              <h3>{name}</h3>
-              <p>{detail}</p>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </div>
-  </section>
+  <!-- HOW A PIECE IS MADE -->
+  <CraftStages
+    id="how-a-piece-is-made"
+    eyebrow="How a kundan piece is made"
+    title="Eight stages, from the first drawing to the last thread."
+    lede="Kundan work was perfected in the Mughal and Rajput courts, and it is still made by hand, one stage at a time, with a specialist for each. This is the whole journey, in order."
+    stages={stages}
+    words={words}
+  />
 
   <!-- THE REGISTER -->
   <section class="section on-sunk">
@@ -77,27 +110,23 @@ const steps = [
         back, it is weighed against the same entry.
       </p>
       <p>
-        This is ordinary practice and it should not be remarkable. It is worth saying
-        because it is the actual question behind every new relationship in this
-        trade, and it deserves a straight answer rather than a reassurance.
+        We do this on every job, big or small, because in this trade trust begins
+        with the gold.
       </p>
       <!-- TODO: photograph of a real register page goes here. It is the single
            most persuasive image the site can carry. -->
     </div>
   </section>
 
-  <section class="section on-ink">
+  <section class="section on-ink page-close">
     <div class="wrap wrap--narrow">
       <h2>Come and see the workshop.</h2>
       <p class="lede">
         We are at {site.address.street}, off {site.address.locality}.
         Call before you come and one of us will be at the bench.
       </p>
-      <ContactButtons class="cta" />
+      <ContactButtons />
     </div>
   </section>
 </BaseLayout>
 
-<style>
-  .cta { margin-top: 1.75rem; }
-</style>
