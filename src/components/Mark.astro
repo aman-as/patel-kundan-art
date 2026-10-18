@@ -10,14 +10,18 @@ interface Props {
   size?: string;
   color?: string;
   class?: string;
+  /** Set where the brand name is written next to the mark, so screen
+   *  readers do not announce the name twice. */
+  decorative?: boolean;
 }
-const { size = '58px', color = 'var(--brass-soft)', class: cls = '' } = Astro.props;
+const { size = '58px', color = 'var(--brass-soft)', class: cls = '', decorative = false } = Astro.props;
 ---
 
 <span
   class={`mark ${cls}`}
-  role="img"
-  aria-label="Kundanwala"
+  role={decorative ? undefined : 'img'}
+  aria-label={decorative ? undefined : 'Kundanwala'}
+  aria-hidden={decorative ? 'true' : undefined}
   style={`--mark-url:url(${mark.src}); --mark-size:${size}; --mark-color:${color};`}
 ></span>
 

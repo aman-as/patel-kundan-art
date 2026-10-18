@@ -96,7 +96,8 @@
 
 /* ---- word scrub: the passage brightens word by word ---- */
 .story [data-scrub] .w {
-  opacity: calc(0.16 + var(--lit, 0) * 0.84);
+  /* a word still to light is dim but readable (3:1, large type) */
+  opacity: calc(0.4 + var(--lit, 0) * 0.6);
   transition: opacity 0.15s linear;
 }
 .story [data-scrub] .gild .w {
@@ -128,7 +129,7 @@
 }
 .thread h3 { font-size: var(--step-2); }
 .thread p { font-size: 0.97rem; margin-top: 0.3rem; color: var(--text-muted); }
-.on-ink .thread p { color: var(--text-on-ink-muted); }
+.on-ink .thread p { color: #B4B4BC; }
 .on-ink .thread__n { color: var(--silver-soft); }
 
 /* the track, and the bead on each step */
@@ -174,11 +175,12 @@
   transform: scale(1.35);
   box-shadow: 0 0 0 6px rgba(233, 205, 134, 0.18), 0 0 18px rgba(233, 205, 134, 0.55);
 }
+/* dimmed, not faded out: a step still to come stays readable (4.5:1) */
 .story .thread > li {
-  opacity: 0.38;
+  opacity: 0.65;
   transition: opacity 0.45s ease;
 }
-.story .thread > li.is-past { opacity: 0.72; }
+.story .thread > li.is-past { opacity: 0.82; }
 .story .thread > li.is-current { opacity: 1; }
 .story .thread > li.is-current .thread__n { color: var(--brass); }
 .story .on-ink .thread > li.is-current .thread__n { color: var(--brass-soft); }

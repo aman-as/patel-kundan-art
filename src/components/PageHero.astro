@@ -42,11 +42,16 @@ const { eyebrow, title, lede } = Astro.props;
     justify-items: start;
   }
   .page-hero h1 {
-    font-size: clamp(2.7rem, 1.4rem + 5.6vw, 6.4rem);
+    font-size: clamp(2.7rem, min(1.4rem + 5.6vw, 13svh), 6.4rem);
     line-height: 1;
     letter-spacing: -0.02em;
     max-width: 14ch;
   }
   .inner :global(.lede) { max-width: 50ch; color: var(--silver-soft); }
   .inner :global(.btn-row) { margin-top: 0.5rem; }
+  /* a sideways phone: less air above the headline, so it clears the call bar */
+  @media (max-height: 500px) {
+    .inner { padding-block: 1.75rem 2rem; }
+    .page-hero h1 { font-size: clamp(2.2rem, 13svh, 3.4rem); }
+  }
 </style>

@@ -8,6 +8,27 @@
    never a text fill.
    ========================================================================== */
 
+/* ---- type: served from this site, not Google, so a phone on 4G does not
+   wait on a second server before it can show any words. Both are variable
+   fonts: one file covers every weight used (400 to 600). Latin letters only,
+   the same subset Google sent. ---- */
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('../assets/fonts/eb-garamond-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('../assets/fonts/inter-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
   /* ---- colour: black, gold, silver ----
      Two metals, because the workshop works in both. Gold is the accent that
@@ -21,7 +42,7 @@
   --ivory-sunk:   #E9E9EC;
   --ivory-line:   #D6D6DB;
 
-  --brass:        #A8841F;   /* gold on light */
+  --brass:        #806310;   /* gold on light: 5.2:1 on ivory, AA for text */
   --brass-soft:   #E9CD86;   /* gold on ink */
 
   --silver:       #7E838C;   /* silver on light */
@@ -35,8 +56,8 @@
   /* WhatsApp is the primary conversion element on this site. Recognisability
      beats palette purity here — a green button that reads as "WhatsApp" at a
      glance converts better than an on-brand one that does not. */
-  --wa:           #128C7E;
-  --wa-hover:     #0F7268;
+  --wa:           #0E7A6E;   /* 5.2:1 with white text */
+  --wa-hover:     #0B6359;
 
   /* ---- type ---- */
   --font-display: 'EB Garamond', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
@@ -66,6 +87,12 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  /* a link reached with the Tab key, or a section opened from a link, is
+     never left under the sticky header or the phone call bar */
+  scroll-padding-top: 84px;
+}
+@media (max-width: 799px) {
+  html { scroll-padding-top: 72px; scroll-padding-bottom: calc(var(--sticky-bar) + 12px); }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -299,13 +326,8 @@ a { color: inherit; }
   position: sticky;
   top: 0;
   z-index: 60;
-  transition: padding 0.35s ease, background-color 0.35s ease, backdrop-filter 0.35s ease;
 }
-.site-header.is-stuck {
-  background: rgba(20, 16, 13, 0.86);
-  backdrop-filter: saturate(140%) blur(14px);
-  -webkit-backdrop-filter: saturate(140%) blur(14px);
-}
+/* the stuck tint is set on the header's blur layer (Header.astro) */
 
 /* ---- richer reveal: rises and settles ---- */
 .js .reveal {
