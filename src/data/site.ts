@@ -11,7 +11,6 @@
 
 export interface Contact {
   name: string;
-  role: string;
   /** Digits only, with country code. Used to build tel: and wa.me links. */
   number: string;
   call: boolean;
@@ -27,8 +26,8 @@ export const formatPhone = (n: string) => {
 };
 
 export const contacts: Contact[] = [
-  { name: 'Anil Singh',  role: 'Kundan setting',      number: '919999029885', call: true, whatsapp: true },
-  { name: 'Sunil Singh', role: 'Orders and finishing', number: '919999964650', call: true, whatsapp: true },
+  { name: 'Anil Singh',  number: '919999029885', call: true, whatsapp: true },
+  { name: 'Sunil Singh', number: '919999964650', call: true, whatsapp: true },
 ];
 
 /** The number used for every primary CTA. Keep it consistent everywhere —
@@ -134,6 +133,13 @@ export const site = {
    * Keep it as given: do not swap in a coordinate link or a guessed place URL.
    */
   mapsUrl: 'https://maps.app.goo.gl/beA2e6hGz39CNkk67',
+  /**
+   * The same listing at its full Google Maps address: where `mapsUrl` leads,
+   * copied from its redirect (18 Oct 2026) without the tracking part. A
+   * computer opens this instead, because some office networks block Google's
+   * short links (see BaseLayout).
+   */
+  mapsUrlFull: 'https://www.google.com/maps/place/Patel+Kundan+Art+%26+Patel+Jewellers/@28.6507243,77.1933096,17z/data=!3m1!4b1!4m6!3m5!1s0x390d031c93a0fc61:0xcc55f09823b1f0d1!8m2!3d28.6507243!4d77.1933096!16s%2Fg%2F11lgftfc_2!5m1!1e2',
 } as const;
 
 export const fullAddress = [

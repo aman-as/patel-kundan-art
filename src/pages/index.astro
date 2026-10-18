@@ -203,6 +203,11 @@ const trust = [
     :global(.film__copy) .hero__h1 { max-width: none; }
     .trust-line { display: none; }
   }
+  /* nor on a short laptop screen or a sideways phone, where the room goes to
+     the headline */
+  @media (max-height: 640px) {
+    .trust-line { display: none; }
+  }
   /* on a wide screen "Kundan jewellery" holds one line, so the opening
      clears the header on a laptop */
   @media (min-width: 800px) {
