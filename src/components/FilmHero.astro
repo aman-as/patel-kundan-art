@@ -11,7 +11,8 @@
  *
  * Files: public/video/<name>.mp4, encoded with a keyframe on every few frames
  * so seeking is instant (see scripts note in the plan). `tall` is used on
- * portrait screens, `wide` everywhere else.
+ * portrait screens, `wide` everywhere else, and `posterTall` is the tall
+ * film's first frame, so a phone opens on the same picture the film starts on.
  */
 import Mark from './Mark.astro';
 import { url } from '../data/site';
@@ -20,11 +21,12 @@ interface Props {
   wide?: string;
   tall?: string;
   poster?: string;
+  posterTall?: string;
   /** Short statements that take turns over the film once the headline has
    *  gone, each timed to a stage of it (see `windows` in the script). */
   lines?: string[];
 }
-const { wide, tall, poster, lines = [] } = Astro.props;
+const { wide, tall, poster, posterTall, lines = [] } = Astro.props;
 const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
 ---
 
@@ -32,7 +34,17 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
   <div class="film__stage">
     <div class="film__media" aria-hidden="true">
       {wide || tall ? (
-        <video muted playsinline preload="auto" poster={poster && url(`/video/${poster}`)}></video>
+        <>
+          {/* the opening frame, chosen by the screen's shape without waiting
+              for the script; the film covers it once its first frame is in */}
+          {poster && (
+            <picture>
+              {posterTall && <source media="(orientation: portrait)" srcset={url(`/video/${posterTall}`)} />}
+              <img class="film__poster" src={url(`/video/${poster}`)} alt="" decoding="async" fetchpriority="high" />
+            </picture>
+          )}
+          <video muted playsinline preload="auto"></video>
+        </>
       ) : (
         <div class="film__still">
           <Mark size="min(78vmin, 640px)" color="rgba(233, 205, 134, 0.07)" class="film__mark" />
@@ -45,7 +57,7 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
     </div>
     {lines.length > 0 && (
       <ol class="wrap film__lines">
-        {lines.map((l) => <li>{l}</li>)}
+        {lines.map((l) => <li class:list={{ 'is-long': l.length > 24 }}>{l}</li>)}
       </ol>
     )}
     <p class="film__hint" aria-hidden="true">Scroll</p>
@@ -62,7 +74,17 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
     overflow: hidden;
   }
   .film__media, .film__shade { position: absolute; inset: 0; }
-  .film__media video { width: 100%; height: 100%; object-fit: cover; }
+  /* one fixed frame for the whole scroll: the same size, crop and position
+     from the first frame to the last */
+  .film__media video,
+  .film__poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 50%;
+  }
   .film__still {
     position: absolute;
     inset: 0;
@@ -116,6 +138,30 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
   .film__copy :global(.lede),
   .film__copy :global(h1) { text-shadow: 0 1px 14px rgba(22, 17, 13, 0.75), 0 0 2px rgba(22, 17, 13, 0.5); }
   .film__hint { display: none; }
+
+  /* a phone: the words are set a size smaller and closer together so they fit
+     between the header and the call bar, and they always start at least 20px
+     below the 60px header, even on a screen they fill */
+  @media (max-width: 799px) {
+    .film__copy {
+      gap: clamp(0.5rem, 1.2svh, 0.8rem);
+      padding-top: calc(60px + 20px);
+      padding-bottom: calc(var(--sticky-bar) + 1rem);
+    }
+    .film__copy :global(.eyebrow) {
+      font-size: 0.72rem;
+      line-height: 1.4;
+      letter-spacing: 0.1em;
+    }
+    .film__copy :global(h1) {
+      font-size: clamp(2.25rem, 8.5vw, 3.1rem);
+      line-height: 0.98;
+    }
+    .film__copy :global(.lede) {
+      font-size: clamp(0.92rem, 3.7vw, 1rem);
+      line-height: 1.42;
+    }
+  }
 
   /* without the scroll story the statements are a plain list under the film */
   .film__lines {
@@ -179,15 +225,23 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
     transform: translate3d(0, calc((1 - var(--a, 0)) * 28px), 0);
     filter: blur(calc((1 - var(--a, 0)) * 6px));
   }
+  /* a longer statement takes three even lines on a phone rather than four */
+  :global(.story) .film__lines li.is-long { max-width: 14ch; text-wrap: balance; }
   @media (min-width: 800px) {
     :global(.story) .film__lines li {
       bottom: clamp(3rem, 2rem + 8svh, 7rem);
       max-width: none;
       white-space: nowrap;
     }
+    /* one line where it fits; a longer statement breaks into two even lines
+       rather than running off the screen */
+    :global(.story) .film__lines li.is-long { max-width: none; white-space: normal; }
   }
   @media (min-width: 800px) {
     :global(.story) .film__copy { padding-bottom: clamp(3rem, 2rem + 8svh, 7rem); }
+  }
+  @media (max-width: 799px) {
+    :global(.story) .film__copy { padding-bottom: calc(var(--sticky-bar) + 1rem); }
   }
   :global(.story) .film__shade { opacity: calc(1 - var(--p, 0) * 0.6); }
   :global(.story) .film__still { transform: scale(calc(1 + var(--p, 0) * 0.12)); }
@@ -212,11 +266,8 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
     :global(.story) .film__hint { bottom: 2rem; }
   }
 
-  /* very short screens: the eyebrow goes, and on a sideways phone the lede,
-     so the headline and both buttons still fit above the call bar */
-  @media (max-height: 620px) and (max-width: 799px) {
-    .film__copy :global(.eyebrow) { display: none; }
-  }
+  /* a sideways phone: the eyebrow and the lede go, so the headline and both
+     buttons still fit above the call bar */
   @media (max-height: 500px) {
     .film__copy :global(.eyebrow), .film__copy :global(.lede) { display: none; }
     .film__copy { gap: 0.8rem; padding-top: 1rem; }
@@ -227,9 +278,12 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
 
 <script>
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // a phone or tablet, where the film is scrubbed more gently (see `seek`)
+  const touch = window.matchMedia('(pointer: coarse)').matches;
   const films = Array.from(document.querySelectorAll<HTMLElement>('[data-film]'));
 
   films.forEach((el) => {
+    const stage = el.querySelector<HTMLElement>('.film__stage');
     const video = el.querySelector<HTMLVideoElement>('video');
     const copy = el.querySelector<HTMLElement>('.film__copy');
     const lines = Array.from(el.querySelectorAll<HTMLElement>('.film__lines li'));
@@ -237,6 +291,8 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
     // melting gold, over the ghaat and setting, and over the finished piece
     // (the last one stays as the stage lets go)
     const windows = [[0.22, 0.36], [0.39, 0.6], [0.67, 1.4]];
+    // chosen once, by the screen's shape as the page opens, and never changed
+    // while scrolling (a phone's toolbars resize the window as it scrolls)
     const portrait = window.matchMedia('(orientation: portrait)').matches;
     const src = (portrait ? el.dataset.tall : el.dataset.wide) || el.dataset.wide || el.dataset.tall;
     if (video && src) video.src = src;
@@ -244,13 +300,38 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
     if (reduce) return; // the still or the poster frame, nothing moves
     document.documentElement.classList.add('story');
     const clamp = (v: number) => Math.min(1, Math.max(0, v));
+    const FRAME = 1 / 24; // both films run at 24 frames a second
 
-    let ticking = false, target = 0;
+    let raf = 0, target = 0, shown = 0, unlocking = false;
+
+    // On a desktop every scroll step seeks straight to its frame, as it always
+    // has. On a touch screen one seek runs at a time, to a whole frame, and the
+    // film eases towards the scroll position, so a flick glides instead of
+    // cutting; the next seek waits for the last to land ('seeked' below), so
+    // seeks never queue up and frames arrive in order. Returns true while the
+    // film is still catching up.
+    const seek = () => {
+      if (!video || !video.duration || unlocking) return false;
+      if (!touch) {
+        if (Math.abs(video.currentTime - target) > 0.02) video.currentTime = target;
+        return false;
+      }
+      shown += (target - shown) * 0.35;
+      if (Math.abs(target - shown) < FRAME / 2) shown = target;
+      if (!video.seeking) {
+        const t = Math.min(Math.round(shown / FRAME) * FRAME, video.duration - 0.05);
+        if (Math.abs(video.currentTime - t) > FRAME / 2) video.currentTime = t;
+      }
+      return shown !== target;
+    };
+
     const frame = () => {
-      ticking = false;
-      const vh = window.innerHeight;
+      raf = 0;
       const r = el.getBoundingClientRect();
-      if (r.bottom < 0 || r.top > vh) return;
+      if (r.bottom < 0 || r.top > window.innerHeight) return;
+      // measured against the pinned stage (100svh) rather than the window, so
+      // a phone's toolbar sliding in or out does not nudge the film
+      const vh = stage?.offsetHeight || window.innerHeight;
       const p = clamp(-r.top / Math.max(r.height - vh, 1));
       el.style.setProperty('--p', p.toFixed(4));
       copy?.classList.toggle('is-gone', p > 0.21);
@@ -264,18 +345,37 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
         // the film ends a little before the stage lets go, so the last
         // frame (the finished gold) holds for a moment
         target = clamp(p / 0.85) * (video.duration - 0.05);
-        if (Math.abs(video.currentTime - target) > 0.02) video.currentTime = target;
+        if (seek()) request();
       }
     };
-    const request = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
+    const request = () => { if (!raf) raf = requestAnimationFrame(frame); };
     window.addEventListener('scroll', request, { passive: true });
     window.addEventListener('resize', request, { passive: true });
-    // iOS will not seek a video that has never started; a muted play/pause
-    // on the first touch unlocks it
     video?.addEventListener('loadedmetadata', request);
-    window.addEventListener('touchstart', () => {
-      if (video && video.paused) video.play().then(() => video.pause()).catch(() => {});
-    }, { once: true, passive: true });
+    if (touch) video?.addEventListener('seeked', request);
+
+    // iOS shows no frame for a seek until the video has played once. On the
+    // first touch it plays, muted and at a tenth of the speed, and pauses the
+    // moment it starts, so the picture does not move; scrubbing waits for that
+    // and then lands wherever the scroll has reached. If the play is refused
+    // (Low Power Mode), the next touch tries again.
+    const unlock = () => {
+      if (!video || !video.paused || unlocking) return;
+      unlocking = true;
+      video.playbackRate = 0.1;
+      video.play()
+        .then(() => {
+          video.pause();
+          window.removeEventListener('touchstart', unlock);
+        })
+        .catch(() => {})
+        .finally(() => {
+          video.playbackRate = 1;
+          unlocking = false;
+          request();
+        });
+    };
+    window.addEventListener('touchstart', unlock, { passive: true });
     frame();
   });
 </script>
