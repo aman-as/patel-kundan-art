@@ -5,18 +5,21 @@ import sitemap from '@astrojs/sitemap';
 /* -----------------------------------------------------------------------------
    WHERE THE SITE LIVES — the only two lines to change when the domain changes.
 
-   Now, on GitHub Pages:      SITE = 'https://aman-as.github.io'
-                              BASE = '/patel-kundan-art'
-
-   Later, on patelkundanart.com:
-                              SITE = 'https://patelkundanart.com'
+   Now, on Cloudflare Pages:  SITE = 'https://patelkundanart.pages.dev'
                               BASE = '/'
+
+   Later, on a domain of its own:
+                              SITE = 'https://<the new domain>'
+                              BASE = '/'
+
+   The old GitHub Pages address (aman-as.github.io/patel-kundan-art/) still
+   serves this same docs/ folder; BaseLayout forwards its visitors here.
 
    Every internal link is built through url() in src/data/site.ts, so changing
    these two lines moves the whole site. Nothing else needs editing.
 ----------------------------------------------------------------------------- */
-const SITE = 'https://aman-as.github.io';
-const BASE = '/patel-kundan-art';
+const SITE = 'https://patelkundanart.pages.dev';
+const BASE = '/';
 
 export default defineConfig({
   site: SITE,
@@ -27,9 +30,9 @@ export default defineConfig({
 
   integrations: [sitemap({ filter: (page) => !page.includes('/our-work/') })],
 
-  // Build straight into docs/ and commit it. GitHub Pages can serve a site
-  // directly from this folder with no build step and no GitHub Actions, which
-  // means the repository can be updated from a browser alone.
+  // Build straight into docs/ and commit it. Cloudflare Pages (and GitHub
+  // Pages) serve this folder directly with no build step, which means the
+  // repository can be updated from a browser alone.
   outDir: './docs',
 
   build: {
