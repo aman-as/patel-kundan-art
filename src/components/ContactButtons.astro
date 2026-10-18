@@ -44,7 +44,7 @@ const {
   )}
 
   {link && (
-    <a class="btn btn--line" href={link.href} {...(link.external ? { rel: 'noopener', target: '_blank' } : {})}>
+    <a class="btn btn--line" href={link.href} {...(link.external ? { rel: 'noopener noreferrer', target: '_blank' } : {})}>
       {link.label}
     </a>
   )}

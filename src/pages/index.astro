@@ -10,7 +10,7 @@ const steps = [
   { name: 'Weight and estimate', detail: 'Before any work begins, we tell you what the piece will weigh and what the work involves.' },
   { name: 'Gold received', detail: 'If you give us gold, it is weighed in front of you and written into the job register. You can also pay for the gold and the making together.' },
   { name: 'Ghaat', detail: 'The gold framework is built by hand.' },
-  { name: 'Kundan setting', detail: 'Each stone is set in pure gold foil, the traditional way. It is the craft our workshop is named for.' },
+  { name: 'Specialist Craftsmanship & Setting', detail: 'The making, stone-setting and finishing processes are selected according to the jewellery design and materials.' },
   { name: 'Finish and weigh out', detail: 'Polished, checked and weighed out against the same register entry, then handed back to you.' },
 ];
 
@@ -63,10 +63,12 @@ const trust = [
     </p>
     <ContactButtons showCall={false} link={{ href: url('/for-jewellers/'), label: 'Manufacturing for Jewellers' }} />
     <p class="trust-line">Custom orders · Jewellery job work · For individuals and jewellers</p>
+    {/* lets a visitor skip the scroll-played film */}
+    <p class="skip-film"><a class="ulink" href="#services">Explore Our Services <span aria-hidden="true">↓</span></a></p>
   </FilmHero>
 
   <!-- 2. WHAT WE DO, and the two ways in -->
-  <section class="section">
+  <section class="section" id="services">
     <div class="wrap">
       <div class="split">
         <div>
@@ -208,6 +210,15 @@ const trust = [
   }
   @media (max-height: 700px) and (max-width: 799px) {
     :global(.film__copy) .eyebrow { display: none; }
+  }
+
+  .skip-film a {
+    display: inline-block;
+    padding-block: 0.35rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--brass-soft);
+    text-shadow: 0 1px 10px rgba(22, 17, 13, 0.8);
   }
 
   .more { margin-top: 1.5rem; }
