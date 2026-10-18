@@ -1,9 +1,10 @@
 # Patel Kundan Art — website
 
-Kundan & customized jewellery manufacturing · Beadonpura, Karol Bagh, New Delhi.
+Kundan & jadau specialists · custom gold and silver jewellery manufacturing ·
+Beadonpura, Karol Bagh, New Delhi.
 
 Static site. Astro, no framework on the client, no backend. Builds to plain HTML
-and deploys free on Cloudflare Pages.
+in `docs/`, which GitHub Pages serves.
 
 ---
 
@@ -12,7 +13,7 @@ and deploys free on Cloudflare Pages.
 ```bash
 npm install
 npm run dev      # http://localhost:4321
-npm run build    # output in dist/
+npm run build    # output in docs/
 npm run preview  # serve the built site
 ```
 
@@ -40,30 +41,15 @@ Two fields are deliberately left empty because the facts are not yet confirmed:
 
 Fill either one in and it appears automatically. Nothing unverified is published.
 
-### 2. The portfolio — `src/content/products/`
+### 2. The words — `src/pages/`
 
-To add a piece:
+Each page is one file, and its words sit in plain HTML inside it. Lists that
+repeat (steps, services, questions) are kept as small arrays at the top of the
+page file, so a line can be changed without touching the layout.
 
-1. Put the photograph in `src/assets/img/work/`
-2. Add a `.md` file in `src/content/products/`:
-
-```markdown
----
-title: Three-strand rani haar with matching earrings
-category: Necklace Sets     # Necklace Sets | Chokers | Bangles | Earrings | Custom Work
-image: ../../assets/img/work/your-photo.png
-alt: Describe the piece for someone who cannot see it
-note: One short line. Form and craft only.
-order: 10                   # lower numbers first
-featured: true              # show on the home page
----
-```
-
-The grid, the ordering, the responsive sizes and the WebP conversion all happen
-automatically.
-
-**Rule:** describe only what is visible in the photograph. Never state weight,
-purity, stone type or price.
+**No gallery.** The site deliberately has no gallery, portfolio, photo grid or
+carousel. Real workshop photographs, when there are some, go inside the
+sections they belong to.
 
 ---
 
@@ -71,46 +57,46 @@ purity, stone type or price.
 
 ```
 src/
-  data/site.ts          single source of truth — contacts, address, geo, links
-  content/products/     the portfolio, one file per piece
-  assets/img/
-    work/               product photographs (optimised at build time)
-    brand/              the Kundanwala mark
+  data/site.ts          single source of truth — contacts, address, geo, links,
+                        the five pages in menu order
+  assets/img/brand/     the Kundanwala mark
+  assets/fonts/         the self-hosted fonts
   components/           Header, Footer, StickyContactBar, ContactButtons,
-                        ProductGrid, PageHero, Mark
+                        FilmHero, JobThread, CraftStages, Makes, Faq,
+                        PageHero, Mark, SiteMotion, ScrollStory
   layouts/BaseLayout    <head>, SEO tags, LocalBusiness JSON-LD
   pages/                one file per page — the URL is the filename
   styles/global.css     design tokens: colour, type scale, spacing, buttons
-public/                 served as-is: robots.txt, favicon
+public/                 served as-is: robots.txt, favicon, the opening film
 ```
 
 ### Pages
 
-| URL | File |
-|---|---|
-| `/` | `src/pages/index.astro` |
-| `/our-work/` | `src/pages/our-work.astro` |
-| `/for-jewellers/` | `src/pages/for-jewellers.astro` |
-| `/custom-orders/` | `src/pages/custom-orders.astro` |
-| `/workshop/` | `src/pages/workshop.astro` |
-| `/contact/` | `src/pages/contact.astro` |
+| URL | File | Menu name |
+|---|---|---|
+| `/` | `src/pages/index.astro` | Home |
+| `/workshop/` | `src/pages/workshop.astro` | Our Workshop |
+| `/custom-orders/` | `src/pages/custom-orders.astro` | For Individuals |
+| `/for-jewellers/` | `src/pages/for-jewellers.astro` | For Jewellers |
+| `/contact/` | `src/pages/contact.astro` | Contact |
 
 ---
 
 ## Design notes
 
-The product photographs are cut-outs shot on navy velvet with soft edges. They
-composite cleanly on dark grounds and halo visibly on white — so sections that
-show work are ink, and sections that are read are ivory. This is a constraint of
-the assets, not a style preference. If future photographs are shot on white,
-this can be revisited.
+Reading sections sit on warm ivory with dark brown text; the opening film, the
+page openings and the closing call to action are dark. Antique gold is used
+only for labels, numbers and hairlines. Every text colour passes WCAG AA on
+the surface it sits on (see the colour tokens at the top of
+`src/styles/global.css`).
 
 The Kundanwala mark is stored as a white alpha mask and tinted with CSS
 `mask-image`, so one file works in any colour without a second asset.
 
-Client-side JavaScript: one `IntersectionObserver` for a fade-in on scroll.
-Nothing else. The navigation, the layout and the buttons all work with
-JavaScript disabled.
+Client-side JavaScript is enhancement only: the scroll-played film, the gold
+thread and the fade-ins. The navigation, the layout, the questions and the
+buttons all work with JavaScript disabled, and motion stops for visitors who
+ask for reduced motion.
 
 ---
 
@@ -170,7 +156,6 @@ two lines move the entire site. Nothing else needs editing.
 
 - [ ] The real year the family began kundan work (`foundedYear`)
 - [ ] Business hours (`hours`)
-- [ ] More product photography — the portfolio currently holds four pieces
-- [ ] Workshop photographs: the bench, the brothers, work in progress
+- [ ] Workshop photographs: the bench, the tools, work in progress (inside sections, never a gallery)
 - [ ] A photograph of a job register page for `/workshop/`
 - [ ] Open Graph share image at `public/og/default.jpg`

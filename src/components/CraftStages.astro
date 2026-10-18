@@ -1,11 +1,12 @@
 ---
 /**
- * HOW A PIECE IS MADE — every stage a kundan piece passes through at the
- * bench, in order. Each stage is named large in English, with the name it has
- * at the bench, in Hindi, small underneath as a helper.
+ * HOW A PIECE IS MADE — the stages a kundan piece can pass through, in
+ * order. Which ones a piece needs depends on its design. Each stage is named
+ * large in English, with its name in the trade, in Hindi, small underneath as
+ * a helper.
  *
- * The English name sits in dim gold and fills with bright gold from the bottom
- * up as its stage scrolls into view, the way gold takes the light. With
+ * The English name sits in faint gold and fills with antique gold from the
+ * bottom up as its stage scrolls into view, the way gold takes the light. With
  * reduced motion it is gold at once; with JavaScript off it is simply gold.
  *
  * The Devanagari face is a subset of Tiro Devanagari Hindi (SIL Open Font
@@ -22,12 +23,10 @@ interface Stage {
   /** The same name in Roman letters. */
   roman: string;
   text: string;
-  /** Who traditionally does this stage. */
+  /** The craftsman this stage belongs to, by tradition. */
   who?: string;
   /** What a buyer can check for at this stage. */
   look?: string;
-  /** Who does this stage in our own workshop, when we do. */
-  ours?: string;
 }
 interface Props {
   id: string;
@@ -43,7 +42,7 @@ const n = (i: number) => String(i + 1).padStart(2, '0');
 const total = n(stages.length - 1);
 ---
 
-<section class="section on-ink craft" id={id}>
+<section class="section on-sunk craft" id={id}>
   <div class="wrap">
     <div class="craft__head">
       <p class="eyebrow">{eyebrow}</p>
@@ -60,11 +59,10 @@ const total = n(stages.length - 1);
             <p class="craft__hi"><span lang="hi">{s.word}</span><span aria-hidden="true">·</span><span>{s.roman}</span></p>
           </div>
           <div class="craft__body">
-            {s.ours && <p class="craft__ours">At our bench · {s.ours}</p>}
             <p class="craft__text">{s.text}</p>
             {(s.who || s.look) && (
               <dl class="craft__facts">
-                {s.who && (<div><dt>Who</dt><dd>{s.who}</dd></div>)}
+                {s.who && (<div><dt>Craftsman</dt><dd>{s.who}</dd></div>)}
                 {s.look && (<div><dt>Look for</dt><dd>{s.look}</dd></div>)}
               </dl>
             )}
@@ -96,7 +94,7 @@ const total = n(stages.length - 1);
   }
 
   .craft__head { display: grid; gap: 1.1rem; max-width: 760px; }
-  .craft__head .lede { color: var(--text-on-ink-muted); }
+
 
   .craft__list {
     list-style: none;
@@ -107,11 +105,11 @@ const total = n(stages.length - 1);
     display: grid;
     gap: 0.75rem;
     padding-block: clamp(2rem, 1.6rem + 2vw, 3.5rem);
-    border-top: 1px solid var(--ink-line);
+    border-top: 1px solid var(--ivory-line);
   }
-  .craft__stage:last-child { border-bottom: 1px solid var(--ink-line); }
+  .craft__stage:last-child { border-bottom: 1px solid var(--ivory-line); }
 
-  /* ---- the name: dim gold, then gilded; its bench name small beneath ---- */
+  /* ---- the name: faint gold, then gilded; its trade name small beneath ---- */
   .craft__name { display: grid; justify-items: start; gap: 0.45rem; }
   .craft__title {
     font-size: clamp(3.1rem, 2.4rem + 2.8vw, 5rem);
@@ -119,15 +117,15 @@ const total = n(stages.length - 1);
     /* room for the descenders, which the clipped gold would otherwise cut off */
     padding-bottom: 0.08em;
     color: transparent;
-    background-image: linear-gradient(180deg, #fbebbf 0%, #e9cd86 42%, #c49a3f 100%);
+    background-image: linear-gradient(180deg, #9a7526 0%, #7a5a12 55%, #5e440d 100%);
     -webkit-background-clip: text;
     background-clip: text;
   }
   /* the gold rises through the dim letters */
   :global(.js) .craft__title {
     background-image:
-      linear-gradient(180deg, #fbebbf 0%, #e9cd86 42%, #c49a3f 100%),
-      linear-gradient(rgba(233, 205, 134, 0.16), rgba(233, 205, 134, 0.16));
+      linear-gradient(180deg, #9a7526 0%, #7a5a12 55%, #5e440d 100%),
+      linear-gradient(rgba(122, 90, 18, 0.2), rgba(122, 90, 18, 0.2));
     background-repeat: no-repeat;
     background-position: 0 100%, 0 0;
     background-size: 100% 0%, 100% 100%;
@@ -145,44 +143,32 @@ const total = n(stages.length - 1);
     font-weight: 500;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--silver-soft);
+    color: var(--silver);
   }
   .craft__hi [lang='hi'] {
     font-family: 'Tiro Devanagari Hindi', 'Noto Serif Devanagari', 'Kohinoor Devanagari', 'Nirmala UI', serif;
     font-size: 1.3rem;
     letter-spacing: 0;
     text-transform: none;
-    color: var(--brass-soft);
+    color: var(--brass);
   }
-  .craft__hi [aria-hidden] { color: var(--text-on-ink-muted); }
+  .craft__hi [aria-hidden] { color: var(--silver); }
 
   /* ---- the words ---- */
   .craft__n {
     font-family: var(--font-ui);
     font-size: 0.75rem;
     letter-spacing: 0.14em;
-    color: var(--brass-soft);
+    color: var(--brass);
   }
-  .craft__n span { color: var(--text-on-ink-muted); }
-  .craft__ours {
-    display: inline-block;
-    margin-bottom: 0.9rem;
-    padding: 0.3rem 0.7rem;
-    border: 1px solid rgba(233, 205, 134, 0.45);
-    border-radius: 999px;
-    font-family: var(--font-ui);
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    color: var(--brass-soft);
-  }
-  .craft__text { color: #B4B4BC; max-width: 56ch; }
+  .craft__n span { color: var(--silver); }
+  .craft__text { color: var(--text-muted); max-width: 56ch; }
   .craft__facts {
     display: grid;
     gap: 0.9rem;
     margin: 1.4rem 0 0;
     padding-top: 1.1rem;
-    border-top: 1px solid var(--ink-line);
+    border-top: 1px solid var(--ivory-line);
     max-width: 56ch;
   }
   .craft__facts dt {
@@ -191,9 +177,9 @@ const total = n(stages.length - 1);
     font-weight: 600;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--brass-soft);
+    color: var(--brass);
   }
-  .craft__facts dd { margin: 0.2rem 0 0; font-size: 0.95rem; color: var(--text-on-ink); }
+  .craft__facts dd { margin: 0.2rem 0 0; font-size: 0.95rem; color: var(--text); }
 
   /* ---- the trade's words, explained ---- */
   .craft__words { margin-top: clamp(2.5rem, 2rem + 2vw, 4rem); max-width: 980px; }
@@ -203,11 +189,11 @@ const total = n(stages.length - 1);
     font-weight: 500;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--brass-soft);
+    color: var(--brass);
   }
   .craft__words dl { display: grid; gap: 1.1rem 2.5rem; margin: 1.25rem 0 0; }
-  .craft__words dt { font-family: var(--font-display); font-size: var(--step-2); color: var(--text-on-ink); }
-  .craft__words dd { margin: 0.2rem 0 0; color: #B4B4BC; max-width: 46ch; }
+  .craft__words dt { font-family: var(--font-display); font-size: var(--step-2); color: var(--text); }
+  .craft__words dd { margin: 0.2rem 0 0; color: var(--text-muted); max-width: 46ch; }
 
   @media (min-width: 640px) {
     .craft__facts { grid-template-columns: 1fr 1fr; gap: 1.5rem; }

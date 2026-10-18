@@ -2,28 +2,35 @@
 /**
  * What we make — set as an index: large serif names on hairlines, two or
  * three columns, each line rising in turn as the list scrolls into view.
+ * A guide to the work, not a catalogue: each page passes its own list.
  */
 interface Props {
+  eyebrow?: string;
   title?: string;
+  intro?: string;
+  items: string[];
+  /** A line under the list. */
+  note?: string;
   class?: string;
 }
-const { title = 'What we make', class: cls = '' } = Astro.props;
-const makes = [
-  'Kundan', 'Jadau', 'Polki', 'Antique finish', 'Bridal sets', 'Chokers',
-  'Rani haar', 'Bangles', 'Earrings', 'Pendants', 'Rings', 'Silver jewellery',
-];
+const { eyebrow = 'What we make', title, intro, items, note, class: cls = '' } = Astro.props;
 ---
 
 <section class={`section makes ${cls}`}>
   <div class="wrap">
-    <p class="eyebrow">{title}</p>
+    <p class="eyebrow">{eyebrow}</p>
+    {title && <h2>{title}</h2>}
+    {intro && <p class="makes__intro">{intro}</p>}
     <ul class="makes__list stagger reveal">
-      {makes.map((m, i) => <li style={`--i:${i}`}><span>{String(i + 1).padStart(2, '0')}</span>{m}</li>)}
+      {items.map((m, i) => <li style={`--i:${i}`}><span>{String(i + 1).padStart(2, '0')}</span>{m}</li>)}
     </ul>
+    {note && <p class="makes__note">{note}</p>}
   </div>
 </section>
 
 <style>
+  .makes h2 { margin-top: 0.75rem; max-width: 20ch; }
+  .makes__intro { margin-top: 1rem; color: var(--text-muted); max-width: var(--measure); }
   .makes__list {
     list-style: none;
     margin: 1.75rem 0 0;
@@ -40,7 +47,7 @@ const makes = [
     padding-block: 0.9rem;
     border-top: 1px solid var(--ivory-line);
     font-family: var(--font-display);
-    font-size: clamp(1.25rem, 1rem + 1vw, 1.9rem);
+    font-size: clamp(1.2rem, 1rem + 0.8vw, 1.7rem);
     line-height: 1.15;
   }
   .makes__list li span {
@@ -49,6 +56,7 @@ const makes = [
     letter-spacing: 0.12em;
     color: var(--brass);
   }
+  .makes__note { margin-top: 1.5rem; font-size: 0.95rem; color: var(--text-muted); max-width: var(--measure); }
   :global(.on-ink) .makes__list li { border-top-color: var(--ink-line); }
   :global(.on-ink) .makes__list li span { color: var(--brass-soft); }
 </style>

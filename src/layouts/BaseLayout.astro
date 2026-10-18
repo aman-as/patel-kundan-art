@@ -36,7 +36,8 @@ const shareImage = new URL(url('/video/film-poster.jpg'), Astro.site).href;
 --------------------------------------------------------------------------- */
 const schema: Record<string, unknown> = {
   '@context': 'https://schema.org',
-  '@type': ['LocalBusiness', 'JewelryStore'],
+  // a manufacturing workshop, not a retail shop
+  '@type': 'LocalBusiness',
   '@id': `${homeUrl}#business`,
   name: site.brand,
   alternateName: site.entities.filter((n) => n !== site.brand),
@@ -88,7 +89,7 @@ if (site.foundedYear) schema.foundingDate = String(site.foundedYear);
     <meta property="og:image:height" content="720" />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <meta name="theme-color" content="#0A090B" />
+    <meta name="theme-color" content="#16110D" />
     <meta name="format-detection" content="telephone=yes" />
     <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
     <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />

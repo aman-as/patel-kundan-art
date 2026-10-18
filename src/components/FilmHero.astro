@@ -78,20 +78,20 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
     transform: translateY(-50%);
   }
   .film__shade {
-    background: linear-gradient(to top, rgba(10, 9, 11, 0.92) 0%, rgba(10, 9, 11, 0.5) 38%, transparent 70%);
+    background: linear-gradient(to top, rgba(22, 17, 13, 0.92) 0%, rgba(22, 17, 13, 0.5) 38%, transparent 70%);
   }
   /* on a wide screen the words sit on the left, over the bright paper */
   @media (min-width: 800px) {
     .film__shade {
       background:
-        linear-gradient(to top, rgba(10, 9, 11, 0.92) 0%, rgba(10, 9, 11, 0.5) 38%, transparent 70%),
-        linear-gradient(to right, rgba(10, 9, 11, 0.62) 0%, rgba(10, 9, 11, 0.28) 42%, transparent 66%);
+        linear-gradient(to top, rgba(22, 17, 13, 0.92) 0%, rgba(22, 17, 13, 0.5) 38%, transparent 70%),
+        linear-gradient(to right, rgba(22, 17, 13, 0.62) 0%, rgba(22, 17, 13, 0.28) 42%, transparent 66%);
     }
   }
   /* on a phone the words fill the lower two thirds of the screen */
   @media (max-width: 799px) {
     .film__shade {
-      background: linear-gradient(to top, rgba(10, 9, 11, 0.94) 0%, rgba(10, 9, 11, 0.72) 45%, rgba(10, 9, 11, 0.3) 72%, transparent 88%);
+      background: linear-gradient(to top, rgba(22, 17, 13, 0.94) 0%, rgba(22, 17, 13, 0.72) 45%, rgba(22, 17, 13, 0.3) 72%, transparent 88%);
     }
   }
   .film__copy {
@@ -114,7 +114,7 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
   /* the film opens on cream paper, where gold and silver type wash out */
   .film__copy :global(.eyebrow),
   .film__copy :global(.lede),
-  .film__copy :global(h1) { text-shadow: 0 1px 14px rgba(10, 9, 11, 0.75), 0 0 2px rgba(10, 9, 11, 0.5); }
+  .film__copy :global(h1) { text-shadow: 0 1px 14px rgba(22, 17, 13, 0.75), 0 0 2px rgba(22, 17, 13, 0.5); }
   .film__hint { display: none; }
 
   /* without the scroll story the statements are a plain list under the film */
@@ -174,7 +174,7 @@ const src = (f?: string) => (f ? url(`/video/${f}`) : undefined);
     bottom: calc(var(--sticky-bar) + 3rem);
     max-width: 11ch;
     color: #f4ead2;
-    text-shadow: 0 2px 24px rgba(10, 9, 11, 0.8), 0 0 2px rgba(10, 9, 11, 0.5);
+    text-shadow: 0 2px 24px rgba(22, 17, 13, 0.8), 0 0 2px rgba(22, 17, 13, 0.5);
     opacity: var(--a, 0);
     transform: translate3d(0, calc((1 - var(--a, 0)) * 28px), 0);
     filter: blur(calc((1 - var(--a, 0)) * 6px));

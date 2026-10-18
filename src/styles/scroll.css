@@ -129,7 +129,7 @@
 }
 .thread h3 { font-size: var(--step-2); }
 .thread p { font-size: 0.97rem; margin-top: 0.3rem; color: var(--text-muted); }
-.on-ink .thread p { color: #B4B4BC; }
+.on-ink .thread p { color: #BDB3A6; }
 .on-ink .thread__n { color: var(--silver-soft); }
 
 /* the track, and the bead on each step */
@@ -182,6 +182,13 @@
 }
 .story .thread > li.is-past { opacity: 0.82; }
 .story .thread > li.is-current { opacity: 1; }
+/* on ivory the dimming is lighter and the words darker, so a step still to
+   come keeps 4.5:1 there too */
+.story .section:not(.on-ink) .thread > li { opacity: 0.85; }
+.story .section:not(.on-ink) .thread > li.is-past { opacity: 0.92; }
+.story .section:not(.on-ink) .thread > li.is-current { opacity: 1; }
+.story .section:not(.on-ink) .thread p { color: #4A3F36; }
+.story .section:not(.on-ink) .thread__n { color: var(--text-muted); }
 .story .thread > li.is-current .thread__n { color: var(--brass); }
 .story .on-ink .thread > li.is-current .thread__n { color: var(--brass-soft); }
 

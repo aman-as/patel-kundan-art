@@ -3,86 +3,174 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import ContactButtons from '../components/ContactButtons.astro';
 import Makes from '../components/Makes.astro';
+import Faq from '../components/Faq.astro';
+
+const styles = [
+  'Kundan and jadau pieces',
+  'Polki-style designs',
+  'Bridal and occasion jewellery',
+  'Chokers and long necklaces',
+  'Earrings and pendants',
+  'Rings and bangles',
+  'Antique-look and polished finishes',
+  'Other gold and silver designs',
+];
+
+// six steps, the same journey as "How a job runs" on the home page
+const expect = [
+  { h: 'Share your idea', p: 'Send a photo, drawing, reference or description.' },
+  { h: 'Discuss the requirements', p: 'We talk through the design, the materials, the likely work and anything practical to consider.' },
+  { h: 'Review the estimate', p: 'We explain the estimate and expected timeline for the piece. The final cost depends on the agreed design, materials and work.' },
+  { h: 'Confirm before making begins', p: 'Go ahead once you are comfortable with the details. If you give us gold, it is weighed and recorded at this point.' },
+  { h: 'Making', p: 'The piece is made to the agreed design. Kundan and jadau work is our speciality.' },
+  { h: 'Review and handover', p: 'We finish the agreed work, check it, and arrange collection or handover.' },
+];
+
+const faq = [
+  {
+    q: 'Do I need a finished design?',
+    a: 'No. A clear reference, photograph, sketch or description is a good starting point. The final approach depends on what you want made.',
+  },
+  {
+    q: 'Can you make jewellery other than kundan?',
+    a: 'Yes. Kundan and jadau are our specialities, but we also take on custom gold and silver jewellery beyond those styles. Share your reference so we can discuss the exact work involved.',
+  },
+  {
+    q: 'Can you remake my old gold jewellery?',
+    a: 'We can look at the piece with you and discuss a possible remake. Whether the old gold can be reused the way you expect depends on its condition, the design and the work required.',
+  },
+  {
+    q: 'How much will it cost?',
+    a: 'Each piece is different. The estimate depends on the design, the materials, the weight where relevant, and the making work. Send us a reference for a discussion about your piece.',
+  },
+  {
+    q: 'How long will it take?',
+    a: 'The timeline depends on the design, the process and the work already in hand. We discuss the expected timeline before confirming the job.',
+  },
+];
 ---
 
 <BaseLayout
-  title="Custom Kundan Jewellery in Delhi | Patel Kundan Art"
-  description="Custom kundan and jadau jewellery made to order in Karol Bagh, Delhi. Bring a design, an idea, or old gold you would like remade by hand."
+  title="Custom Gold & Silver Jewellery in Karol Bagh, Delhi | Patel Kundan Art"
+  description="Have a design in mind or old jewellery to remake? Patel Kundan Art makes custom kundan, jadau and other gold and silver jewellery for individuals and families in Delhi."
 >
   <PageHero
-    eyebrow="For individuals"
-    title="One piece, made properly, for you."
-    lede="Anyone can have a piece made here. Bring a design, an idea, or gold you already own, and we will make it for you by hand."
+    eyebrow="For individuals &amp; families"
+    title="Jewellery made around your idea."
+    lede="Bring a design, a photograph, an existing piece or simply an idea. We make custom kundan and jadau jewellery, and other gold and silver jewellery, to the design we agree together."
   >
-    <ContactButtons message="custom" waLabel="WhatsApp us about a custom piece" />
+    <p class="sub">
+      One special piece, jewellery for an occasion, or a remake of something already in
+      your family: we start by listening to what you want to create.
+    </p>
+    <ContactButtons message="custom" waLabel="Discuss a custom piece" />
   </PageHero>
 
   <section class="section">
     <div class="wrap">
-      <p class="eyebrow">What people come to us for</p>
       <div class="two">
         <div class="prose">
-          <h2>Remaking old gold</h2>
+          <p class="eyebrow">Made to your design</p>
+          <h2>Start with a reference. We can discuss the rest.</h2>
           <p>
-            This is most of what people come to us for now. Jewellery that sits in
-            a locker: a set from a wedding a generation ago, pieces from two sides
-            of a family, something broken or simply out of fashion.
+            You do not need a technical drawing. A photograph, a reference piece, a sketch or a
+            clear description helps us understand the style you have in mind.
           </p>
           <p>
-            You already own the gold. What you are paying for is the making, which
-            is a far smaller number than buying the same piece new.
+            We will discuss the design, the finish, the material, the approximate weight where
+            relevant, the making work and an estimated timeline. Final details and cost depend
+            on the individual piece.
           </p>
-          <p>
-            Before anything is melted, we tell you exactly what you have. The old
-            piece is weighed in front of you, and what comes back is weighed the same way.
-          </p>
-          <ContactButtons class="cta" message="remake" waLabel="Ask about remaking old gold" showCall={false} />
         </div>
         <div class="prose">
-          <h2>Made to your design</h2>
+          <p class="eyebrow">Remaking old gold</p>
+          <h2>Give a piece you already own a new purpose.</h2>
           <p>
-            A bridal set, a single piece for an occasion, or something you saw once
-            and have wanted ever since. Tell us about it and we will work out the
-            design with you.
+            Some jewellery is meaningful but no longer suits the way you dress or live. A family
+            set, an old pendant, a broken piece, or jewellery that has stayed in the locker for
+            years may be worth discussing for a remake.
           </p>
           <p>
-            Kundan and jadau are what we are known for. Most of our work is in gold,
-            and silver pieces get the same care. If a design needs a different
-            specialist, we will tell you at the start.
+            We look at the piece with you and discuss what is possible. How much can be reused,
+            what extra material is needed and the cost all depend on the jewellery and the new
+            design. We explain the proposed work and the estimate before you decide.
           </p>
+          <p>
+            If you give us gold, we weigh and record it at the start, and explain how it is
+            accounted for during the job and at handover.
+          </p>
+          <ContactButtons class="cta" message="remake" waLabel="Ask about remaking" showCall={false} />
         </div>
       </div>
     </div>
   </section>
 
-  <Makes />
+  <Makes
+    class="on-sunk"
+    eyebrow="Jewellery styles"
+    title="Kundan, jadau and other custom jewellery."
+    intro="Kundan and jadau are our specialities, but we are not limited to them. Depending on the design, we can discuss custom work across gold and silver jewellery, including:"
+    items={styles}
+    note="This is a guide, not a fixed catalogue. Share the design you have in mind and we can discuss what it needs."
+  />
 
-  <section class="section on-sunk">
-    <div class="wrap wrap--narrow prose">
-      <h2>What to expect</h2>
-      <p>
-        Every piece is made by hand from the first sketch, so it takes time. We
-        give you a date before you commit, and it is a date we keep.
-      </p>
-      <p>
-        Each piece is priced on its own, because each one is different. Call or
-        WhatsApp us and we will tell you what it will weigh and what the work
-        involves, before you commit to anything.
-      </p>
+  <section class="section">
+    <div class="wrap">
+      <p class="eyebrow">What to expect</p>
+      <h2 class="expect__h">A considered process, with the details discussed upfront.</h2>
+      <ol class="expect">
+        {expect.map((e, i) => (
+          <li class="reveal">
+            <span class="expect__n">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <h3>{e.h}</h3>
+              <p>{e.p}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
     </div>
   </section>
 
+  <Faq class="on-sunk" items={faq} />
+
   <section class="section on-ink page-close">
     <div class="wrap wrap--narrow">
-      <h2>Tell us about the piece you have in mind.</h2>
-      <p class="lede">We will tell you what is possible and how we would make it.</p>
-      <ContactButtons message="custom" waLabel="WhatsApp us about a custom piece" />
+      <h2>Tell us what you have in mind.</h2>
+      <p class="lede">
+        Send a photo, share a reference or describe the piece you want made. We will discuss
+        what is possible and the next steps.
+      </p>
+      <ContactButtons message="custom" waLabel="Send your design" />
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .two { display: grid; gap: 2.5rem; margin-top: 1.5rem; }
-  @media (min-width: 800px) { .two { grid-template-columns: 1fr 1fr; gap: 3.5rem; } }
+  .sub { max-width: 50ch; font-size: 0.98rem; color: var(--silver-soft); }
+  .two { display: grid; gap: 3rem; }
+  @media (min-width: 860px) { .two { grid-template-columns: 1fr 1fr; gap: 4rem; } }
+  .two h2 { font-size: var(--step-3); }
+  .two .eyebrow + h2 { margin-top: 0.6rem; }
   .cta { margin-top: 1.5rem; }
+
+  .expect__h { max-width: 20ch; margin-top: 0.75rem; }
+  .expect {
+    list-style: none;
+    margin: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem) 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+  @media (min-width: 760px) { .expect { grid-template-columns: 1fr 1fr; column-gap: 3rem; } }
+  .expect li {
+    display: grid;
+    grid-template-columns: 2.75rem 1fr;
+    gap: 0.5rem;
+    padding-block: 1.25rem;
+    border-top: 1px solid var(--ivory-line);
+  }
+  .expect__n { font-family: var(--font-display); font-size: 1.35rem; line-height: 1.3; color: var(--brass); }
+  .expect h3 { font-size: var(--step-1); }
+  .expect p { margin-top: 0.3rem; color: var(--text-muted); }
 </style>

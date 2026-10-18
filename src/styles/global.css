@@ -1,11 +1,10 @@
 /* =============================================================================
    Patel Kundan Art — design tokens and base styles
    -----------------------------------------------------------------------------
-   Palette rationale: the product photographs are cut-outs shot on navy velvet
-   with soft edges. They composite cleanly on dark grounds and show halo
-   artefacts on white. So sections that show work are ink; sections that are
-   read are ivory. Brass is a rule-and-detail colour only — never a gradient,
-   never a text fill.
+   Palette: a calm workshop, not a showroom. Sections that are read sit on
+   warm ivory with dark brown text; the film, the page openings and the
+   closing call to action stay dark. Antique gold is a rule-and-detail colour
+   only — labels, numbers, hairlines — never a background.
    ========================================================================== */
 
 /* ---- type: served from this site, not Google, so a phone on 4G does not
@@ -30,28 +29,28 @@
 }
 
 :root {
-  /* ---- colour: black, gold, silver ----
-     Two metals, because the workshop works in both. Gold is the accent that
-     leads; silver carries rules, labels and secondary type so the pair reads
-     as deliberate rather than as gold with grey bits. */
-  --ink:          #0A090B;
-  --ink-raised:   #141317;
-  --ink-line:     #272529;
+  /* ---- colour: warm ivory, dark brown, antique gold ----
+     Every text colour below passes WCAG AA (4.5:1) on the surface it is
+     used on, including the deeper ivory of alternate sections. */
+  --ink:          #16110D;   /* warm near-black: film, page openings, closing */
+  --ink-raised:   #201A15;
+  --ink-line:     #342C25;
 
-  --ivory:        #F4F4F5;   /* pearl, not cream — the palette is cool now */
-  --ivory-sunk:   #E9E9EC;
-  --ivory-line:   #D6D6DB;
+  --ivory:        #F7F2E8;
+  --ivory-sunk:   #EEE6D6;
+  --ivory-line:   #DCD1BE;
+  --card:         #FFFDF8;
 
-  --brass:        #806310;   /* gold on light: 5.2:1 on ivory, AA for text */
+  --brass:        #7A5A12;   /* antique gold on ivory: 5.1:1 or better */
   --brass-soft:   #E9CD86;   /* gold on ink */
 
-  --silver:       #7E838C;   /* silver on light */
-  --silver-soft:  #D3D8DE;   /* silver on ink */
+  --silver:       #6E655C;   /* warm grey for small labels on ivory */
+  --silver-soft:  #D9D1C4;   /* the same on ink */
 
-  --text:         #15141A;
-  --text-muted:   #5D5E68;
-  --text-on-ink:  #E8E8EC;
-  --text-on-ink-muted: #9A9AA4;
+  --text:         #2B221C;
+  --text-muted:   #5F5349;
+  --text-on-ink:  #EFE8DC;
+  --text-on-ink-muted: #A99F93;
 
   /* WhatsApp is the primary conversion element on this site. Recognisability
      beats palette purity here — a green button that reads as "WhatsApp" at a
@@ -241,9 +240,59 @@ a { color: inherit; }
   gap: 0.75rem;
 }
 
+/* a quiet outlined button for a link to another page (or to the map) */
+.btn--line {
+  background: transparent;
+  border-color: var(--ivory-line);
+  color: var(--text);
+}
+.btn--line:hover, .btn--line:focus-visible { border-color: var(--brass); color: var(--brass); }
+.on-ink .btn--line { border-color: rgba(239, 232, 220, 0.35); color: var(--text-on-ink); }
+.on-ink .btn--line:hover, .on-ink .btn--line:focus-visible { border-color: var(--brass-soft); color: var(--brass-soft); }
+
 /* ---- the call to action that closes an inner page ---- */
 .page-close h2 + .lede { margin-top: 1.25rem; }
 .page-close .btn-row { margin-top: 2rem; }
+
+/* ---- shared content patterns ---- */
+
+/* short labels: what the workshop takes on (not a catalogue) */
+.tags {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.tags li {
+  padding: 0.5rem 0.95rem;
+  border: 1px solid var(--ivory-line);
+  border-radius: 999px;
+  background: var(--card);
+  font-size: 0.92rem;
+  line-height: 1.3;
+}
+
+/* points on hairlines, two columns on wide screens */
+.points {
+  list-style: none;
+  margin: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem) 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1.75rem;
+}
+@media (min-width: 700px) { .points { grid-template-columns: 1fr 1fr; gap: 2.25rem 3rem; } }
+.points li { padding-top: 1.1rem; border-top: 1px solid var(--ivory-line); }
+.points h3 { font-size: var(--step-1); }
+.points p { color: var(--text-muted); margin-top: 0.45rem; }
+
+/* a two-column section: heading on the left, words on the right */
+.split { display: grid; gap: 1.5rem; }
+@media (min-width: 900px) {
+  .split { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2.5rem, 2rem + 3vw, 5rem); }
+}
+.split h2 { margin-top: 0.75rem; }
 
 /* ---- focus ---- */
 :focus-visible {
@@ -413,7 +462,7 @@ a { color: inherit; }
 .on-ink .steps__n,
 .on-ink .cats { color: var(--silver-soft); }
 
-::selection { background: rgba(233, 205, 134, 0.28); }
+::selection { background: rgba(201, 160, 72, 0.3); }
 
 /* The lamp picks up both metals */
 .lamp {
