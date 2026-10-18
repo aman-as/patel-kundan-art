@@ -121,6 +121,15 @@ if (site.foundedYear) schema.foundingDate = String(site.foundedYear);
     <Footer />
     <StickyContactBar />
 
+    {/* On a computer every map link opens the listing's full Google Maps
+        address, since some office networks block Google's short links.
+        Phones keep the short link, which opens the Google Maps app. */}
+    <script is:inline define:vars={{ short: site.mapsUrl, full: site.mapsUrlFull }}>
+      if (!window.matchMedia('(pointer: coarse)').matches) {
+        document.querySelectorAll('a[href="' + short + '"]').forEach((a) => { a.href = full; });
+      }
+    </script>
+
     <SiteMotion />
     <ScrollStory />
   </body>

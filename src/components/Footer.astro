@@ -37,7 +37,7 @@ const year = new Date().getFullYear();
         {contacts.map((c) => (
           <li>
             <a class="num" href={tel(c.number)}>{formatPhone(c.number)}</a>
-            <span class="muted">{c.name} · {c.role}</span>
+            <span class="muted">{c.name}</span>
           </li>
         ))}
       </ul>
