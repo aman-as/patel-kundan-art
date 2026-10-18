@@ -69,13 +69,24 @@ const faq = [
 
       <div>
         <h2 class="h">Visit {site.brand}</h2>
-        <address>
-          {site.address.street}<br />
-          {site.address.locality}<br />
-          {site.address.city} {site.address.postalCode}, India
-        </address>
-        <p class="mt note">Please call or message before visiting so we can arrange a convenient time.</p>
-        <p class="mt"><a class="btn btn--line" href={site.mapsUrl} rel="noopener" target="_blank">Get Directions</a></p>
+        <p class="note">Please call or message before visiting so we can arrange a convenient time.</p>
+
+        {/* The whole card opens our Google Business Profile listing, where
+            Google shows the name, address and its own Directions button. */}
+        <a class="place mt" href={site.mapsUrl} rel="noopener noreferrer" target="_blank">
+          <svg class="place__pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z" />
+            <circle cx="12" cy="9.5" r="2.5" />
+          </svg>
+          <span class="place__name">{site.brand}</span>
+          <address class="place__addr">
+            {site.address.street}<br />
+            {site.address.locality}<br />
+            {site.address.city} {site.address.postalCode}, India
+          </address>
+          <span class="place__go">Open our Google Maps listing <span aria-hidden="true">→</span></span>
+        </a>
+        <p class="mt"><a class="btn btn--line" href={site.mapsUrl} rel="noopener noreferrer" target="_blank">Get Directions</a></p>
 
         {site.hours.length > 0 && (
           <>
@@ -87,15 +98,6 @@ const faq = [
             </ul>
           </>
         )}
-
-        <div class="map mt">
-          <iframe
-            title="Map showing the location of Patel Kundan Art in Beadonpura, Karol Bagh"
-            src={`https://www.google.com/maps?q=${site.geo.lat},${site.geo.lng}&hl=en&z=17&output=embed`}
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-          ></iframe>
-        </div>
       </div>
     </div>
   </section>
@@ -153,11 +155,27 @@ const faq = [
   address { font-style: normal; line-height: 1.7; }
   .hours { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.3rem; }
   .mt { margin-top: 1rem; }
-  .map {
+
+  /* ---- the location card: opens the Google Business Profile listing ---- */
+  .place {
+    display: grid;
+    gap: 0.6rem;
+    justify-items: start;
+    padding: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+    background: var(--card);
     border: 1px solid var(--ivory-line);
     border-radius: var(--radius);
-    overflow: hidden;
-    aspect-ratio: 4 / 3;
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.3s ease, box-shadow 0.4s ease;
   }
-  .map iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .place:hover, .place:focus-visible {
+    border-color: var(--brass);
+    box-shadow: 0 24px 50px -32px rgba(43, 34, 28, 0.35);
+  }
+  .place__pin { width: 28px; height: 28px; color: var(--brass); }
+  .place__name { font-family: var(--font-display); font-size: var(--step-2); line-height: 1.15; }
+  .place__addr { color: var(--text-muted); }
+  .place__go { margin-top: 0.4rem; color: var(--brass); font-size: 0.92rem; font-weight: 500; }
+  .place:hover .place__go { text-decoration: underline; text-underline-offset: 3px; }
 </style>

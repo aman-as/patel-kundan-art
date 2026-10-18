@@ -127,7 +127,13 @@ export const site = {
    */
   foundedYear: null as number | null,
 
-  mapsUrl: 'https://www.google.com/maps/search/?api=1&query=28.650651,77.193367',
+  /**
+   * Our Google Maps listing, as shared by the owner (18 Oct 2026).
+   * Every map, address and directions link on the site opens this, so a
+   * visitor lands on the business listing itself, never on a bare map pin.
+   * Keep it as given: do not swap in a coordinate link or a guessed place URL.
+   */
+  mapsUrl: 'https://maps.app.goo.gl/beA2e6hGz39CNkk67',
 } as const;
 
 export const fullAddress = [
