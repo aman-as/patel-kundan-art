@@ -28,6 +28,12 @@ const homeUrl = new URL(import.meta.env.BASE_URL.replace(/\/?$/, '/'), Astro.sit
 /* The picture WhatsApp and Google show when a link to the site is shared:
    the opening frame of the film (a sketch, not a finished piece). */
 const shareImage = new URL(url('/video/film-poster.jpg'), Astro.site).href;
+/* The site used to live at aman-as.github.io/patel-kundan-art/, which still
+   serves this same docs/ folder. Anyone arriving there (an old shared link) is
+   sent to the same page on the real address. */
+const oldHost = 'aman-as.github.io';
+const oldBase = '/patel-kundan-art';
+const forwardTo = new URL(Astro.site!).origin;
 
 /* ---------------------------------------------------------------------------
    Structured data is generated from src/data/site.ts, so what Google reads can
@@ -73,6 +79,11 @@ if (site.foundedYear) schema.foundingDate = String(site.foundedYear);
 <html lang="en-IN">
   <head>
     <meta charset="utf-8" />
+    <script is:inline define:vars={{ oldHost, oldBase, forwardTo }}>
+      if (location.hostname === oldHost) {
+        location.replace(forwardTo + (location.pathname.replace(oldBase, '') || '/') + location.search + location.hash);
+      }
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />

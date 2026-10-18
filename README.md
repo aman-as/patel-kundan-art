@@ -100,55 +100,46 @@ ask for reduced motion.
 
 ---
 
-## Deploy — GitHub Pages, no build step
+## Deploy — Cloudflare Pages, no build step
 
 `npm run build` writes the finished site into **`docs/`**, and `docs/` is
-committed to the repository. GitHub Pages serves that folder as-is — no
-GitHub Actions, no Node on the server, nothing to configure beyond one switch.
+committed to the repository. Cloudflare Pages serves that folder as-is, and
+publishes again by itself every time `main` changes.
 
-**One-time setup:** repository → **Settings → Pages → Build and deployment**
+**Cloudflare Pages settings** (Workers & Pages → the project → Settings → Build):
 
 | Field | Value |
 |---|---|
-| Source | Deploy from a branch |
-| Branch | `main` |
-| Folder | `/docs` |
+| Production branch | `main` |
+| Framework preset | None |
+| Build command | *(empty)* |
+| Build output directory | `docs` |
 
-Save. The site appears within a minute or two at:
+Live at:
 
 ```
-https://aman-as.github.io/patel-kundan-art/
+https://patelkundanart.pages.dev/
 ```
 
-**To publish a change:** run `npm run build`, then commit and push. Whatever is
-in `docs/` is what the world sees.
+**To publish a change:** run `npm run build`, then commit and push to `main`.
+Whatever is in `docs/` is what the world sees.
 
-If you never run the build locally, the site simply keeps serving the last
-`docs/` that was committed — which is a perfectly good place to be.
+**The old address.** GitHub Pages (Settings → Pages: branch `main`, folder
+`/docs`) still serves the same folder at `aman-as.github.io/patel-kundan-art/`.
+Every page there forwards the visitor to the same page on the Cloudflare
+address (script at the top of `BaseLayout.astro`), so old shared links keep
+working. Leave it switched on.
 
 > Astro's asset folder is renamed from `_astro/` to `assets/` in
 > `astro.config.mjs`. GitHub Pages runs Jekyll, which silently deletes folders
 > beginning with an underscore. Do not change that setting back.
 
-### Moving to patelkundanart.com later
+### Moving to a domain of its own later
 
-Two lines at the top of `astro.config.mjs`:
-
-```js
-const SITE = 'https://patelkundanart.com';
-const BASE = '/';
-```
-
-Then in the repository, **Settings → Pages → Custom domain**, enter the domain
-and follow the DNS instructions. Also update the `Sitemap:` line in
-`public/robots.txt`.
-
-Every internal link is built through `url()` in `src/data/site.ts`, so those
-two lines move the entire site. Nothing else needs editing.
-
-> Note: on a project URL like `aman-as.github.io/patel-kundan-art/`, search
-> engines read `robots.txt` from the domain root, which this site does not
-> control. It starts working once the custom domain is in place.
+Change `SITE` at the top of `astro.config.mjs` to the new address, rebuild,
+then add the domain in Cloudflare Pages → the project → Custom domains.
+Every internal link, the canonical tags, the sitemap and `robots.txt` follow
+that one line.
 
 ---
 
